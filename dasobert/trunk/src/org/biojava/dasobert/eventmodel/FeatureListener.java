@@ -20,14 +20,13 @@
  * Created on Oct 28, 2005
  *
  */
-package org.biojava.spice.manypanel.eventmodel;
+package org.biojava.dasobert.eventmodel;
 
 //import org.biojava.spice.multipanel.eventmodel.FeatureEvent;
 
-/** a feature listener that returns the raw features as returned by a DAS source.
- *  not to be confused by the SpiceFeatureEvent
- *  
- */
+/**  a feature listener that returns the raw features as returned by a DAS source.
+ * 
+ */  
 public interface FeatureListener {
     
     /** new features have been returned from the Annotation server 
