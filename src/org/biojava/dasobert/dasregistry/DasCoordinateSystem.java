@@ -49,18 +49,28 @@ public class DasCoordinateSystem {
 
     public boolean equals(DasCoordinateSystem other){
         boolean match = true;
+        System.out.println("comparing " + this.toString() + " to " + other.toString());
+        // URI has piority 
+        if ( (! uniqueId.equals("")) && ( uniqueId.equals( other.getUniqueId())))
+            return true;
         
-        if ( ! uniqueId.equals( other.getUniqueId()))
+        if ( ncbi_tax_id != other.getNCBITaxId()) {
+            System.out.println("mismatch in ncbi tax id");
             match = false;
-        if ( ncbi_tax_id != other.getNCBITaxId())
+        }
+        if ( ! version.equals(other.getVersion() )){
+            System.out.println("mismatch in version");
             match = false;
-        if ( version != other.getVersion() )
+        }
+        if ( ! category.equals(other.getCategory())  ) {
+            System.out.println("mismatch in category");
             match = false;
-        if ( ! category.equals(other.getCategory())  )
+        }
+        if ( ! name.equals(other.getName())) {
+            System.out.println("mismatch in name");   
             match = false;
-        if ( ! name.equals(other.getName()))
-            match = false;
-        
+        }
+        System.out.println(" match: " + match);
         
         return match;
     }
