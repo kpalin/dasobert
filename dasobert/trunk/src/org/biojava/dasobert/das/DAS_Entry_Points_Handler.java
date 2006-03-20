@@ -26,9 +26,6 @@ package org.biojava.dasobert.das ;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.Attributes;
 
-import java.util.ArrayList ;
-import java.util.HashMap ;
-
 
 /** a class to parse the reponse of a DAS - types request 
  */

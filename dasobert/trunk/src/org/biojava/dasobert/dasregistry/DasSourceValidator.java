@@ -35,24 +35,33 @@ public class DasSourceValidator {
     public void validateDasSource(DasSource ds) throws DASException {
         
         if ( ds instanceof Das2Source ){
-            Das2Source d2s = (Das2Source)ds;
-            Das2Validator validator = new Das2Validator();
-            validator.validate(d2s);
             
+            Das2Source d2s = (Das2Source)ds;
+            
+            Das2Validator validator = new Das2Validator();
+            boolean ok = validator.validate(d2s);
+            if ( ! ok)
+                throw new DASException("coul not validate DasSource");
             
         } else {
+            
             // a DAS 1 source ...
+            
             String url =ds.getUrl();
             String[] caps = ds.getCapabilities();
             String testCode = ds.getTestCode();
+            
             Das1Validator validator = new Das1Validator();
+            
             String[] okcaps = validator.validate(url,testCode,caps);
             String validationMessage = validator.getValidationMessage();
             if ( okcaps.length != caps.length){
                 throw new DASException("could not validate DasSource " + validationMessage);
             }
             
+            
         }
+        
     }
     
 }

@@ -515,6 +515,7 @@ public class Das1Validator {
             } catch (SAXNotRecognizedException e){
                 e.printStackTrace();
             }
+            
             DAS_Sequence_Handler cont_handle = new DAS_Sequence_Handler() ;
             xmlreader.setContentHandler(cont_handle);
             xmlreader.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
