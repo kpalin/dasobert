@@ -105,7 +105,7 @@ public class DAS2SourceHandler extends DefaultHandler{
         } else if ( qName.equals("MAINTAINER")){
             String email = atts.getValue("email");
             currentSource.setAdminemail(email);
-        } else if ( qName.equals("COORDINATE")){
+        } else if ( qName.equals("COORDINATES")){
             DasCoordinateSystem dcs = getCoordinateSystem(uri,name,qName,atts);
             coordinates.add(dcs);
             
