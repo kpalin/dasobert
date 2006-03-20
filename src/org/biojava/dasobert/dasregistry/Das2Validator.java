@@ -22,11 +22,20 @@
  */
 package org.biojava.dasobert.dasregistry;
 
+import org.biojava.dasobert.das2.Das2Source;
+
 public class Das2Validator {
 
     public Das2Validator() {
         super();
 
+    }
+    
+    public boolean validate(Das2Source ds){
+        
+        // TODO this bit still needs to be implemented!
+        
+        return true;
     }
 
     
