@@ -6,7 +6,7 @@
 
 -->
 
-<project name="SimpleDasClient" default="package" basedir=".">
+<project name="Dasobert" default="package" basedir=".">
 
   <!-- Checks environment and setup variables -->
   <target name="init" description="Checks environment and setup variables">
@@ -21,7 +21,7 @@
     </available>
 
     <!-- Echo information -->
-    <echo message="Building SimpleDasClient-${version}" />
+    <echo message="Building Dasobert-${version}" />
 
 
     <!-- Main build directory -->
@@ -40,13 +40,13 @@
     <property name="packages" value="org.*" />
 
     <!-- Subdirectories for main source and classes -->
-    <property name="name.simpledasclient" value="simpledasclient" />
-    <property name="Name.simpledasclient" value="SIMPLEDASCLIENT" />
-    <property name="build.dest.simpledasclient" value="${build.classes.dir}/${name.simpledasclient}" />
-    <property name="build.docs.simpledasclient" value="${build.dest.docs}/${name.simpledasclient}" />
+    <property name="name.dasobert" value="dasobert" />
+    <property name="Name.dasobert" value="DASOBERT" />
+    <property name="build.dest.dasobert" value="${build.classes.dir}/${name.dasobert}" />
+    <property name="build.docs.dasobert" value="${build.dest.docs}/${name.dasobert}" />
 
-    <property name="jar.simpledasclient" value="${build.dir}/${name.simpledasclient}.jar" />
-    <property name="manifest.file.simpledasclient" value="${manifest.dir}/MANIFEST.MF" />
+    <property name="jar.dasobert" value="${build.dir}/${name.dasobert}.jar" />
+    <property name="manifest.file.dasobert" value="${manifest.dir}/MANIFEST.MF" />
     <!-- Subdirectories for tests source and classes -->
     <property name="name.tests" value="tests" />
     <property name="build.dest.tests" value="${build.classes.dir}/${name.tests}" />
@@ -54,14 +54,14 @@
     <property name="reports.tests" value="./reports/tests" />
     <!-- Subdirectories for demos source and classes -->
     <property name="name.demos" value="demos" />
-    <property name="Name.demos" value="Simpledasclient Demos" />
+    <property name="Name.demos" value="Dasobert Demos" />
     <property name="build.dest.demos" value="${build.classes.dir}/${name.demos}" />
     <property name="build.docs.demos" value="${build.dest.docs}/${name.demos}" />
     <property name="jar.demos" value="${build.dir}/${name.demos}.jar" />
     <property name="manifest.file.demos" value="${manifest.dir}/${name.demos}.txt" />
     <!-- Subdirectories for apps source and classes -->
     <property name="name.apps" value="apps" />
-    <property name="Name.apps" value="Simpledasclient Applications" />
+    <property name="Name.apps" value="Dasobert Applications" />
     <property name="build.dest.apps" value="${build.classes.dir}/${name.apps}" />
     <property name="build.docs.apps" value="${build.dest.docs}/${name.apps}" />
     <property name="jar.apps" value="${build.dir}/${name.apps}.jar" />
@@ -71,7 +71,7 @@
     <property name="build.lib" value="${build.dir}/lib" />
 
     <property name="dist.root" value="./dist" />
-    <property name="dist.dir" value="${dist.root}/${name.simpledasclient}-${version}" />
+    <property name="dist.dir" value="${dist.root}/${name.dasobert}-${version}" />
   </target>
 
 
@@ -100,12 +100,12 @@
 
 
 
-  <!-- Prepares the simpledasclient source code -->
-  <target name="prepare-simpledasclient" depends="prepare"
-  description="Prepares simpledasclient source files">
+  <!-- Prepares the dasobert source code -->
+  <target name="prepare-dasobert" depends="prepare"
+  description="Prepares dasobert source files">
     <!-- Creates directories -->
-    <mkdir dir="${build.dest.simpledasclient}"     />
-    <mkdir dir="${build.docs.simpledasclient}"     />
+    <mkdir dir="${build.dest.dasobert}"     />
+    <mkdir dir="${build.docs.dasobert}"     />
 
 
   </target>
@@ -191,11 +191,11 @@
 
 
   <!-- Compiles the source directory -->
-  <target name="compile-simpledasclient" depends="prepare-simpledasclient"
+  <target name="compile-dasobert" depends="prepare-dasobert"
   description="Compiles the source directory">
     <javac
       srcdir="${src.dir}"
-      destdir="${build.dest.simpledasclient}"
+      destdir="${build.dest.dasobert}"
       depend="${javac.depend}"
       deprecation="${javac.deprecation}"
       source="${javac.source}"
@@ -218,7 +218,7 @@
       debug="${javac.debug}">
       <classpath>
         <pathelement path="${classpath}" />
-        <pathelement path="${jar.simpledasclient}" />
+        <pathelement path="${jar.dasobert}" />
       </classpath>
     </javac>
   </target>
@@ -235,7 +235,7 @@
       debug="${javac.debug}">
       <classpath>
         <pathelement path="${classpath}" />
-        <pathelement path="${jar.simpledasclient}" />
+        <pathelement path="${jar.dasobert}" />
       </classpath>
     </javac>
   </target>
@@ -252,7 +252,7 @@
       debug="${javac.debug}">
       <classpath>
         <pathelement path="${classpath}" />
-        <pathelement path="${jar.simpledasclient}" />
+        <pathelement path="${jar.dasobert}" />
       </classpath>
     </javac>
   </target>
@@ -266,18 +266,18 @@
     a manifest for each distributable component.
   -->
 
-  <!-- Creates the simpledasclient package (tests are left in the parallel tree) -->
+  <!-- Creates the dasobert package (tests are left in the parallel tree) -->
 
   <!-- this ought to depend on compile-grammars at well, but until conditional
         sablecc works, that's a Bad Idea -->
 
-  <target name="package" depends="compile-simpledasclient"
-  description="create simpledasclient class jar file">
+  <target name="package" depends="compile-dasobert"
+  description="create dasobert class jar file">
   <echo message="did you           ant unjar-libs   ?"/>
     <jar
-      jarfile="${jar.simpledasclient}"
+      jarfile="${jar.dasobert}"
     >
-      <fileset dir="${build.dest.simpledasclient}"    />
+      <fileset dir="${build.dest.dasobert}"    />
     </jar>
 
     
@@ -295,23 +295,23 @@
 
 
   <!-- Creates the API documentation -->
-  <target name="javadocs" depends="prepare-simpledasclient"
+  <target name="javadocs" depends="prepare-dasobert"
   description="Creates the API documentation">
     <javadoc
       packagenames="${packages}"
       sourcepath="${src.dir}"
-      destdir="${build.docs.simpledasclient}"
+      destdir="${build.docs.dasobert}"
       author="true"
       version="true"
       use="true"
       source="1.4"
-      windowtitle="${Name.simpledasclient} API"
-      doctitle="${Name.simpledasclient}"
+      windowtitle="${Name.dasobert} API"
+      doctitle="${Name.dasobert}"
       maxmemory="96m">
        <link href="http://java.sun.com/j2se/1.4.2/docs/api/" offline="false"/>
 
-       <group title="Biojava SIMPLEDASCLIENT"
-       	packages="org.biojava.simpledasclient" />
+       <group title="Biojava DASOBERT"
+       	packages="org.biojava.dasobert" />
              
     </javadoc>
   </target>
