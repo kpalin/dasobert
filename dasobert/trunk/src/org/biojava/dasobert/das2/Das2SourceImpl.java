@@ -25,7 +25,7 @@ package org.biojava.dasobert.das2;
 import org.biojava.dasobert.dasregistry.Das1Source;
 import org.biojava.dasobert.dasregistry.DasSource;
 
-public class DAS2SourceImpl 
+public class Das2SourceImpl 
 extends Das1Source
 implements Das2Source 
 
@@ -33,7 +33,7 @@ implements Das2Source
 
     Das2Capability[] capabilities;
     
-    public DAS2SourceImpl() {
+    public Das2SourceImpl() {
         super();
         capabilities = new Das2Capability[0];
     }
@@ -43,13 +43,13 @@ implements Das2Source
      * 
      */
     public boolean equals(DasSource other){
-        if (! (other instanceof DAS2SourceImpl))
+        if (! (other instanceof Das2SourceImpl))
             return false;
        
         // to compare if two Das2Sources are identical we do the following:
         //  we check the capabilities
         
-        DAS2SourceImpl d2o = (DAS2SourceImpl)other;
+        Das2SourceImpl d2o = (Das2SourceImpl)other;
         
         if ( nickname.equals(d2o.getNickname()))
             return true;
