@@ -55,7 +55,7 @@ public class DasCoordinateSystem {
             return true;
         
         if ( ncbi_tax_id != other.getNCBITaxId()) {
-            System.out.println("mismatch in ncbi tax id");
+            System.out.println("mismatch in ncbi tax id " + ncbi_tax_id + " != " + other.getNCBITaxId());
             match = false;
         }
         if ( ! version.equals(other.getVersion() )){

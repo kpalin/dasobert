@@ -47,7 +47,7 @@ public class DAS2SourceHandler extends DefaultHandler{
         super();
         
         sources = new ArrayList();
-        currentSource = new DAS2SourceImpl();
+        currentSource = new Das2SourceImpl();
         coordinates = new ArrayList();
         capabilities = new ArrayList();
     }
@@ -83,6 +83,11 @@ public class DAS2SourceHandler extends DefaultHandler{
         String test_range = atts.getValue("test_range");
         dcs.setTestCode(test_range);
         
+        try {
+            String taxidstr = atts.getValue("taxid");
+            int taxid = Integer.parseInt(taxidstr);
+            dcs.setNCBITaxId(taxid);
+        } catch (Exception e){}
         
         String version = atts.getValue("version");
         if ( version != null)
@@ -95,8 +100,8 @@ public class DAS2SourceHandler extends DefaultHandler{
         //System.out.println("new element "+qName);
         
         if (qName.equals("SOURCE")) {
-            System.out.println("new Source " + atts.getValue(uri));
-            currentSource = new DAS2SourceImpl();
+            //System.out.println("new Source " + atts.getValue(uri));
+            currentSource = new Das2SourceImpl();
             coordinates = new ArrayList();
             capabilities = new ArrayList();
             
@@ -144,7 +149,7 @@ public class DAS2SourceHandler extends DefaultHandler{
             System.out.println("Das2SourceHandler endElement name " + name + " uri " + uri + " qName " + qName);
             System.out.println("Das2SourceHandler adding to source: " + currentSource.getId());    
             sources.add(currentSource);   
-            currentSource = new DAS2SourceImpl();
+            currentSource = new Das2SourceImpl();
         }
     }
     
