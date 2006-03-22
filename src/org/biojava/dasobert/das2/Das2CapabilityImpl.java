@@ -49,6 +49,14 @@ implements Das2Capability{
         return status;
     }
     
+    public int hashCode(){
+        int h = 7;
+        h = 31 * h + capability.hashCode();
+        h = 31 * h + queryId.hashCode();
+        
+        return h;
+    }
+    
     public String toString(){
         String txt ="capability " + capability + " queryId " + queryId;
         return txt;
