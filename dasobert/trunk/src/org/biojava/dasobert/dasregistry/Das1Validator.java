@@ -107,7 +107,7 @@ public class Das1Validator {
     
     
     
-    public String[] validate(String url, String testcode, String[] capabilities){
+    public String[] validate(String url, DasCoordinateSystem[] coords, String[] capabilities){
         validationMessage="";
         // a list containing all valid DAS requests ...
         
@@ -130,34 +130,55 @@ public class Das1Validator {
             String capability = capabilities[c];
             if ( all_capabilities.contains(capability)) {
                 //System.out.println("testing " + capability);
+                
                 if ( capability.equals("sequence")) {
-                    // do a DAS sequence retreive
-                    if (  validateSequence(url,testcode) )
-                        lst.add(capability);
-                    else 
-                        error = true ;
+                    for ( int i=0;i< coords.length;i++){                        
+                        DasCoordinateSystem ds =coords[i];
+                        String testcode = ds.getTestCode();
+                        
+                        // do a DAS sequence retreive
+                        if (  validateSequence(url,testcode) )
+                            lst.add(capability);
+                        else 
+                            error = true ;
+                    }
                     
                 }
                 else if ( capability.equals("structure")) {
-                    if (validateStructure(url,testcode)) 
-                        lst.add(capability);
-                    else 
-                        error = true ;
-                    
+                    for ( int i=0;i< coords.length;i++){                        
+                        DasCoordinateSystem ds =coords[i];
+                        String testcode = ds.getTestCode();
+                        
+                        
+                        if (validateStructure(url,testcode)) 
+                            lst.add(capability);
+                        else 
+                            error = true ;
+                    }    
                 }
                 else if ( capability.equals("features")){
-                    if ( validateFeatures(url,testcode))
-                        lst.add(capability);
-                    else 
-                        error = true ;
-                    
+                    for ( int i=0;i< coords.length;i++){                        
+                        DasCoordinateSystem ds =coords[i];
+                        String testcode = ds.getTestCode();
+                        
+                        
+                        if ( validateFeatures(url,testcode))
+                            lst.add(capability);
+                        else 
+                            error = true ;
+                    }    
                 }
                 else if ( capability.equals("alignment")){
-                    if ( validateAlignment(url,testcode))
-                        lst.add(capability);
-                    else
-                        error =true ;
-                    
+                    for ( int i=0;i< coords.length;i++){                        
+                        DasCoordinateSystem ds =coords[i];
+                        String testcode = ds.getTestCode();
+                        
+                        
+                        if ( validateAlignment(url,testcode))
+                            lst.add(capability);
+                        else
+                            error =true ;
+                    }    
                 } else if ( capability.equals("types")){
                     if ( validateTypes(url))
                         lst.add(capability);
@@ -175,10 +196,16 @@ public class Das1Validator {
                     } else 
                         error = true;
                 } else if ( capability.equals("dna")){
-                    if ( validateDNA(url,testcode)){
-                        lst.add(capability);
-                    } else 
-                        error = true;
+                    for ( int i=0;i< coords.length;i++){                        
+                        DasCoordinateSystem ds =coords[i];
+                        String testcode = ds.getTestCode();
+                        
+                        
+                        if ( validateDNA(url,testcode)){
+                            lst.add(capability);
+                        } else 
+                            error = true;
+                    }
                 }
                 else {
                     validationMessage += "<br/>---<br/> test of capability " + capability + " not implemented,yet.";

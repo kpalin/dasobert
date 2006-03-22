@@ -49,11 +49,11 @@ public class DasSourceValidator {
             
             String url =ds.getUrl();
             String[] caps = ds.getCapabilities();
-            String testCode = ds.getTestCode();
+            //String testCode = ds.getTestCode();
             
             Das1Validator validator = new Das1Validator();
             
-            String[] okcaps = validator.validate(url,testCode,caps);
+            String[] okcaps = validator.validate(url,ds.getCoordinateSystem(),caps);
             String validationMessage = validator.getValidationMessage();
             if ( okcaps.length != caps.length){
                 throw new DASException("could not validate DasSource " + validationMessage);
