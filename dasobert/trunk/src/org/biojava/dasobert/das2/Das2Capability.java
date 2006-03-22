@@ -25,6 +25,7 @@ package org.biojava.dasobert.das2;
 public interface Das2Capability {
 
     public boolean equals(Das2Capability other);
+    public int hashCode();
     
     public void setCapability(String type);
     public String getCapability();

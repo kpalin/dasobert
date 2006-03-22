@@ -37,6 +37,13 @@ public interface DasSource {
      */
     public boolean equals(DasSource ds);
     
+    /** classes that implement equals, should also implement hashKey
+     * 
+     * @return
+     */
+    public int hashCode();
+    
+    
     public  void setId(String i);
 
     /** get a the Id of the DasSource. The Id is a unique db

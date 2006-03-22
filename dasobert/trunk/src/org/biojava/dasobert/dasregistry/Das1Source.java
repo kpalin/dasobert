@@ -57,8 +57,8 @@ public class Das1Source implements DasSource {
 	description      = "" ;
 	String empty     = "" ;
 	nickname         = "" ;
-	coordinateSystem = new DasCoordinateSystem[1];
-	coordinateSystem[0] = new DasCoordinateSystem();
+	coordinateSystem = new DasCoordinateSystem[0];
+	//coordinateSystem[0] = new DasCoordinateSystem();
 	capabilities     =  new String[1];
 	labels 	         = new String[1];
 	capabilities[0]  = empty ;
@@ -69,6 +69,7 @@ public class Das1Source implements DasSource {
 	local=true;
     }
     
+    
     public boolean equals(DasSource other){
         System.out.println("Das1Source equals, comparing with other DasSource");
         if (! (other instanceof Das1Source))
@@ -76,14 +77,22 @@ public class Das1Source implements DasSource {
         
         Das1Source ods = (Das1Source) other;
         
-        if ( ods.getUrl().equals(nickname))
+        if ( ods.getUrl().equals(url))
             return true;
         if ( ods.getNickname().equals(nickname))
             return true;
         return false;
-        
-        
     }
+
+    public int hashCode() {
+        int h = 7;
+        
+        h = 31 * h + nickname.hashCode();
+        h = 31 * h + url.hashCode();
+        
+        return h;
+    }
+    
     
     public String toString() {
 	

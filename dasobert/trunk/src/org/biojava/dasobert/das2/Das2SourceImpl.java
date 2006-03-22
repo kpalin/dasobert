@@ -24,6 +24,7 @@ package org.biojava.dasobert.das2;
 
 import org.biojava.dasobert.dasregistry.Das1Source;
 import org.biojava.dasobert.dasregistry.DasSource;
+import org.omg.PortableServer.ServantLocatorPackage.CookieHolder;
 
 public class Das2SourceImpl 
 extends Das1Source
@@ -35,6 +36,7 @@ implements Das2Source
     
     public Das2SourceImpl() {
         super();
+
         capabilities = new Das2Capability[0];
     }
     
@@ -78,6 +80,19 @@ implements Das2Source
         
         return true;
         
+    }
+    
+    public int hashCode(){
+        int h = 7 ;
+        
+        h = 31 * h + nickname.hashCode();
+        
+        for ( int x=0;x<capabilities.length;x++){
+            Das2Capability cap = capabilities[x];
+            h = 31 * h + cap.hashCode();
+        }
+        
+        return h;
     }
     
     public String[] getCapabilities() {
