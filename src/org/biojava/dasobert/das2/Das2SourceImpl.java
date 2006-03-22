@@ -85,7 +85,7 @@ implements Das2Source
     public int hashCode(){
         int h = 7 ;
         
-        h = 31 * h + nickname.hashCode();
+        h = 31 * h + (null = nickanme ? 0 :  nickname.hashCode());
         
         for ( int x=0;x<capabilities.length;x++){
             Das2Capability cap = capabilities[x];

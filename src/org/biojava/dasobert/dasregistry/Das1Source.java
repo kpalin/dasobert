@@ -87,8 +87,8 @@ public class Das1Source implements DasSource {
     public int hashCode() {
         int h = 7;
         
-        h = 31 * h + nickname.hashCode();
-        h = 31 * h + url.hashCode();
+        h = 31 * h + ( null == nickname ? 0 : nickname.hashCode());
+        h = 31 * h + ( null == url ? 0 : url.hashCode());
         
         return h;
     }
