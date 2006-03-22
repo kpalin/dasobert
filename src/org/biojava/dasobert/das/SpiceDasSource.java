@@ -132,7 +132,8 @@ extends Das1Source
         s.setRegisterDate(ds.getRegisterDate());
         s.setLeaseDate(ds.getLeaseDate());
         s.setNickname(ds.getNickname());
-        s.setTestCode(ds.getTestCode());
+        // testcode now part of coordinate system...
+        //s.setTestCode(ds.getTestCode());
         s.setId(ds.getId());
         s.setLabels(ds.getLabels());
         s.setHelperurl(ds.getHelperurl());
