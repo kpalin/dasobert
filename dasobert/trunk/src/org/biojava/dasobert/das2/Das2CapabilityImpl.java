@@ -51,8 +51,8 @@ implements Das2Capability{
     
     public int hashCode(){
         int h = 7;
-        h = 31 * h + capability.hashCode();
-        h = 31 * h + queryId.hashCode();
+        h = 31 * h + ( null == capability ? 0 : capability.hashCode()) ;
+        h = 31 * h + ( null == queryId    ? 0 : queryId.hashCode()) ;
         
         return h;
     }
