@@ -39,34 +39,32 @@ public class Das1Source implements DasSource {
     DasCoordinateSystem[] coordinateSystem ;
     String[] capabilities     ;
     String[] labels           ;
-    String helperurl          ;
-    String testCode           ;
+    String helperurl          ;    
     Date   registerDate       ;
     Date   leaseDate          ;
     String id                 ;
     boolean local;
-
+    
     boolean alertAdmin;
     
     public static String EMPTY_ID = "UNK:-1" ;
-	
+    
     public Das1Source () {
-	id               = EMPTY_ID;
-	url              = "";
-	adminemail       = "" ;
-	description      = "" ;
-	String empty     = "" ;
-	nickname         = "" ;
-	coordinateSystem = new DasCoordinateSystem[0];
-	//coordinateSystem[0] = new DasCoordinateSystem();
-	capabilities     =  new String[1];
-	labels 	         = new String[1];
-	capabilities[0]  = empty ;
-	registerDate     = new Date() ;
-	leaseDate        = new Date() ;
-	helperurl        = "";
-	testCode         = "";
-	local=true;
+        id               = EMPTY_ID;
+        url              = "";
+        adminemail       = "" ;
+        description      = "" ;
+        String empty     = "" ;
+        nickname         = "" ;
+        coordinateSystem = new DasCoordinateSystem[0];
+        //coordinateSystem[0] = new DasCoordinateSystem();
+        capabilities     =  new String[1];
+        labels 	         = new String[1];
+        capabilities[0]  = empty ;
+        registerDate     = new Date() ;
+        leaseDate        = new Date() ;
+        helperurl        = "";	
+        local=true;
     }
     
     
@@ -83,7 +81,7 @@ public class Das1Source implements DasSource {
             return true;
         return false;
     }
-
+    
     public int hashCode() {
         int h = 7;
         
@@ -95,34 +93,34 @@ public class Das1Source implements DasSource {
     
     
     public String toString() {
-	
-	String str = "<source>\n\t<uri>"+url+"</uri>\n\t<description>"+description+"</description>\n\t<contact>"+adminemail+"</contact>\n" ;
-	 
-	if ( coordinateSystem!=null) {
-	    for (int i=0;i<coordinateSystem.length;i++){
-		
-		str+="\t<coordinateSystem>"+coordinateSystem[i]+"</coordinateSystem>\n" ;
-	    }
-	}
-	if (capabilities != null ) {
-	    for (int i=0;i<capabilities.length;i++){
-		str+="\t<service>http://www.biodas.org/das1/"+capabilities[i]+"</service>\n" ;
-	    }
-	}
-	DateFormat df = DateFormat.getDateInstance();
-	String rds = df.format(registerDate);
-	String lds = df.format(leaseDate);
-	str += "\t<registerDate>"+rds+"</registerDate>\n"; 
-	str += "\t<leaseDate>"   +lds+"</leaseDate>\n"   ;
-	str +="</source>\n";
-	return str;
-
+        
+        String str = "<source>\n\t<uri>"+url+"</uri>\n\t<description>"+description+"</description>\n\t<contact>"+adminemail+"</contact>\n" ;
+        
+        if ( coordinateSystem!=null) {
+            for (int i=0;i<coordinateSystem.length;i++){
+                
+                str+="\t<coordinateSystem>"+coordinateSystem[i]+"</coordinateSystem>\n" ;
+            }
+        }
+        if (capabilities != null ) {
+            for (int i=0;i<capabilities.length;i++){
+                str+="\t<service>http://www.biodas.org/das1/"+capabilities[i]+"</service>\n" ;
+            }
+        }
+        DateFormat df = DateFormat.getDateInstance();
+        String rds = df.format(registerDate);
+        String lds = df.format(leaseDate);
+        str += "\t<registerDate>"+rds+"</registerDate>\n"; 
+        str += "\t<leaseDate>"   +lds+"</leaseDate>\n"   ;
+        str +="</source>\n";
+        return str;
+        
     }
     public void setLocal(boolean flag){ local = flag;}
     public boolean isLocal(){return local;}
     
     public void setId(String i) { id = i; }
-
+    
     /** get a the Id of the DasSource. The Id is a unique db
      * identifier. The public DAS-Registry has Auto_Ids that look like
      * DASSOURCE:12345; public look like XYZ:12345, where the XYZ
@@ -131,86 +129,76 @@ public class Das1Source implements DasSource {
     public String getId() { return id;}
     
     public void setNickname(String name) {
-	nickname = name ;
+        nickname = name ;
     }
     public String getNickname(){
-	return nickname;
+        return nickname;
     }
     public void setUrl(String u) {
-	char lastChar = u.charAt(u.length()-1);
-	if ( lastChar  != '/')
-	    u += "/";
-
-	url = u ;
+        char lastChar = u.charAt(u.length()-1);
+        if ( lastChar  != '/')
+            u += "/";
+        
+        url = u ;
     }
-
+    
     public void setAdminemail (String u) {
-	adminemail = u ;
+        adminemail = u ;
     }
     
     public void setDescription (String u) {
-	description = u;
+        description = u;
     }
     
     public void setCoordinateSystem (DasCoordinateSystem[] u){
-	coordinateSystem=u ;
-    }
-
-    public void setCapabilities (String[] u){
-	capabilities = u ;
+        coordinateSystem=u ;
     }
     
-
+    public void setCapabilities (String[] u){
+        capabilities = u ;
+    }
+    
     public String getUrl(){return url;}
     public String getAdminemail(){return adminemail;}
     public String getDescription(){return description;}
     public String[] getCapabilities(){return capabilities;}
     public DasCoordinateSystem[] getCoordinateSystem(){return coordinateSystem;}
-
+    
     public void setRegisterDate(Date d) {
-	registerDate = d;
+        registerDate = d;
     }
     public Date getRegisterDate() {
-	return registerDate ;
+        return registerDate ;
     }
     public void setLeaseDate(Date d) {
-	leaseDate =d ;
+        leaseDate =d ;
     }
     public Date getLeaseDate() {
-	return leaseDate ;
+        return leaseDate ;
     }
-
+    
     public void setLabels(String[] ls) {
-	labels = ls ;
+        labels = ls ;
     }
-
+    
     public String[] getLabels() {
-	return labels;
+        return labels;
     }
-
+    
     public void setHelperurl(String url) {
-	helperurl = url;
+        helperurl = url;
     }
-
+    
     public String getHelperurl() {
-	return helperurl;
+        return helperurl;
     }
-
-  
-    public void setTestCode(String code) {
-	testCode = code;
-    }
-
-    public String getTestCode() {
-	return testCode;
-    }
-
+    
     public void setAlertAdmin(boolean flag) {
-	alertAdmin = flag;
+        alertAdmin = flag;
     }
-
+    
     public boolean getAlertAdmin() {
-	return alertAdmin;
+        return alertAdmin;
     }
-
+    
 }

@@ -93,9 +93,9 @@ public interface DasSource {
 
     public  String getHelperurl();
 
-    public  void setTestCode(String code);
-
-    public  String getTestCode();
+    // TestCode is now part of the coordinate system!
+    //public  void setTestCode(String code);
+    //public  String getTestCode();
 
     public  void setAlertAdmin(boolean flag);
 
