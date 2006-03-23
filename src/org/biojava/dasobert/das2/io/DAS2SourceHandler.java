@@ -20,11 +20,15 @@
  * Created on Mar 15, 2006
  *
  */
-package org.biojava.dasobert.das2;
+package org.biojava.dasobert.das2.io;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.biojava.dasobert.das2.Das2Capability;
+import org.biojava.dasobert.das2.Das2CapabilityImpl;
+import org.biojava.dasobert.das2.Das2Source;
+import org.biojava.dasobert.das2.Das2SourceImpl;
 import org.biojava.dasobert.dasregistry.DasCoordinateSystem;
 import org.biojava.dasobert.dasregistry.DasSource;
 import org.xml.sax.Attributes;
@@ -146,15 +150,15 @@ public class DAS2SourceHandler extends DefaultHandler{
             currentSource.setDas2Capabilities((Das2Capability[])capabilities.toArray(new Das2Capability[capabilities.size()]));
             
             currentSource.setCoordinateSystem((DasCoordinateSystem[])coordinates.toArray(new DasCoordinateSystem[coordinates.size()]));
-            System.out.println("Das2SourceHandler endElement name " + name + " uri " + uri + " qName " + qName);
-            System.out.println("Das2SourceHandler adding to source: " + currentSource.getId());    
+            //System.out.println("Das2SourceHandler endElement name " + name + " uri " + uri + " qName " + qName);
+            //System.out.println("Das2SourceHandler adding to source: " + currentSource.getId());    
             sources.add(currentSource);   
             currentSource = new Das2SourceImpl();
         }
     }
     
     public DasSource[] getSources(){    
-        System.out.println("Das2SourceHandler: source size: " + sources.size());
+        //System.out.println("Das2SourceHandler: source size: " + sources.size());
         return (DasSource[])sources.toArray(new DasSource[sources.size()]);
     }
     

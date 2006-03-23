@@ -36,4 +36,10 @@ public interface Das2Capability {
     public void setFormats(String[] formats);
     public String[] getFormats();
     
+    /** checks if this capability is actually of das1 style
+     * 
+     * @return
+     */
+    public boolean isDas1Style();
+    
 }

@@ -29,12 +29,26 @@ implements Das2Capability{
     String[] formats;
     String queryId;
     
+    public static String DAS1_CAPABILITY_PREFIX = "das1";
+    
     public Das2CapabilityImpl() {
         super();
         capability = "undef";
         queryId = "";
         formats = new String[0];
 
+    }
+    
+    public boolean isDas1Style(){
+        
+        if ( capability == null)
+            return false;
+        if ( capability.length() < 4)
+            return false;
+        if ( capability.substring(0,4).equals(DAS1_CAPABILITY_PREFIX))
+            return true;
+        return false;
+    
     }
     
     public boolean equals(Das2Capability other){

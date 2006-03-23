@@ -28,34 +28,11 @@ package org.biojava.dasobert.dasregistry ;
 //xml stuff
 import org.xml.sax.*;
 import javax.xml.parsers.*;
-
-//import java.util.Arrays                       ;
 import java.util.ArrayList                    ;
-//import java.util.HashMap                      ;
 import java.util.Map                          ;
 import java.util.List                         ;
-//import java.util.Iterator                     ;
-//import java.util.Set                          ;
-
 import java.io.InputStream                    ;
-//database stuff
-//import java.sql.*                             ;
-//import javax.sql.DataSource                   ;
-//import org.apache.commons.pool.ObjectPool     ;
 
-
-
-//for mail
-//import javax.mail.*                           ;
-//import javax.mail.internet.*                  ;
-//import java.util.Properties                   ;
-
-//for regexp matching
-//import java.util.logging.Logger;
-//import java.util.regex.*                      ;
-
-
-//for parent registry
 import java.net.URL                           ;
 
 
@@ -117,13 +94,8 @@ public class Das1Validator {
         if ( lastChar  != '/')
             url += "/";
         
-        boolean error = false ;
-        
-        
-        if ( ! validateURL(url) ) 
-            error = true;
-        
-        
+        validateURL(url); 
+         
         
         // test if all specified capabilities really work
         for ( int c = 0 ; c < capabilities.length ; c++) {
@@ -139,8 +111,7 @@ public class Das1Validator {
                         // do a DAS sequence retreive
                         if (  validateSequence(url,testcode) )
                             lst.add(capability);
-                        else 
-                            error = true ;
+                   
                     }
                     
                 }
@@ -152,8 +123,7 @@ public class Das1Validator {
                         
                         if (validateStructure(url,testcode)) 
                             lst.add(capability);
-                        else 
-                            error = true ;
+                       
                     }    
                 }
                 else if ( capability.equals("features")){
@@ -164,8 +134,7 @@ public class Das1Validator {
                         
                         if ( validateFeatures(url,testcode))
                             lst.add(capability);
-                        else 
-                            error = true ;
+                       
                     }    
                 }
                 else if ( capability.equals("alignment")){
@@ -176,35 +145,31 @@ public class Das1Validator {
                         
                         if ( validateAlignment(url,testcode))
                             lst.add(capability);
-                        else
-                            error =true ;
+                       
                     }    
                 } else if ( capability.equals("types")){
                     if ( validateTypes(url))
                         lst.add(capability);
-                    else
-                        error =true ;
+                    //else
+                    //    error =true ;
                     
                 } else if ( capability.equals("entry_points")) {
                     if ( validateEntry_Points(url))
                         lst.add(capability);
-                    else 
-                        error = true;
+                    //else 
+                    //    error = true;
                 } else if ( capability.equals("stylesheet")) {
-                    if ( validateStylesheet(url)){
+                    if ( validateStylesheet(url))
                         lst.add(capability);
-                    } else 
-                        error = true;
+                    //} else 
+                    //    error = true;
                 } else if ( capability.equals("dna")){
                     for ( int i=0;i< coords.length;i++){                        
                         DasCoordinateSystem ds =coords[i];
-                        String testcode = ds.getTestCode();
+                        String testcode = ds.getTestCode();                        
                         
-                        
-                        if ( validateDNA(url,testcode)){
-                            lst.add(capability);
-                        } else 
-                            error = true;
+                        if ( validateDNA(url,testcode))
+                            lst.add(capability);                        
                     }
                 }
                 else {
@@ -611,7 +576,7 @@ public class Das1Validator {
         
         HttpURLConnection huc = null;
         huc = (HttpURLConnection) url.openConnection();
-        String contentEncoding = huc.getContentEncoding();
+        //String contentEncoding = huc.getContentEncoding();
         inStream = huc.getInputStream();	
         return inStream;
     }
