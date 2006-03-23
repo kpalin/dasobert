@@ -17,23 +17,16 @@
  *
  *      http://www.biojava.org/
  * 
- * Created on Feb 9, 2006
+ * Created on Feb 24, 2006
  *
  */
-package org.biojava.dasobert.das2;
+package org.biojava.dasobert.das2.io;
+
+import java.io.InputStream;
 
 import org.biojava.dasobert.dasregistry.DasSource;
 
-public interface Das2Source
-extends DasSource {
+public interface DasSourceReader {
 
-   public Das2Capability[] getDas2Capabilities();
-   public void setDas2Capabilities(Das2Capability[] capabilities);
-   
-   /** test if this is a DAS1 source represented as a DAS2 source
-    *  if true - this source can be converted into a DAS1 source by using
-    *  DasSourceConverter.toDas1(Das2Source);
-    *
-    */
-   public boolean hasDas1Capabilities();
+    public DasSource[] readDasSource(InputStream stream);
 }

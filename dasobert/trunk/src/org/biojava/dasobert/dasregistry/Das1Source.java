@@ -54,13 +54,13 @@ public class Das1Source implements DasSource {
         url              = "";
         adminemail       = "" ;
         description      = "" ;
-        String empty     = "" ;
+        //String empty     = "" ;
         nickname         = "" ;
         coordinateSystem = new DasCoordinateSystem[0];
         //coordinateSystem[0] = new DasCoordinateSystem();
-        capabilities     =  new String[1];
-        labels 	         = new String[1];
-        capabilities[0]  = empty ;
+        capabilities     =  new String[0];
+        labels 	         = new String[0];
+        //capabilities[0]  = empty ;
         registerDate     = new Date() ;
         leaseDate        = new Date() ;
         helperurl        = "";	

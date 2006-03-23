@@ -24,7 +24,6 @@ package org.biojava.dasobert.das2;
 
 import org.biojava.dasobert.dasregistry.Das1Source;
 import org.biojava.dasobert.dasregistry.DasSource;
-import org.omg.PortableServer.ServantLocatorPackage.CookieHolder;
 
 public class Das2SourceImpl 
 extends Das1Source
@@ -45,7 +44,11 @@ implements Das2Source
      * 
      */
     public boolean equals(DasSource other){
-        if (! (other instanceof Das2SourceImpl))
+        
+        if ( this == other)
+            return true;
+        
+        if ( ( other == null) || (other.getClass() != this.getClass()))    
             return false;
        
         // to compare if two Das2Sources are identical we do the following:
@@ -93,6 +96,21 @@ implements Das2Source
         }
         
         return h;
+    }
+    
+    
+    public boolean hasDas1Capabilities(){
+        
+        // test if any of the capabilities is a das1 capabilitiy
+        
+        for (int i = 0 ; i < capabilities.length; i++) {
+            Das2Capability cap = capabilities[i];
+            if ( cap.isDas1Style())
+                return true;            
+        }
+        return false;
+        
+        
     }
     
     public String[] getCapabilities() {
