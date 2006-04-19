@@ -22,7 +22,7 @@
  */
 
 import org.biojava.dasobert.das.SequenceThread;
-import org.biojava.dasobert.das.SpiceDasSource;
+import org.biojava.dasobert.dasregistry.Das1Source;
 import org.biojava.dasobert.eventmodel.SequenceEvent;
 import org.biojava.dasobert.eventmodel.SequenceListener;
 
@@ -61,7 +61,7 @@ public class getSequence {
 			// first let's create a SpiceDasSource which knows where the
 			// DAS server is located.
 
-			SpiceDasSource dasSource = new SpiceDasSource();
+			Das1Source dasSource = new Das1Source();
 
 			dasSource.setUrl("http://www.ebi.ac.uk/das-srv/uniprot/das/aristotle/");
 
