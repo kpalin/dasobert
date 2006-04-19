@@ -32,7 +32,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-
+import org.biojava.dasobert.dasregistry.Das1Source;
 import org.biojava.dasobert.eventmodel.SequenceEvent;
 import org.biojava.dasobert.eventmodel.SequenceListener;
 import org.xml.sax.InputSource;
@@ -49,20 +49,20 @@ import java.util.*;
 public class SequenceThread  
 extends Thread {
     
-    SpiceDasSource[] sequenceServers;
+    Das1Source[] sequenceServers;
     String sp_accession;
     List seqListeners;
     static Logger logger = Logger.getLogger("org.biojava.spice");
     
-     public SequenceThread(String sp_accession,SpiceDasSource ds ) {
+     public SequenceThread(String sp_accession,Das1Source ds ) {
         super();
-        SpiceDasSource[] dss =new SpiceDasSource[1];
+        Das1Source[] dss =new Das1Source[1];
 	dss[0] = ds;
         this.sp_accession = sp_accession;
         this.sequenceServers =dss ;
         clearSequenceListeners();
     }
-    public SequenceThread(String sp_accession,SpiceDasSource[] ds ) {
+    public SequenceThread(String sp_accession,Das1Source[] ds ) {
         super();
         
         this.sp_accession = sp_accession;
@@ -90,7 +90,7 @@ extends Thread {
             
             if ( gotSequence ) break ;
             
-            SpiceDasSource ds = sequenceServers[i];
+            Das1Source ds = sequenceServers[i];
             String url = ds.getUrl() ;
             char lastChar = url.charAt(url.length()-1);      
             if ( ! (lastChar == '/') ) 
@@ -124,6 +124,8 @@ extends Thread {
         triggerNoSequence(sp_accession);
         
     }
+
+   
     
     
     private void triggerNewSequence(String sp_accession,String sequence){
@@ -224,46 +226,23 @@ extends Thread {
             InputStream inStream = null;
             try{
                 
-                /// PROXY!!!!
-                //String proxy = "wwwcache.sanger.ac.uk";
-                //String port = "3128" ;
-                //Properties systemProperties = System.getProperties();
-                //systemProperties.setProperty("proxySet", "true" );
-                //  systemProperties.setProperty("http.proxyHost",proxy);
-                //  systemProperties.setProperty("http.proxyPort",port);
-                
+             
+               
                 
                 HttpURLConnection huc = null;
-                //huc = (HttpURLConnection) dasUrl.openConnection();
-                
-                //huc = proxyUrl.openConnection();
-                
-                //logger.finer("opening "+url);
+             
                 huc = AlignmentThread.openHttpURLConnection(url);
                 
                 
                 logger.finest(huc.getResponseMessage());
-                //String contentEncoding = huc.getContentEncoding();
-                //logger.finest("encoding: " + contentEncoding);
-                //logger.finest("code:" + huc.getResponseCode());
-                //logger.finest("message:" + huc.getResponseMessage());
+                
                 inStream = huc.getInputStream();
-                //logger.finest(inStream);
-                
-                //in    = new BufferedReader(new InputStreamReader(inStream));
-                
-                //String inputLine ;
-                //while (null != (inputLine = in.readLine()) ) {
-                
-                //logger.finest(inputLine);
-                //}
-                
                 
                 
             }
             catch ( Exception ex){
                 ex.printStackTrace();
-                logger.log(Level.WARNING,"Uncaught exception", ex);
+                logger.log(Level.WARNING,"exception occured", ex);
             }
             
             return inStream;
