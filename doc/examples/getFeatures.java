@@ -36,19 +36,24 @@ import java.util.ArrayList;
  * sequence</i> coordinate system and then does feature requests for
  * them.
  */
-public class getFeatures {
+public class GetFeatures {
 
 
     public static void main (String[] args) {
-	
-	getFeatures f = new getFeatures();
-	f.showExample();
+
+	String accessionCode = "P50225";
+	if ( args.length == 1 ) {
+	    accessionCode = args[0];
+	}
+
+	GetFeatures f = new GetFeatures();
+	f.showExample(accessionCode);
 	
 	
 
     }
     
-    public void showExample() {
+    public void showExample(String accessionCode) {
 	try {
 
 	    // first we set some system properties
@@ -66,12 +71,10 @@ public class getFeatures {
 	    
 	    Das1Source dasSource = new Das1Source();
 	    
-	    //dasSource.setUrl("http://www.ebi.ac.uk/das-srv/uniprot/das/aristotle/");
-	    dasSource.setUrl("http://www.ebi.ac.uk/msd-srv/msdmotif/das/s3dm/");
-
+	    dasSource.setUrl("http://www.ebi.ac.uk/das-srv/uniprot/das/aristotle/");
 
 	    // we want to get the features for this UniProt entry:
-	    String accessionCode = "1dwf";
+	   
 	    
 
 	    requestFeatures(accessionCode,dasSource);
