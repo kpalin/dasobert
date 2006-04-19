@@ -45,6 +45,12 @@ public class ContactRegistry {
     public static void main(String[] args) {
         try {
             
+	// if you are behind a proxy, please uncomment the following lines
+			System.setProperty("proxySet", "true");
+			System.setProperty("proxyHost", "wwwcache.sanger.ac.uk");
+			System.setProperty("proxyPort", "3128");
+
+
 //          make sure we use the Xerces XML parser..
             System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
                     "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
@@ -53,7 +59,10 @@ public class ContactRegistry {
             
             ContactRegistry contact = new ContactRegistry();
             Das1Source[] sources = contact.getDas1Sources();
-            System.out.print("got " + sources.length + "das1 sources");
+            System.out.println("got " + sources.length + "das1 sources");
+
+	    contact.displaySources(sources);
+	    
         } catch ( Exception e) {
             e.printStackTrace();
         }
@@ -61,6 +70,7 @@ public class ContactRegistry {
     }
     
     
+
     public Das1Source[] getDas1Sources() throws MalformedURLException, DASException{
         
         DasSourceReaderImpl reader = new DasSourceReaderImpl();
@@ -95,4 +105,12 @@ public class ContactRegistry {
         
     }
     
+    private void displaySources(DasSource[] sources){
+	for (int i=0;i<sources.length;i++) {
+	    DasSource ds = sources[i];
+	    System.out.println(ds);
+	    
+	}
+    }
+
 }
