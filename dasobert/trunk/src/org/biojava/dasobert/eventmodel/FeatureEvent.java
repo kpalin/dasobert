@@ -24,14 +24,14 @@ package org.biojava.dasobert.eventmodel;
 
 import java.util.Map;
 
-import org.biojava.dasobert.das.SpiceDasSource;
+import org.biojava.dasobert.dasregistry.Das1Source;
 public class FeatureEvent {
     
     Map[] features;
-    SpiceDasSource dasSource;
+    Das1Source dasSource;
     int comeBackLater;
     
-    public FeatureEvent(Map[] features,SpiceDasSource dasSource) {
+    public FeatureEvent(Map[] features,Das1Source dasSource) {
         super();
         this.features =features;
         this.dasSource = dasSource;
@@ -64,7 +64,7 @@ public class FeatureEvent {
         return features;
     }
     
-    public SpiceDasSource getDasSource(){
+    public Das1Source getDasSource(){
         return dasSource;
     }
     
