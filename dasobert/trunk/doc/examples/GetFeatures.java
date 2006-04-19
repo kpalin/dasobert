@@ -130,6 +130,8 @@ public class GetFeatures {
 	    Map[] features = e.getFeatures();
 
 	    System.out.println("das source " + ds.getNickname() + " returned " + features.length +" features");
+	    if ( features.length>0) 
+		System.out.println(features[0]);
 	    System.exit(0);
 	}
 
