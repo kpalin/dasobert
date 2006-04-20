@@ -1,0 +1,5 @@
+version 0.1 - 20060419
+
+	* extracted DAS communication from SPICE and DAS registration server into the new Dasobert library.
+	* what is still now working is the new DAS-style interface to the DAS registration server
+	
