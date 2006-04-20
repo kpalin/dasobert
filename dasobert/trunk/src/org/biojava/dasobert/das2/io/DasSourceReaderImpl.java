@@ -25,14 +25,13 @@ package org.biojava.dasobert.das2.io;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.logging.Level;
+
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.biojava.dasobert.das.AlignmentThread;
-import org.biojava.dasobert.das.DAS_Feature_Handler;
 import org.biojava.dasobert.dasregistry.DasSource;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
