@@ -24,12 +24,9 @@
 
 import org.biojava.dasobert.dasregistry.Das1Source;
 import org.biojava.dasobert.das.FeatureThread;
-import org.biojava.dasobert.dasregistry.DasCoordinateSystem;
 import org.biojava.dasobert.eventmodel.FeatureListener;
 import org.biojava.dasobert.eventmodel.FeatureEvent;
-import java.net.URL;
 import java.util.Map;
-import java.util.ArrayList;
 
 /** an example that first connects to the DAS registration server,
  * then selects all DAS-sources that are in <i>UniProt,Protein
