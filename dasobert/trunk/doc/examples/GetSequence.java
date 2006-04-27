@@ -129,6 +129,8 @@ public class GetSequence {
 		}
 
 		public void noObjectFound(String accessionCode) {
+            System.out.println("did not find a sequence with accession code " + accessionCode );
+            System.exit(0);
 		}
 
 	}

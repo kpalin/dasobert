@@ -109,6 +109,8 @@ public class GetStructure {
 		}
 
 		public void noObjectFound(String accessionCode) {
+            System.out.println("did not find a structure with accession code " + accessionCode );
+            System.exit(0);
 		}
 
 	}
