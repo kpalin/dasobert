@@ -50,16 +50,22 @@ public class DasSourceConverter {
         ds.setRegisterDate(das2source.getRegisterDate());
         ds.setLeaseDate(das2source.getLeaseDate());
         ds.setLabels(das2source.getLabels());
+        ds.setCoordinateSystem(das2source.getCoordinateSystem());
+        ds.setNickname(das2source.getNickname());
+        ds.setId(das2source.getId());
         
         // convert the capabilitites to das1 capabiltities and get the url
         Das2Capability[] caps = das2source.getDas2Capabilities();
         String[] das1capabilitites = new String[caps.length];
+        int DASPREFIXLENGTH = 4;
         for ( int i = 0 ; i< caps.length;i++){
             Das2Capability cap = caps[i];
+            
             String c = cap.getCapability();
-            das1capabilitites[i] = c;
+            das1capabilitites[i] = c.substring(4,c.length());
             String query_uri = cap.getQueryUri();
-            String url = query_uri.substring(0,(query_uri.length() - c.length()));
+            
+            String url = query_uri.substring(0,(query_uri.length() - c.length() + DASPREFIXLENGTH));
             ds.setUrl(url);
         }
         ds.setCapabilities(das1capabilitites);

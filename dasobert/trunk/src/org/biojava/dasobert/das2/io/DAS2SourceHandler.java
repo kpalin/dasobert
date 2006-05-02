@@ -148,7 +148,7 @@ public class DAS2SourceHandler extends DefaultHandler{
     public void endElement(String uri, String name, String qName) {
         if ( qName.equals("SOURCE")) {
             currentSource.setDas2Capabilities((Das2Capability[])capabilities.toArray(new Das2Capability[capabilities.size()]));
-            
+            //System.out.println("got coordinates " + coordinates.size());
             currentSource.setCoordinateSystem((DasCoordinateSystem[])coordinates.toArray(new DasCoordinateSystem[coordinates.size()]));
             //System.out.println("Das2SourceHandler endElement name " + name + " uri " + uri + " qName " + qName);
             //System.out.println("Das2SourceHandler adding to source: " + currentSource.getId());    

@@ -43,9 +43,9 @@ implements Das2Capability{
         
         if ( capability == null)
             return false;
-        if ( capability.length() < 4)
+        if ( capability.length() < DAS1_CAPABILITY_PREFIX.length())
             return false;
-        if ( capability.substring(0,4).equals(DAS1_CAPABILITY_PREFIX))
+        if ( capability.substring(0,DAS1_CAPABILITY_PREFIX.length()).equals(DAS1_CAPABILITY_PREFIX))
             return true;
         return false;
     
