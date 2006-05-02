@@ -24,7 +24,14 @@
 package org.biojava.dasobert.dasregistry;
 
 import java.util.Date ;
-import java.text.DateFormat ;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+
+import org.biojava.dasobert.das2.io.DasSourceWriter;
+import org.biojava.dasobert.das2.io.DasSourceWriterImpl;
+import org.biojava.utils.xml.PrettyXMLWriter;
 
 
 /** a simple Bean class to be returned via SOAP
@@ -91,29 +98,24 @@ public class Das1Source implements DasSource {
         return h;
     }
     
-    
+    /** the DAS2 string representation of this DAS source
+     * 
+     */
     public String toString() {
         
-        String str = "<source>\n\t<uri>"+url+"</uri>\n\t<description>"+description+"</description>\n\t<contact>"+adminemail+"</contact>\n" ;
+        StringWriter writer = new StringWriter();
         
-        if ( coordinateSystem!=null) {
-            for (int i=0;i<coordinateSystem.length;i++){
-                
-                str+="\t<coordinateSystem>"+coordinateSystem[i]+"</coordinateSystem>\n" ;
-            }
+        PrintWriter pw = new PrintWriter(writer);
+        PrettyXMLWriter xw = new PrettyXMLWriter(pw);
+        
+        DasSourceWriter dswriter = new DasSourceWriterImpl();
+        try {
+            dswriter.writeDasSource(xw,this);
+        } catch (IOException e){
+            e.printStackTrace();
         }
-        if (capabilities != null ) {
-            for (int i=0;i<capabilities.length;i++){
-                str+="\t<service>http://www.biodas.org/das1/"+capabilities[i]+"</service>\n" ;
-            }
-        }
-        DateFormat df = DateFormat.getDateInstance();
-        String rds = df.format(registerDate);
-        String lds = df.format(leaseDate);
-        str += "\t<registerDate>"+rds+"</registerDate>\n"; 
-        str += "\t<leaseDate>"   +lds+"</leaseDate>\n"   ;
-        str +="</source>\n";
-        return str;
+        
+        return writer.toString();
         
     }
     public void setLocal(boolean flag){ local = flag;}

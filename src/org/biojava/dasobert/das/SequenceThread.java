@@ -115,6 +115,7 @@ extends Thread {
                 ex.printStackTrace();     
                 logger.warning(ex.getMessage());
                 
+                //triggerException(ex);
                 
             }       
         }
@@ -127,6 +128,13 @@ extends Thread {
 
    
     
+//    private void triggerException(Exception e){
+//        Iterator iter = seqListeners.iterator();
+//        while (iter.hasNext()){
+//           SequenceListener li = (SequenceListener)iter.next();
+//           li.exceptionOccured(e);
+//        }
+//    }
     
     private void triggerNewSequence(String sp_accession,String sequence){
 

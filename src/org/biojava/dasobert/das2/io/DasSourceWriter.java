@@ -17,31 +17,21 @@
  *
  *      http://www.biojava.org/
  * 
- * Created on Nov 1, 2005
+ * Created on Feb 6, 2006
  *
  */
-package org.biojava.dasobert.eventmodel;
+package org.biojava.dasobert.das2.io;
 
-/** an interface for the listeners of new PDB code requested / new Uniprot code requested
- * 
- * @author Andreas Prlic
- *
- */
-public interface ObjectListener {
+import java.io.IOException;
+import java.io.OutputStream;
+
+import org.biojava.dasobert.dasregistry.DasSource;
+import org.biojava.utils.xml.XMLWriter;
+
+public interface DasSourceWriter {
+
+    public void writeDasSource(OutputStream stream, DasSource source) throws IOException;
     
-    /** a new object has been requested 
-     * 
-     * @param accessionCode
-     */
-    public void newObjectRequested(String accessionCode);
-    
-    /** no object with that accessionCode has been found
-     * 
-     * @param accessionCode
-     */
-    public void noObjectFound(String accessionCode);
-    
-    
-   // public void exceptionOccured(Exception e);
-   
+    public void writeDasSource(XMLWriter writer, DasSource source) throws IOException;
+            
 }
