@@ -36,10 +36,10 @@ import java.util.List;
  *
  */
 public class DAS_Feature_Handler  extends DefaultHandler{
-
-	/**
-	 * 
-	 */
+    
+    /**
+     * 
+     */
     List features ;
     boolean first_flag ;
     HashMap feature ;
@@ -49,103 +49,112 @@ public class DAS_Feature_Handler  extends DefaultHandler{
     
     int comeBackLater ;
     
-	public DAS_Feature_Handler() {
-		super();
-	
-		features= new ArrayList() ;
-		first_flag = true ;
-		featurefield = "" ;
-		characterdata = "";
-		dasCommand = "" ;
+    public DAS_Feature_Handler() {
+        super();
+        
+        features= new ArrayList() ;
+        first_flag = true ;
+        featurefield = "" ;
+        characterdata = "";
+        dasCommand = "" ;
         comeBackLater = -1; 
-	}
-
+    }
+    
     public void setDASCommand(String cmd) { dasCommand = cmd ;}
     public String getDASCommand() { return dasCommand; }
-
-	public List get_features() {
-		return features ;
-	}
+    
+    public List get_features() {
+        return features ;
+    }
     
     public int getComBackLater(){
         return comeBackLater;
     }
-	
-	void start_feature(String uri, String name, String qName, Attributes atts) {
-	    feature = new HashMap() ;
-	    String id 	= atts.getValue("id");
-	    feature.put("id",id);
-	    feature.put("dassource",dasCommand);
-	    characterdata = "";
-	}
-	
-	void add_featuredata(String uri, String name, String qName) {
-		//System.out.println("featurefield "+featurefield+ " data "+characterdata);
-		// NOTE can have multiple lines ..
-	    
-	    String data = (String)feature.get(featurefield);
-	    if (data != null){
-	        characterdata = data + " " + characterdata;
-	    }
-	    
-	    feature.put(featurefield,characterdata);
-		featurefield = "";
-		characterdata = "";
-	}
-	
-	public void startElement (String uri, String name, String qName, Attributes atts){
-	    //System.out.println("new element "+qName);
-		
-	    if (qName.equals("FEATURE")) 
-		start_feature(uri,  name,  qName,  atts);
-	    else if ( qName.equals("METHOD") || 
-		      qName.equals("TYPE") ||
-		      qName.equals("START") ||
-		      qName.equals("END") ||
-		      qName.equals("NOTE") ||
-		      qName.equals("LINK") ||
-		      qName.equals("SCORE")
-		      ){
-		characterdata ="";
-		featurefield = qName ;
-	    }
-	    
-	}
     
-	public void startDocument() {
-	    //System.out.println("start document");
-	}
-	
-	public void endDocument ()	{
-	    //System.out.println("adding feature " + feature);
-	    //features.add(feature);
-		
-	}
-		public void endElement(String uri, String name, String qName) {
-			//System.out.println("end "+name);
-			if ( qName.equals("METHOD") || 
-			     qName.equals("TYPE") ||
-			     qName.equals("START") ||
-			     qName.equals("END") ||
-			     qName.equals("NOTE") ||
-			     qName.equals("LINK") ||
-			     qName.equals("SCORE")
-			) {
-			    add_featuredata(uri,name,qName);
-			}
-			else if ( qName.equals("FEATURE")) {
-			    //System.out.println("adding ffeature " + feature);
-			    features.add(feature);
-			}
-		}
-		
-		public void characters (char ch[], int start, int length){
-			//System.out.println("characters");
-			for (int i = start; i < start + length; i++) {
-		
-				characterdata += ch[i];
-			}
-		
-		}
-		
+    void start_feature(String uri, String name, String qName, Attributes atts) {
+        feature = new HashMap() ;
+        String id 	= atts.getValue("id");
+        feature.put("id",id);
+        feature.put("dassource",dasCommand);
+        characterdata = "";
+    }
+    
+    void add_featuredata(String uri, String name, String qName) {
+        //System.out.println("featurefield "+featurefield+ " data "+characterdata);
+        // NOTE can have multiple lines ..
+        
+        String data = (String)feature.get(featurefield);
+        if (data != null){
+            characterdata = data + " " + characterdata;
+        }
+        
+        feature.put(featurefield,characterdata);
+        featurefield = "";
+        characterdata = "";
+    }
+    
+    private void addLink(String uri, String name, String qName, Attributes atts) {
+        String href = atts.getValue("href");
+        feature.put("LINK",href);
+        characterdata="";
+        featurefield = "LINK-TEXT";
+                
+    }
+    
+    public void startElement (String uri, String name, String qName, Attributes atts){
+        //System.out.println("new element "+qName);
+        
+        if (qName.equals("FEATURE")) 
+            start_feature(uri,  name,  qName,  atts);
+        else if ( qName.equals("LINK"))
+            addLink(uri,name,qName, atts);
+        else if ( qName.equals("METHOD") || 
+                qName.equals("TYPE") ||
+                qName.equals("START") ||
+                qName.equals("END") ||
+                qName.equals("NOTE") ||                
+                qName.equals("SCORE")
+        ){
+            characterdata ="";
+            featurefield = qName ;
+        }
+        
+    }
+    
+    public void startDocument() {
+        //System.out.println("start document");
+    }
+    
+    public void endDocument ()	{
+        //System.out.println("adding feature " + feature);
+        //features.add(feature);
+        
+    }
+    public void endElement(String uri, String name, String qName) {
+        //System.out.println("end "+name);
+        if ( qName.equals("METHOD") || 
+                qName.equals("TYPE") ||
+                qName.equals("START") ||
+                qName.equals("END") ||
+                qName.equals("NOTE") || 
+                qName.equals("LINK") || 
+                qName.equals("SCORE")
+        ) {
+            add_featuredata(uri,name,qName);
+        }
+        else if ( qName.equals("FEATURE")) {
+            //System.out.println("adding ffeature " + feature);
+            features.add(feature);
+        }
+    }
+    
+    public void characters (char ch[], int start, int length){
+        //System.out.println("characters");
+        for (int i = start; i < start + length; i++) {
+            
+            characterdata += ch[i];
+        }
+        
+    }
+    
 }
