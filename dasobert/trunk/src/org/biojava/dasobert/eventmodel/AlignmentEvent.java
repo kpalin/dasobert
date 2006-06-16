@@ -26,17 +26,33 @@ import org.biojava.bio.program.das.dasalignment.Alignment;
 
 public class AlignmentEvent {
 
+    String accessionCode;
     Alignment alignment ;
     Alignment[] allAlignments;
     
-    public AlignmentEvent(Alignment ali,Alignment[] allAlignments) {
+    public AlignmentEvent(String accessionCode, Alignment ali,Alignment[] allAlignments) {
         super();
+        this.accessionCode = accessionCode;
         
         alignment=ali;
         this.allAlignments = allAlignments;
 
     }
     
+    
+    
+    public String getAccessionCode() {
+        return accessionCode;
+    }
+
+
+
+    public void setAccessionCode(String accessionCode) {
+        this.accessionCode = accessionCode;
+    }
+
+
+
     /** get the first alignment */
     public Alignment getAlignment(){
         return alignment;

@@ -200,7 +200,7 @@ extends Thread{
         
         
         
-        AlignmentEvent event = new AlignmentEvent(finalAlig,aligs); 
+        AlignmentEvent event = new AlignmentEvent(query,finalAlig,aligs); 
         Iterator iter = alignmentListeners.iterator();
         while (iter.hasNext()){
             AlignmentListener li = (AlignmentListener ) iter.next();
@@ -290,7 +290,9 @@ extends Thread{
             char lastChar = url.charAt(url.length()-1);      
             if ( ! (lastChar == '/') ) 
                 url +="/" ;
-            dasalignmentcommand  =  "alignment?query="+code ;
+            url += "alignment?";
+            
+            dasalignmentcommand  =  "query="+code ;
             
             if ( subject != null){
                 dasalignmentcommand += "&subject="+subject;
@@ -308,7 +310,9 @@ extends Thread{
             
 //          protect the command
             try {
+                logger.info("before encode " + url + dasalignmentcommand);
                 dasalignmentcommand = url +  URLEncoder.encode(dasalignmentcommand,"UTF-8");
+                logger.info("after encode " + dasalignmentcommand);
             } catch (Exception e){
             
             }
@@ -365,6 +369,7 @@ extends Thread{
         try{
             ali =  dasalignmentCall.parseDASResponse(inStream) ;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new IOException("error during creation of URL " + e.getMessage());
         }
         return ali;
@@ -491,7 +496,7 @@ extends Thread{
             
         }
         
-        AlignmentEvent event = new AlignmentEvent(a,new Alignment[0]); 
+        AlignmentEvent event = new AlignmentEvent(q,a,new Alignment[0]); 
         Iterator iter = alignmentListeners.iterator();
         while (iter.hasNext()){
             AlignmentListener li = (AlignmentListener ) iter.next();

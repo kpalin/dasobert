@@ -50,7 +50,7 @@ public class DasSourceWriterImpl implements DasSourceWriter {
     
     public void writeDasSource(XMLWriter xw, DasSource source) throws IOException {
         xw.openTag("SOURCE");
-        System.out.println("DasSourceWriterImpl:  writing new source");
+        //System.out.println("DasSourceWriterImpl:  writing new source");
         
         xw.attribute("uri",source.getId());
         xw.attribute("title",source.getNickname());    
@@ -64,7 +64,7 @@ public class DasSourceWriterImpl implements DasSourceWriter {
         xw.openTag("MAINTAINER");
         xw.attribute("email",source.getAdminemail());        
         xw.closeTag("MAINTAINER");
-        System.out.println("before version");
+        //System.out.println("before version");
         xw.openTag("VERSION");
         xw.attribute("uri","latest");
         
@@ -73,7 +73,7 @@ public class DasSourceWriterImpl implements DasSourceWriter {
             d = new Date();
         xw.attribute("created",d.toString());        
         
-        System.out.println("before coords");
+        //System.out.println("before coords");
         DasCoordinateSystem[] coords = source.getCoordinateSystem();
         
         for ( int i=0;i< coords.length;i++){
@@ -101,7 +101,7 @@ public class DasSourceWriterImpl implements DasSourceWriter {
                                 
             xw.closeTag("COORDINATES");            
         }
-        System.out.println("before das specific part");
+        //System.out.println("before das specific part");
         if ( source instanceof Das2Source){
             //System.out.println("das2source");
             Das2Source s = (Das2Source) source;
@@ -109,7 +109,7 @@ public class DasSourceWriterImpl implements DasSourceWriter {
             
             for ( int i = 0 ; i < caps.length; i++){
                 Das2Capability cap = caps[i];
-                System.out.println("DasSourceWriterImpl: capability: " + cap);
+                //System.out.println("DasSourceWriterImpl: capability: " + cap);
                 xw.openTag("CAPABILITY");
                 xw.attribute("type",cap.getCapability());
                 xw.attribute("query_uri",cap.getQueryUri());                
@@ -134,7 +134,7 @@ public class DasSourceWriterImpl implements DasSourceWriter {
     }
     
     public void writeDasSource(OutputStream stream, DasSource source) throws IOException {
-        System.out.println(source.getNickname());
+        //System.out.println(source.getNickname());
         
         PrintWriter pw = new PrintWriter(stream);
         PrettyXMLWriter xw = new PrettyXMLWriter(pw);
