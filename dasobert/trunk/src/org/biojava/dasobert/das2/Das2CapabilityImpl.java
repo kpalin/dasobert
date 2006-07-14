@@ -29,7 +29,7 @@ implements Das2Capability{
     String[] formats;
     String queryId;
     
-    public static String DAS1_CAPABILITY_PREFIX = "das1";
+    public static String DAS1_CAPABILITY_PREFIX = "das1:";
     
     public Das2CapabilityImpl() {
         super();

@@ -46,14 +46,18 @@ public class DAS2SourceHandler extends DefaultHandler{
     Das2Source currentSource;
     List coordinates;
     List capabilities;
-    
+    List labels;
+
+    public static final String LABELPROPERTY = "label";
+
     public DAS2SourceHandler() {
         super();
         
-        sources = new ArrayList();
+        sources       = new ArrayList();
         currentSource = new Das2SourceImpl();
-        coordinates = new ArrayList();
-        capabilities = new ArrayList();
+        coordinates   = new ArrayList();
+        capabilities  = new ArrayList();
+	labels        = new ArrayList();
     }
     
     private void startSource (String uri, String name, String qName, Attributes atts){
@@ -121,10 +125,9 @@ public class DAS2SourceHandler extends DefaultHandler{
         } else if ( qName.equals("CAPABILITY")){
             Das2Capability cap = getCapability(uri,name,qName,atts);
             capabilities.add(cap);
-        }
-        
-        //TODO: add support for "labels"
-        
+        } else if (qName.equals("PROPERTY")) {
+	    addProperty(uri,name,qName,atts);
+	}                
     }
     
     private Das2Capability getCapability(String uri, String name, String qName, Attributes atts){
@@ -139,6 +142,13 @@ public class DAS2SourceHandler extends DefaultHandler{
         
     }
     
+    private void addProperty(String uri, String name, String qName, Attributes atts){
+	String pname = atts.getValue("name");
+	String label = atts.getValue("value");
+	if ( pname.equals(LABELPROPERTY) )
+	    labels.add(label);
+    }
+    
     public void startDocument(){
         sources = new ArrayList();
         coordinates = new ArrayList();
@@ -150,11 +160,15 @@ public class DAS2SourceHandler extends DefaultHandler{
             currentSource.setDas2Capabilities((Das2Capability[])capabilities.toArray(new Das2Capability[capabilities.size()]));
             //System.out.println("got coordinates " + coordinates.size());
             currentSource.setCoordinateSystem((DasCoordinateSystem[])coordinates.toArray(new DasCoordinateSystem[coordinates.size()]));
+
+	    currentSource.setLabels((String[])labels.toArray(new String[labels.size()]));
+	    labels.clear();
+
             //System.out.println("Das2SourceHandler endElement name " + name + " uri " + uri + " qName " + qName);
             //System.out.println("Das2SourceHandler adding to source: " + currentSource.getId());    
             sources.add(currentSource);   
             currentSource = new Das2SourceImpl();
-        }
+        } 		
     }
     
     public DasSource[] getSources(){    

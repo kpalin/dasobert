@@ -48,7 +48,9 @@ public class DAS_Feature_Handler  extends DefaultHandler{
     String dasCommand ;
     
     int comeBackLater ;
-    
+
+    int maxFeatures ;
+
     public DAS_Feature_Handler() {
         super();
         
@@ -58,6 +60,19 @@ public class DAS_Feature_Handler  extends DefaultHandler{
         characterdata = "";
         dasCommand = "" ;
         comeBackLater = -1; 
+	maxFeatures = -1;
+    }
+
+    /** specifies a maximum number of features to be downloaded. if a
+	server returns more, they will be ignored.  default is to load
+	all features */
+
+    public void setMaxFeatures(int max) {
+	maxFeatures = max;
+    }
+
+    public int getMaxFeatures() {
+	return maxFeatures;
     }
     
     public void setDASCommand(String cmd) { dasCommand = cmd ;}
@@ -72,6 +87,11 @@ public class DAS_Feature_Handler  extends DefaultHandler{
     }
     
     void start_feature(String uri, String name, String qName, Attributes atts) {
+
+	if (( maxFeatures > 0 ) && ( features.size() > maxFeatures ) ) {
+	    characterdata = "";
+	    return;
+	}
         feature = new HashMap() ;
         String id 	= atts.getValue("id");
         feature.put("id",id);
@@ -83,6 +103,11 @@ public class DAS_Feature_Handler  extends DefaultHandler{
         //System.out.println("featurefield "+featurefield+ " data "+characterdata);
         // NOTE can have multiple lines ..
         
+	if (( maxFeatures > 0 ) && ( features.size() > maxFeatures ) ) {
+	    return;
+	}
+
+
         String data = (String)feature.get(featurefield);
         if (data != null){
             characterdata = data + " " + characterdata;
@@ -122,16 +147,12 @@ public class DAS_Feature_Handler  extends DefaultHandler{
     }
     
     public void startDocument() {
-        //System.out.println("start document");
     }
     
-    public void endDocument ()	{
-        //System.out.println("adding feature " + feature);
-        //features.add(feature);
-        
+    public void endDocument ()	{        
     }
     public void endElement(String uri, String name, String qName) {
-        //System.out.println("end "+name);
+
         if ( qName.equals("METHOD") || 
                 qName.equals("TYPE") ||
                 qName.equals("START") ||
@@ -143,13 +164,20 @@ public class DAS_Feature_Handler  extends DefaultHandler{
             add_featuredata(uri,name,qName);
         }
         else if ( qName.equals("FEATURE")) {
-            //System.out.println("adding ffeature " + feature);
-            features.add(feature);
+
+	    if ( maxFeatures > 0 ) {
+		if ( features.size() < maxFeatures ) {
+		     features.add(feature);
+		} 
+	    } else {
+		// no restriction
+		features.add(feature);
+	    }
         }
     }
     
     public void characters (char ch[], int start, int length){
-        //System.out.println("characters");
+
         for (int i = start; i < start + length; i++) {
             
             characterdata += ch[i];
