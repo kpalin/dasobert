@@ -75,10 +75,8 @@ public class ContactRegistry {
         
         DasSourceReaderImpl reader = new DasSourceReaderImpl();
         
-        // THIS IS THE EXPERIMENTAL SERVER - NOT INTENDET FOR PRODUCTION USE!
-        // THIS FUNCTIONALITY WILL SOON BE AVAILABLE FROM
-        // http://das.sanger.ac.uk/registry/
-        String u = "http://www.spice-3d.org/dasregistry/das1/sources";
+        String u = "http://das.sanger.ac.uk/registry/das1/sources";
+
         
         URL url = new URL(u);
         
