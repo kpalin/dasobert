@@ -415,6 +415,9 @@ public class Das1Validator {
             XMLReader xmlreader = getXMLReader();
             
             DAS_Feature_Handler cont_handle = new DAS_Feature_Handler() ;
+
+	    // make sure we do not load the features of a whole chromosome, in case a user specified those...
+	    cont_handle.setMaxFeatures(300);
             cont_handle.setDASCommand(url.toString());
             xmlreader.setContentHandler(cont_handle);
             xmlreader.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());

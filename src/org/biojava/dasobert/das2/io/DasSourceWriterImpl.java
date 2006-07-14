@@ -40,7 +40,6 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 
     
     public static final String COORDSYSURI = "http://das.sanger.ac.uk/dasregistry/coordsys/";
-    //public static final String DAS1_CAPABILITY_PREFIX = "das1";
     
     public DasSourceWriterImpl() {
         super();
@@ -126,7 +125,20 @@ public class DasSourceWriterImpl implements DasSourceWriter {
                 xw.attribute("query_uri",source.getUrl()+c);            
                 xw.closeTag("CAPABILITY");
             }
+	   
         }
+
+	String[] labels = source.getLabels();
+	if ( labels != null )  {
+	   
+	    for ( int i=0;i< labels.length;i++) {
+		xw.openTag("PROPERTY");
+		xw.attribute("name",DAS2SourceHandler.LABELPROPERTY) ;
+		xw.attribute("value",labels[i]) ;
+		xw.closeTag("PROPERTY");
+	    }
+	    
+	}
         
         xw.closeTag("VERSION");
         
