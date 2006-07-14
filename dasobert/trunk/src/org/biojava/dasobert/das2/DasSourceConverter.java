@@ -23,6 +23,7 @@
 package org.biojava.dasobert.das2;
 
 import org.biojava.bio.program.das.dasalignment.DASException;
+import org.biojava.dasobert.das2.io.DasSourceWriterImpl;
 import org.biojava.dasobert.dasregistry.Das1Source;
 
 public class DasSourceConverter {
@@ -53,16 +54,20 @@ public class DasSourceConverter {
         ds.setCoordinateSystem(das2source.getCoordinateSystem());
         ds.setNickname(das2source.getNickname());
         ds.setId(das2source.getId());
+        ds.setLabels(das2source.getLabels());
         
         // convert the capabilitites to das1 capabiltities and get the url
         Das2Capability[] caps = das2source.getDas2Capabilities();
         String[] das1capabilitites = new String[caps.length];
-        int DASPREFIXLENGTH = 4;
+        int DASPREFIXLENGTH = Das2CapabilityImpl.DAS1_CAPABILITY_PREFIX.length();
+
         for ( int i = 0 ; i< caps.length;i++){
             Das2Capability cap = caps[i];
             
             String c = cap.getCapability();
-            das1capabilitites[i] = c.substring(4,c.length());
+
+            das1capabilitites[i] = c.substring(DASPREFIXLENGTH,c.length());
+
             String query_uri = cap.getQueryUri();
             
             String url = query_uri.substring(0,(query_uri.length() - c.length() + DASPREFIXLENGTH));
