@@ -23,7 +23,6 @@
 package org.biojava.dasobert.das2;
 
 import org.biojava.bio.program.das.dasalignment.DASException;
-import org.biojava.dasobert.das2.io.DasSourceWriterImpl;
 import org.biojava.dasobert.dasregistry.Das1Source;
 
 public class DasSourceConverter {
