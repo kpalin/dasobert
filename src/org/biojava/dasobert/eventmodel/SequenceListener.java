@@ -34,10 +34,15 @@ extends ObjectListener{
     /* select a certain sequence position */
     public void selectedSeqPosition(int position);
     
-    /** select a certain range of a sequence */
+    /** select a certain range of a sequence 
+     * @param start the start
+     * @param end the end of the range
+     * */
     public void selectedSeqRange(int start, int end);
     
-    /** the current selecetion is locked and can not be changed */
+    /** the current selecetion is locked and can not be changed 
+     * @param flag true if selection should be locked
+     * */
     public void selectionLocked(boolean flag);
     
     public void newSequence(SequenceEvent e);

@@ -37,7 +37,9 @@ public class DasSourceConverter {
      * This only will work if is passes the Das2Source.isDas1Source() test 
      * i.e. this is really a das1 server there
      * 
-     * @return
+     * @param das2source a DAS2Source to be converted
+     * @return a Das1Source 
+     * @throws DASException
      */
     public static Das1Source toDas1Source (Das2Source das2source) throws DASException{
         if ( ! das2source.hasDas1Capabilities())

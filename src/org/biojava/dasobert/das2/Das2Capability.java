@@ -38,7 +38,7 @@ public interface Das2Capability {
     
     /** checks if this capability is actually of das1 style
      * 
-     * @return
+     * @return boolean true if the capability is in DAS1 style
      */
     public boolean isDas1Style();
     

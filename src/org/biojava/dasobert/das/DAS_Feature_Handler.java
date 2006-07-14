@@ -65,7 +65,9 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 
     /** specifies a maximum number of features to be downloaded. if a
 	server returns more, they will be ignored.  default is to load
-	all features */
+	all features 
+    @param max the maximium number of features to be downloaded
+    */
 
     public void setMaxFeatures(int max) {
 	maxFeatures = max;

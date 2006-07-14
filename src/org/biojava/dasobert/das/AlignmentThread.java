@@ -96,7 +96,12 @@ extends Thread{
         alignmentListeners.add(ali);
     }
     
-    /** get the data for an object from the alignment */
+    /** get the data for an object from the alignment 
+     * @return Annotation the description of an Object
+     * @param objectid an objectId that is member of this alignment
+     * @param ali an Alignment
+     * @throws NoSuchElementException
+     * */
     public static  Annotation getObject(String objectid, Alignment ali) throws NoSuchElementException{
         Annotation[] objects = ali.getObjects();
         
@@ -378,7 +383,14 @@ extends Thread{
     
     /** open HttpURLConnection. Recommended way to open
      * HttpURLConnections, since this take care of setting timeouts
-     * properly for java 1.4 and 1.5*/
+     * properly for java 1.4 and 1.5
+     * 
+     * @param url a URL to open a http connection to
+     * @return HttpURLConnect the opened connection
+     * @throws IOException
+     * @throws ConnectException
+     * 
+     * */
     public static HttpURLConnection openHttpURLConnection(URL url) 
     throws IOException, ConnectException {
     HttpURLConnection huc = null;

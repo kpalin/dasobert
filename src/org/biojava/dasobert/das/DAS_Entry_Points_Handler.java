@@ -49,7 +49,9 @@ public class DAS_Entry_Points_Handler extends DefaultHandler {
 	} 	
     }
     
-    /** returns true if the server returns an entry points */
+    /** returns a String if the server returns an entry points 
+     * @return a String containing the version
+     * */
     public String getVersion() {
 	return version;
     }

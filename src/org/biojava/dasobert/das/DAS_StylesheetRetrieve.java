@@ -53,6 +53,8 @@ public class DAS_StylesheetRetrieve {
     /** retrieve a StyleSheet from a URL
      * The style sheet is represented as a Map[],
      *  where each Map contains the description of how to draw a features of a particular type.
+     *  @param dasStylesheetRequest url to get stylesheet from
+     *  @return Map[] containing the stylesheet
      *  
      *  */
     public Map[] retrieve(URL dasStylesheetRequest){

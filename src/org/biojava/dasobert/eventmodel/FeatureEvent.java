@@ -58,7 +58,7 @@ public class FeatureEvent {
      *      System.out.println(type);
      * }      
      * </pre>
-     * @return
+     * @return a Map containng the features
      */
     public Map[] getFeatures(){
         return features;

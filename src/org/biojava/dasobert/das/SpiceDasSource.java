@@ -96,7 +96,7 @@ extends Das1Source
      * returns null if not attempt has been made to load the stylesheet.
      * afterwards it returns a Map[0] or the Map[] containing the style data.
      * 
-     * @return
+     * @return Map containing the stylesheet
      */
     public Map[] getStylesheet(){
         return typeStyles;
@@ -104,7 +104,7 @@ extends Das1Source
     
     /** get the stylesheet containing the instructions how to paint in 3D.
      * 
-     * @return
+     * @return a Map containing the stylesheet information
      */
     public Map[] get3DStylesheet(){
         return threeDstyles; 
@@ -121,7 +121,11 @@ extends Das1Source
     public boolean getRegistered()             { return registered ; }
     
     
-    /** convert DasSource to SpiceDasSource */
+    /** convert DasSource to SpiceDasSource 
+     * 
+     * @param ds a DasSource to be converted
+     * @return a new SpiceDasSource object
+     * */
     public static SpiceDasSource  fromDasSource(DasSource ds) {
         SpiceDasSource s = new SpiceDasSource();
         s.setUrl(ds.getUrl());
@@ -148,7 +152,12 @@ extends Das1Source
         return txt;
     }
     
-    /** convert to XML. */
+    /** convert to XML.
+     * 
+     * @param xw an XMLWriter to write to
+     * @return XMLWriter returns it again
+     * @throws IOException
+     *  */
     public XMLWriter toXML(XMLWriter xw)
     throws IOException
     {
