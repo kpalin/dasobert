@@ -33,13 +33,13 @@ public interface DasSource {
     /** compare if two das sources are equal
      * 
      * @param ds
-     * @return
+     * @return returns true if two DAS sources are equivalent
      */
     public boolean equals(DasSource ds);
     
     /** classes that implement equals, should also implement hashKey
      * 
-     * @return
+     * @return the hash code of a das source
      */
     public int hashCode();
     
@@ -50,6 +50,7 @@ public interface DasSource {
      * identifier. The public DAS-Registry has Auto_Ids that look like
      * DASSOURCE:12345; public look like XYZ:12345, where the XYZ
      * prefix can be configured in the config file.
+     * @return String the ID of a Das Source
      */
     public  String getId();
 

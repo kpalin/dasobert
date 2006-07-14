@@ -30,7 +30,10 @@ public class StructureEvent {
     Structure structure;
     int currentChainNumber;
     
-    /** the PDB code ( 4 chars ) */
+    /** the PDB code ( 4 chars ) 
+     * 
+     * @param pdbCode the PDB code
+     * */
     public StructureEvent(String pdbCode){
         this.pdbCode = pdbCode;
         //this.pdbCode = pdbCode.substring(0,4);
@@ -51,7 +54,7 @@ public class StructureEvent {
 
     /** returns the chain number of the current even
      * 
-     * @return
+     * @return the number of the chain in the structure object
      */
     public int getCurrentChainNumber(){
         return currentChainNumber;

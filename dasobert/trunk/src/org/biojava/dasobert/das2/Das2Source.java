@@ -34,6 +34,7 @@ extends DasSource {
     *  if true - this source can be converted into a DAS1 source by using
     *  DasSourceConverter.toDas1(Das2Source);
     *
+    * @return true if the DasSource has DAS1 capabilties
     */
    public boolean hasDas1Capabilities();
 }

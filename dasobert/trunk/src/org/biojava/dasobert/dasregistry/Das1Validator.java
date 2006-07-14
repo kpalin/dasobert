@@ -77,7 +77,8 @@ public class Das1Validator {
         }
     }
     
-    /** return which errors have been produced during validation... */
+    /** return which errors have been produced during validation...
+     * @return String the validation message  */
     public String getValidationMessage(){
         return validationMessage;
     }
@@ -189,6 +190,8 @@ public class Das1Validator {
     
     /** make sure the URL matches the DAS spec 
      returns true if URL looks o.k...
+     @param url to validate
+     @return boolean true if URL looks ok
      */
     public  boolean validateURL(String url) {
         String[] spl = url.split("/");

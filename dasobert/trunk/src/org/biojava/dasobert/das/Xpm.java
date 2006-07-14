@@ -1632,9 +1632,14 @@ public class Xpm
      * will probably care about.
      * xpm is possibly copyright/trademarked by Arnaud LE HORS,
      * BULL Research, France. lehors@sophia.inria.fr
-     ************************************************************/
+     ***********************************************************
+     *
+     * @param xpm 
+     * @return an Image
+     **/
     
     // we dont care/try to deal with mono conversion
+    
     public static Image XpmToImage(String xpm) {
         debug(xpm);
         /* general rules I'm going to follow:

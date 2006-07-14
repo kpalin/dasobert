@@ -108,7 +108,7 @@ public class DAS_Stylesheet_Handler extends DefaultHandler {
     /**  convert the color provided by the stylesheet to a java Color 
      * 
      * @param chars
-     * @return
+     * @return a Color
      */
     private Color getColorFromString(String chars){
         

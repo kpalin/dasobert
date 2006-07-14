@@ -53,12 +53,16 @@ public class AlignmentEvent {
 
 
 
-    /** get the first alignment */
+    /** get the first alignment 
+     * @return Alignment the alignment nr 1*/
     public Alignment getAlignment(){
         return alignment;
     }
     
-    /** get all alignments */
+    /** get all alignments 
+     * 
+     * @return Alignment[] all alignments
+     * */
     public Alignment[] getAllAlignments(){
         return allAlignments;
     }

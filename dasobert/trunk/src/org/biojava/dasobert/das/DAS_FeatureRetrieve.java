@@ -49,6 +49,7 @@ public class DAS_FeatureRetrieve {
     int comeBackLater;
     URL url;
     /**
+     * @param url the URL the features should be downloaded from
      *  
      */
     public DAS_FeatureRetrieve(URL url) {
@@ -161,7 +162,8 @@ public class DAS_FeatureRetrieve {
         
     }
     
-    /** returns a List of Features */
+    /** returns a List of Features 
+     * @return a List of Maps containing the features*/
     public List get_features() {
       
         return features;
