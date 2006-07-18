@@ -105,49 +105,60 @@ public class Das1Validator {
                 //System.out.println("testing " + capability);
                 
                 if ( capability.equals("sequence")) {
+		    boolean sequenceok = true;
                     for ( int i=0;i< coords.length;i++){                        
                         DasCoordinateSystem ds =coords[i];
                         String testcode = ds.getTestCode();
                         
                         // do a DAS sequence retreive
-                        if (  validateSequence(url,testcode) )
-                            lst.add(capability);
+                        if ( ! validateSequence(url,testcode) )
+                            sequenceok = false;
                    
                     }
-                    
+                    if ( sequenceok) 
+			lst.add(capability);
                 }
                 else if ( capability.equals("structure")) {
+		    boolean structureok = true;
                     for ( int i=0;i< coords.length;i++){                        
                         DasCoordinateSystem ds =coords[i];
                         String testcode = ds.getTestCode();
                         
                         
-                        if (validateStructure(url,testcode)) 
-                            lst.add(capability);
+                        if (! validateStructure(url,testcode)) 
+			    structureok = false;
+
                        
                     }    
+		    if (structureok)
+			lst.add(capability);
                 }
                 else if ( capability.equals("features")){
+		    boolean featureok = true;
                     for ( int i=0;i< coords.length;i++){                        
                         DasCoordinateSystem ds =coords[i];
                         String testcode = ds.getTestCode();
                         
                         
-                        if ( validateFeatures(url,testcode))
-                            lst.add(capability);
-                       
-                    }    
+                        if (! validateFeatures(url,testcode))
+			    featureok = false;
+		    } 
+		    if ( featureok) 
+			lst.add(capability);
                 }
                 else if ( capability.equals("alignment")){
+		    boolean alignmentok = true;
                     for ( int i=0;i< coords.length;i++){                        
                         DasCoordinateSystem ds =coords[i];
                         String testcode = ds.getTestCode();
                         
                         
-                        if ( validateAlignment(url,testcode))
-                            lst.add(capability);
+                        if (! validateAlignment(url,testcode))
+			    alignmentok = false;
                        
                     }    
+		    if (alignmentok)
+			lst.add(capability);
                 } else if ( capability.equals("types")){
                     if ( validateTypes(url))
                         lst.add(capability);
@@ -165,13 +176,17 @@ public class Das1Validator {
                     //} else 
                     //    error = true;
                 } else if ( capability.equals("dna")){
+		    boolean dnaok = true;
                     for ( int i=0;i< coords.length;i++){                        
                         DasCoordinateSystem ds =coords[i];
                         String testcode = ds.getTestCode();                        
                         
-                        if ( validateDNA(url,testcode))
-                            lst.add(capability);                        
+                        if ( ! validateDNA(url,testcode))
+			    dnaok = false;
+
                     }
+		    if (dnaok) 
+			lst.add(capability);                        
                 }
                 else {
                     validationMessage += "<br/>---<br/> test of capability " + capability + " not implemented,yet.";
