@@ -31,6 +31,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.biojava.dasobert.util.HttpConnectionTools;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -64,7 +65,7 @@ public class DAS_StylesheetRetrieve {
         InputStream inStream = null;
 
 		try {
-		    HttpURLConnection huc = AlignmentThread.openHttpURLConnection(dasStylesheetRequest);
+		    HttpURLConnection huc = HttpConnectionTools.openHttpURLConnection(dasStylesheetRequest);
 
 		    logger.finest("got connection: "+huc.getResponseMessage());
 		    //String contentEncoding = huc.getContentEncoding();

@@ -120,6 +120,18 @@ extends Thread{
             structureListeners.add(li);
     }
     
+    public void triggerNoStructure(String ac){
+        
+        Iterator iter = structureListeners.iterator();
+        while (iter.hasNext()){
+           //StructureListener li = (StructureListener) iter.next();
+           //li.newStructure(event);
+            StructureListener li = (StructureListener) iter.next();
+            li.noObjectFound(ac);
+           
+        }
+}
+    
     public void triggerNewStructure(StructureEvent event){
         
             Iterator iter = structureListeners.iterator();
@@ -158,7 +170,7 @@ extends Thread{
                 }
                 catch (Exception e) {
                     logger.log(Level.WARNING,"could not retreive structure from "+dasstructurecommand ,e);
-                    
+                    triggerNoStructure(accessionCode);
                 }
             }
         }

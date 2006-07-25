@@ -26,6 +26,8 @@ package org.biojava.dasobert.das;
 
 import java.net.URL                         ;
 import java.io.InputStream                  ;
+
+import org.biojava.dasobert.util.HttpConnectionTools;
 import org.xml.sax.InputSource              ;
 import org.xml.sax.XMLReader                ;
 import javax.xml.parsers.*                  ;
@@ -96,8 +98,6 @@ public class DAS_FeatureRetrieve {
                 e.printStackTrace();
             }
             
-            
-            
             String vali = System.getProperty("XMLVALIDATION");
             
             boolean validation = false ;
@@ -148,13 +148,20 @@ public class DAS_FeatureRetrieve {
         }
     }
     
+    /** 
+     * 
+     * @param url
+     * @return an open stream
+     * @throws java.io.IOException
+     * @throws java.net.ConnectException
+     */
     private InputStream open(URL url)
     throws java.io.IOException, java.net.ConnectException
     {
         InputStream inStream = null;
         
         
-        HttpURLConnection huc = AlignmentThread.openHttpURLConnection(url);
+        HttpURLConnection huc = HttpConnectionTools.openHttpURLConnection(url);
         
         inStream = huc.getInputStream();		
         
