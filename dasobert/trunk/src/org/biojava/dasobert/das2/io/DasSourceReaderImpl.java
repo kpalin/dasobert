@@ -25,14 +25,11 @@ package org.biojava.dasobert.das2.io;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
-import org.biojava.dasobert.das.AlignmentThread;
 import org.biojava.dasobert.dasregistry.DasSource;
+import org.biojava.dasobert.util.HttpConnectionTools;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
@@ -55,7 +52,7 @@ public class DasSourceReaderImpl implements DasSourceReader {
         InputStream inStream = null;
         
         
-        HttpURLConnection huc = AlignmentThread.openHttpURLConnection(url);
+        HttpURLConnection huc = HttpConnectionTools.openHttpURLConnection(url);
         
         inStream = huc.getInputStream();        
         

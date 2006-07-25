@@ -24,8 +24,6 @@ package org.biojava.dasobert.das;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -45,6 +43,7 @@ import org.biojava.dasobert.dasregistry.Das1Source;
 import org.biojava.dasobert.dasregistry.DasCoordinateSystem;
 import org.biojava.dasobert.eventmodel.AlignmentEvent;
 import org.biojava.dasobert.eventmodel.AlignmentListener;
+import org.biojava.dasobert.util.HttpConnectionTools;
 
 
 
@@ -56,13 +55,7 @@ import org.biojava.dasobert.eventmodel.AlignmentListener;
 public class AlignmentThread 
 extends Thread{
     
-    public static String VERSION = "0.1";
-    public static final String PROJECTNAME = "dasobert - Java ";
-    
-    static Logger logger = Logger.getLogger("org.biojava.spice");
-    
-    static int    CONNECTION_TIMEOUT = 15000;// timeout for http connection = 15. sec
-    
+     
     List alignmentListeners;
     DASAlignmentCall dasalignmentCall;   
     String logname;
@@ -70,6 +63,8 @@ extends Thread{
     AlignmentParameters parameters;
     
     String PDB_COORD_SYS  ;
+    
+    static Logger logger = Logger.getLogger("org.biojava.spice");
     
     public AlignmentThread(AlignmentParameters params) {
         super();
@@ -381,58 +376,7 @@ extends Thread{
         
     }
     
-    /** open HttpURLConnection. Recommended way to open
-     * HttpURLConnections, since this take care of setting timeouts
-     * properly for java 1.4 and 1.5
-     * 
-     * @param url a URL to open a http connection to
-     * @return HttpURLConnect the opened connection
-     * @throws IOException
-     * @throws ConnectException
-     * 
-     * */
-    public static HttpURLConnection openHttpURLConnection(URL url) 
-    throws IOException, ConnectException {
-    HttpURLConnection huc = null;
-    huc = (HttpURLConnection) url.openConnection();
-    
-    String os_name    = java.lang.System.getProperty("os.name");
-    String os_version = java.lang.System.getProperty("os.version");
-    String os_arch    = java.lang.System.getProperty("os.arch");
-    String VERSION = "1.0";
-    
-    String userAgent = PROJECTNAME+ " " + VERSION + "("+os_name+"; "+os_arch + " ; "+ os_version+")";
-    //e.g. "Mozilla/5.0 (Windows; U; Win98; en-US; rv:1.7.2) Gecko/20040803"
-     huc.addRequestProperty("User-Agent", userAgent);
-    //logger.finest("opening "+url);
-
-
-    // use reflection to determine if get and set timeout methods for urlconnection are available
-        // seems java 1.5 does not watch the System properties any longer...
-        // and java 1.4 did not provide these...
-    // for 1.4 see setSystemProperties
-    int timeout = CONNECTION_TIMEOUT;
-    try {
-        // try to use reflection to set timeout property
-        Class urlconnectionClass = Class.forName("java.net.HttpURLConnection");
-        
-            Method setconnecttimeout = urlconnectionClass.getMethod (
-                                     "setConnectTimeout", new Class [] {int.class}        
-                                     ); 
-        setconnecttimeout.invoke(huc,new Object[] {new Integer(timeout)});
-        
-        Method setreadtimeout = urlconnectionClass.getMethod (
-                                  "setReadTimeout", new Class[] {int.class}
-                                  );
-        setreadtimeout.invoke(huc,new Object[] {new Integer(timeout)});
-        //System.out.println("successfully set java 1.5 timeout");
-    } catch (Exception e) {
-        //e.printStackTrace();
-        // most likely it was a NoSuchMEthodException and we are running java 1.4.
-    }
-    return huc;
-    }
-    
+  
     
     /** connect to DAS server and return result as an InputStream.
      *
@@ -443,7 +387,7 @@ extends Thread{
         InputStream inStream = null ;
         
         //System.out.println("opening connection to "+url);
-        HttpURLConnection huc = AlignmentThread.openHttpURLConnection(url);  
+        HttpURLConnection huc = HttpConnectionTools.openHttpURLConnection(url);  
         
         
         //System.out.println("temporarily disabled: accepting gzip encoding ");

@@ -35,6 +35,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.biojava.dasobert.dasregistry.Das1Source;
 import org.biojava.dasobert.eventmodel.SequenceEvent;
 import org.biojava.dasobert.eventmodel.SequenceListener;
+import org.biojava.dasobert.util.HttpConnectionTools;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
@@ -239,7 +240,7 @@ extends Thread {
                 
                 HttpURLConnection huc = null;
              
-                huc = AlignmentThread.openHttpURLConnection(url);
+                huc = HttpConnectionTools.openHttpURLConnection(url);
                 
                 
                 logger.finest(huc.getResponseMessage());
