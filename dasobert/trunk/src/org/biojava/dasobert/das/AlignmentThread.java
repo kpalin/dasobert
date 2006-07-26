@@ -310,9 +310,9 @@ extends Thread{
             
 //          protect the command
             try {
-                logger.info("before encode " + url + dasalignmentcommand);
+                logger.finest("before encode " + url + dasalignmentcommand);
                 dasalignmentcommand = url +  URLEncoder.encode(dasalignmentcommand,"UTF-8");
-                logger.info("after encode " + dasalignmentcommand);
+                logger.finest("after encode " + dasalignmentcommand);
             } catch (Exception e){
             
             }
