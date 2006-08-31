@@ -22,18 +22,47 @@
  */
 package org.biojava.dasobert.das2;
 
+/**
+ * @author ap3
+ *
+ */
 public interface Das2Capability {
 
+    /**
+     * @param other
+     * @return a flag if the two capabilities match
+     */
     public boolean equals(Das2Capability other);
     public int hashCode();
     
+    /**
+     * @param type
+     */
     public void setCapability(String type);
+   
+    /**
+     * @return the capability
+     */
     public String getCapability();
     
+    /**
+     * @param id
+     */
     public void setQueryUri(String id);
+    
+    /**
+     * @return the URI of the query
+     */
     public String getQueryUri();
     
+    /**
+     * @param formats
+     */
     public void setFormats(String[] formats);
+    
+    /**
+     * @return an array of String[] that shows the supported file formats
+     */
     public String[] getFormats();
     
     /** checks if this capability is actually of das1 style
