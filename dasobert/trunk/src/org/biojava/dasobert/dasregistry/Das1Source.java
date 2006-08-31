@@ -75,8 +75,11 @@ public class Das1Source implements DasSource {
     }
     
     
+    /** do a quick comparison if URL and nickname are the same
+     * 
+     */
     public boolean equals(DasSource other){
-        System.out.println("Das1Source equals, comparing with other DasSource");
+        //System.out.println("Das1Source equals, comparing with other DasSource");
         if (! (other instanceof Das1Source))
             return false;
         
@@ -87,6 +90,63 @@ public class Das1Source implements DasSource {
         if ( ods.getNickname().equals(nickname))
             return true;
         return false;
+    }
+    
+    /** makes a precise comparison between two das sources
+     * also compares description, coordsys, caps
+     * @param other
+     * @return if the two are exactly the same
+     */
+    public boolean equalsExact(DasSource other){
+    	if ( ! this.equals(other))
+    		return false;
+    	
+    	if ( ! description.equals(other.getDescription()))
+			return false;
+		
+		// test coordinate systems
+		DasCoordinateSystem[] newCoords = this.getCoordinateSystem();
+		DasCoordinateSystem[] oldCoords = other.getCoordinateSystem();
+		
+		if ( ! (newCoords.length == oldCoords.length))
+			return false;
+		
+		
+		for ( int i=0 ; i< newCoords.length ; i++) {
+			
+			DasCoordinateSystem ncs = newCoords[i];
+			
+			boolean found = false ;
+			
+			for ( int j = 0 ; j < oldCoords.length; j++){
+				DasCoordinateSystem ocs = oldCoords[j];
+				
+				if ( ncs.equals(ocs)) {
+					found = true;
+					break;
+				}
+				if (! found )
+					return false;
+			}
+		}
+		
+		// test capabilities
+		String[] otherCaps = other.getCapabilities();
+		for (int i=0 ; i < capabilities.length;i++){
+			String cap = capabilities[i];
+			
+			boolean found = false;
+			for (int j=0; j < otherCaps.length;j++){
+				String oCap = otherCaps[j];
+				if ( oCap.equals(cap)) {
+					found = true;
+					break;
+				}
+			}
+			if (! found)
+				return false;
+		}
+		return true;
     }
     
     public int hashCode() {
