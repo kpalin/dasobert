@@ -37,7 +37,8 @@ import org.biojava.dasobert.eventmodel.StructureEvent;
 import org.biojava.dasobert.eventmodel.StructureListener;
 
 
-/** a thread that gets the protein structure from a das server
+/** a thread that gets the protein structure from a das server.
+ * If several servers are provided it takes the structure from the first server.
  * 
  * <pre>
  *      Das1Source dasSource = new Das1Source();
@@ -144,8 +145,11 @@ extends Thread{
     }
     
     public void run() {
+    	
         Structure structure = null ;
+        
         for (int i=0 ; i < dasSources.length; i++){
+        	
             Das1Source ds = dasSources[i];
             
             String url = ds.getUrl();
@@ -166,7 +170,9 @@ extends Thread{
                 DASStructureClient dasc= new DASStructureClient(dasstructurecommand);
                 logger.info("requesting structure from "+dasstructurecommand  +accessionCode);     
                 try {
-                    structure = dasc.getStructureById(accessionCode);  
+                    structure = dasc.getStructureById(accessionCode); 
+                    
+                    // return as soon as we found a structure
                     if ( structure != null ){
                         StructureEvent event = new StructureEvent(structure);
                         triggerNewStructure(event);
@@ -185,9 +191,10 @@ extends Thread{
         } else {
         	 triggerNoStructure(accessionCode);
         }
-        //notifyAll();
+       
         
     }
+    
     private Structure getLocalPDB(String dir,String pdbcode) {
         PDBFileReader parser = new PDBFileReader() ;
         //TODO make extensions configurable
