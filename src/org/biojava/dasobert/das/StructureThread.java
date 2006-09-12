@@ -166,7 +166,12 @@ extends Thread{
                 DASStructureClient dasc= new DASStructureClient(dasstructurecommand);
                 logger.info("requesting structure from "+dasstructurecommand  +accessionCode);     
                 try {
-                    structure = dasc.getStructureById(accessionCode);                  
+                    structure = dasc.getStructureById(accessionCode);  
+                    if ( structure != null ){
+                        StructureEvent event = new StructureEvent(structure);
+                        triggerNewStructure(event);
+                        return;
+                    }
                 }
                 catch (Exception e) {
                     logger.log(Level.WARNING,"could not retreive structure from "+dasstructurecommand ,e);
@@ -177,6 +182,8 @@ extends Thread{
         if ( structure != null ){
             StructureEvent event = new StructureEvent(structure);
             triggerNewStructure(event);
+        } else {
+        	 triggerNoStructure(accessionCode);
         }
         //notifyAll();
         
