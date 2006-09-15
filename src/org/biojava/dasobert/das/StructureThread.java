@@ -174,6 +174,7 @@ extends Thread{
                     
                     // return as soon as we found a structure
                     if ( structure != null ){
+                    	logger.info("found structure " + structure.getPDBCode());
                         StructureEvent event = new StructureEvent(structure);
                         triggerNewStructure(event);
                         return;

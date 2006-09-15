@@ -49,30 +49,39 @@ public class DasCoordinateSystem {
 
     public boolean equals(DasCoordinateSystem other){
         boolean match = true;
-        System.out.println("comparing " + this.toString() + " to " + other.toString());
+        //System.out.println("comparing " + this.toString() + " to " + other.toString());
         // URI has piority 
         if ( (! uniqueId.equals("")) && ( uniqueId.equals( other.getUniqueId())))
             return true;
         
         if ( ncbi_tax_id != other.getNCBITaxId()) {
-            System.out.println("mismatch in ncbi tax id " + ncbi_tax_id + " != " + other.getNCBITaxId());
+            //System.out.println("mismatch in ncbi tax id " + ncbi_tax_id + " != " + other.getNCBITaxId());
             match = false;
         }
         if ( ! version.equals(other.getVersion() )){
-            System.out.println("mismatch in version");
+            //System.out.println("mismatch in version");
             match = false;
         }
         if ( ! category.equals(other.getCategory())  ) {
-            System.out.println("mismatch in category");
+            //System.out.println("mismatch in category");
             match = false;
         }
         if ( ! name.equals(other.getName())) {
-            System.out.println("mismatch in name");   
+            //System.out.println("mismatch in name");   
             match = false;
         }
-        System.out.println(" match: " + match);
+        //System.out.println(" match: " + match);
         
         return match;
+    }
+    
+    public int hashCode() {
+        int h = 7;
+        
+        h = 31 * h + ( null == name ? 0 : name.hashCode());
+        h = 31 * h + ( null == category ? 0 : category.hashCode());
+        
+        return h;
     }
     
     public Object clone() {

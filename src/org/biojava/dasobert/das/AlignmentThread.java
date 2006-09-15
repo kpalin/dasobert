@@ -388,25 +388,19 @@ extends Thread{
         
         //System.out.println("opening connection to "+url);
         HttpURLConnection huc = HttpConnectionTools.openHttpURLConnection(url);  
-        
-        
-        //System.out.println("temporarily disabled: accepting gzip encoding ");
-        // should make communication much faster!
+                        
+        // should make communication faster
         huc.setRequestProperty("Accept-Encoding", "gzip");
-        
-        //System.out.println("response code " +huc.getResponseCode());
+            
         String contentEncoding = huc.getContentEncoding();
-        //System.out.println("getting InputStream");
+    
         inStream = huc.getInputStream();
         if (contentEncoding != null) {
             if (contentEncoding.indexOf("gzip") != -1) {
                 // we have gzip encoding
-                inStream = new GZIPInputStream(inStream);
-                //System.out.println("using gzip encoding!");
+                inStream = new GZIPInputStream(inStream);               
             }
         }
-        //System.out.println("got InputStream from  DAS Alignment server");
-        //System.out.println("encoding: " + contentEncoding);
         
         return inStream;
         

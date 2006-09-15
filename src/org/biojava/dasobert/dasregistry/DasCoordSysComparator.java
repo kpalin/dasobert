@@ -37,78 +37,78 @@ import org.biojava.dasobert.dasregistry.DasCoordinateSystem;
 
 
 public abstract class DasCoordSysComparator
-    implements Comparator
+implements Comparator
 { 
 
-    private final String name ;
-    private static final Map COMPS_BY_NAME;
+	private final String name ;
+	private static final Map COMPS_BY_NAME;
 
 
-    public DasCoordSysComparator(String str) {
-	//System.out.println("new dasSourceComparator " + str);
-	name = str ;
-    }
-   
-    public static final Comparator BY_NAME = new DasCoordSysComparator("name") {
-        protected Comparable getField(DasCoordinateSystem ds) {
-            return ds.getName();
-        }
-    };    
+	public DasCoordSysComparator(String str) {
+		//System.out.println("new dasSourceComparator " + str);
+		name = str ;
+	}
 
-    public static final Comparator BY_ID = new DasCoordSysComparator("id") {
-        protected Comparable getField(DasCoordinateSystem ds) {
-            return ds.getUniqueId();
-        }
-    };    
-    public static final Comparator BY_CATEGORY = new DasCoordSysComparator("category") {
-        protected Comparable getField(DasCoordinateSystem ds) {
-            return ds.getCategory();
-        }
-    };
-    public static final Comparator BY_ORGANISM = new DasCoordSysComparator("organism") {
-        protected Comparable getField(DasCoordinateSystem ds) {
-            return ds.getOrganismName();
-        }
-    };
-    public static final Comparator BY_TAXID = new DasCoordSysComparator("taxid") {
-        protected Comparable getField(DasCoordinateSystem ds) {
-            return ds.getNCBITaxId()+"";
-        }
-    };
-   
-    
+	public static final Comparator BY_NAME = new DasCoordSysComparator("name") {
+		protected Comparable getField(DasCoordinateSystem ds) {
+			return ds.getName();
+		}
+	};    
 
-    static {
-        COMPS_BY_NAME = new HashMap();
-        COMPS_BY_NAME.put(BY_ID.toString(),           BY_ID);
-	COMPS_BY_NAME.put(BY_NAME.toString(),         BY_NAME);
-        COMPS_BY_NAME.put(BY_CATEGORY.toString(),     BY_CATEGORY);
-        COMPS_BY_NAME.put(BY_ORGANISM.toString(),     BY_ORGANISM);
-        COMPS_BY_NAME.put(BY_TAXID.toString(),        BY_TAXID);
-    }
+	public static final Comparator BY_ID = new DasCoordSysComparator("id") {
+		protected Comparable getField(DasCoordinateSystem ds) {
+			return ds.getUniqueId();
+		}
+	};    
+	public static final Comparator BY_CATEGORY = new DasCoordSysComparator("category") {
+		protected Comparable getField(DasCoordinateSystem ds) {
+			return ds.getCategory();
+		}
+	};
+	public static final Comparator BY_ORGANISM = new DasCoordSysComparator("organism") {
+		protected Comparable getField(DasCoordinateSystem ds) {
+			return ds.getOrganismName();
+		}
+	};
+	public static final Comparator BY_TAXID = new DasCoordSysComparator("taxid") {
+		protected Comparable getField(DasCoordinateSystem ds) {
+			return ds.getNCBITaxId()+"";
+		}
+	};
 
-   
 
-    public static Comparator fromString(String name) {
-        if (COMPS_BY_NAME.containsKey(name)) {
-            return (Comparator) COMPS_BY_NAME.get(name);
-        } else {
-            throw new IllegalArgumentException("Can't compare by key " + name);
-        }
-    }
 
-    protected abstract Comparable getField(DasCoordinateSystem ds);
+	static {
+		COMPS_BY_NAME = new HashMap();
+		COMPS_BY_NAME.put(BY_ID.toString(),           BY_ID);
+		COMPS_BY_NAME.put(BY_NAME.toString(),         BY_NAME);
+		COMPS_BY_NAME.put(BY_CATEGORY.toString(),     BY_CATEGORY);
+		COMPS_BY_NAME.put(BY_ORGANISM.toString(),     BY_ORGANISM);
+		COMPS_BY_NAME.put(BY_TAXID.toString(),        BY_TAXID);
+	}
 
-    /** compare two DasCoordSys objects */
-    public int compare( Object a, Object b) {
-        DasCoordinateSystem x = (DasCoordinateSystem) a ;
-        DasCoordinateSystem y = (DasCoordinateSystem) b ;
-        return getField(x).compareTo(getField(y));
-    }
 
-    public String toString() {
-        return name;
-    }
+
+	public static Comparator fromString(String name) {
+		if (COMPS_BY_NAME.containsKey(name)) {
+			return (Comparator) COMPS_BY_NAME.get(name);
+		} else {
+			throw new IllegalArgumentException("Can't compare by key " + name);
+		}
+	}
+
+	protected abstract Comparable getField(DasCoordinateSystem ds);
+
+	/** compare two DasCoordSys objects */
+	public int compare( Object a, Object b) {
+		DasCoordinateSystem x = (DasCoordinateSystem) a ;
+		DasCoordinateSystem y = (DasCoordinateSystem) b ;
+		return getField(x).compareTo(getField(y));
+	}
+
+	public String toString() {
+		return name;
+	}
 
 
 }
