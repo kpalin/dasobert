@@ -39,102 +39,113 @@ import org.biojava.utils.xml.PrettyXMLWriter;
  */
 
 public class Das1Source implements DasSource {
-    String url                ;
-    protected String nickname           ;
-    String adminemail         ;
-    String description        ;
-    DasCoordinateSystem[] coordinateSystem ;
-    String[] capabilities     ;
-    String[] labels           ;
-    String helperurl          ;    
-    Date   registerDate       ;
-    Date   leaseDate          ;
-    String id                 ;
-    boolean local;
-    
-    boolean alertAdmin;
-    
-    public static String EMPTY_ID = "UNK:-1" ;
-    
-    public Das1Source () {
-        id               = EMPTY_ID;
-        url              = "";
-        adminemail       = "" ;
-        description      = "" ;
-        //String empty     = "" ;
-        nickname         = "" ;
-        coordinateSystem = new DasCoordinateSystem[0];
-        //coordinateSystem[0] = new DasCoordinateSystem();
-        capabilities     =  new String[0];
-        labels 	         = new String[0];
-        //capabilities[0]  = empty ;
-        registerDate     = new Date() ;
-        leaseDate        = new Date() ;
-        helperurl        = "";	
-        local=true;
-    }
-    
-    
-    /** do a quick comparison if URL and nickname are the same
-     * 
-     */
-    public boolean equals(DasSource other){
-        //System.out.println("Das1Source equals, comparing with other DasSource");
-        if (! (other instanceof Das1Source))
-            return false;
-        
-        Das1Source ods = (Das1Source) other;
-        
-        if ( ods.getUrl().equals(url))
-            return true;
-        if ( ods.getNickname().equals(nickname))
-            return true;
-        return false;
-    }
-    
-    /** makes a precise comparison between two das sources
-     * also compares description, coordsys, caps
-     * @param other
-     * @return if the two are exactly the same
-     */
-    public boolean equalsExact(DasSource other){
-    	if ( ! this.equals(other))
-    		return false;
-    	
-    	if ( ! description.equals(other.getDescription()))
+	String url                ;
+	protected String nickname           ;
+	String adminemail         ;
+	String description        ;
+	DasCoordinateSystem[] coordinateSystem ;
+	String[] capabilities     ;
+	String[] labels           ;
+	String helperurl          ;    
+	Date   registerDate       ;
+	Date   leaseDate          ;
+	String id                 ;
+	boolean local;
+
+	boolean alertAdmin;
+
+	public static String EMPTY_ID = "UNK:-1" ;
+
+	public Das1Source () {
+		id               = EMPTY_ID;
+		url              = "";
+		adminemail       = "" ;
+		description      = "" ;
+		//String empty     = "" ;
+		nickname         = "" ;
+		coordinateSystem = new DasCoordinateSystem[0];
+
+		capabilities     = new String[0];
+		labels 	         = new String[0];
+
+		registerDate     = new Date() ;
+		leaseDate        = new Date() ;
+		helperurl        = "";	
+		local=true;
+	}
+
+
+	/** do a quick comparison if URL and nickname are the same
+	 * 
+	 */
+	public boolean equals(DasSource other){
+		//System.out.println("Das1Source equals, comparing with other DasSource");
+		if (! (other instanceof Das1Source))
 			return false;
-		
+
+		Das1Source ods = (Das1Source) other;
+
+		if ( ods.getUrl().equals(url))
+			return true;
+
+		if ( ods.getNickname().equals(nickname))
+			return true;
+
+		return false;
+	}
+
+	/** makes a precise comparison between two das sources
+	 * also compares description, coordsys, caps
+	 * @param other
+	 * @return if the two are exactly the same
+	 */
+	public boolean equalsExact(DasSource other){
+		if ( ! this.equals(other))
+			return false;
+
+		if ( ! description.equals(other.getDescription()))
+			return false;
+
 		// test coordinate systems
 		DasCoordinateSystem[] newCoords = this.getCoordinateSystem();
 		DasCoordinateSystem[] oldCoords = other.getCoordinateSystem();
-		
+
 		if ( ! (newCoords.length == oldCoords.length))
 			return false;
-		
-		
+
+		//System.out.println("testing coords");
 		for ( int i=0 ; i< newCoords.length ; i++) {
-			
+
 			DasCoordinateSystem ncs = newCoords[i];
-			
+
 			boolean found = false ;
-			
+
 			for ( int j = 0 ; j < oldCoords.length; j++){
 				DasCoordinateSystem ocs = oldCoords[j];
-				
-				if ( ncs.equals(ocs)) {
-					found = true;
-					break;
+
+				//System.out.println(ncs.getName());
+				//System.out.println(ocs.getName());
+				//System.out.println(ncs.getCategory());
+				//System.out.println(ocs.getCategory());
+
+				if ( ncs.getName().equals(ocs.getName())) {
+					if ( ncs.getCategory().equals(ocs.getCategory())) {
+						found = true;
+						break;
+					}
 				}
 				if (! found )
 					return false;
 			}
 		}
-		
+
+		//System.out.println("testing capabs");
+
 		// test capabilities
 		String[] otherCaps = other.getCapabilities();
 		for (int i=0 ; i < capabilities.length;i++){
 			String cap = capabilities[i];
-			
+
 			boolean found = false;
 			for (int j=0; j < otherCaps.length;j++){
 				String oCap = otherCaps[j];
@@ -147,120 +158,120 @@ public class Das1Source implements DasSource {
 				return false;
 		}
 		return true;
-    }
-    
-    public int hashCode() {
-        int h = 7;
-        
-        h = 31 * h + ( null == nickname ? 0 : nickname.hashCode());
-        h = 31 * h + ( null == url ? 0 : url.hashCode());
-        
-        return h;
-    }
-    
-    /** the DAS2 string representation of this DAS source
-     * 
-     */
-    public String toString() {
-        
-        StringWriter writer = new StringWriter();
-        
-        PrintWriter pw = new PrintWriter(writer);
-        PrettyXMLWriter xw = new PrettyXMLWriter(pw);
-        
-        DasSourceWriter dswriter = new DasSourceWriterImpl();
-        try {
-            dswriter.writeDasSource(xw,this);
-        } catch (IOException e){
-            e.printStackTrace();
-        }
-        
-        return writer.toString();
-        
-    }
-    public void setLocal(boolean flag){ local = flag;}
-    public boolean isLocal(){return local;}
-    
-    public void setId(String i) { id = i; }
-    
-    /** get a the Id of the DasSource. The Id is a unique db
-     * identifier. The public DAS-Registry has Auto_Ids that look like
-     * DASSOURCE:12345; public look like XYZ:12345, where the XYZ
-     * prefix can be configured in the config file.
-     */
-    public String getId() { return id;}
-    
-    public void setNickname(String name) {
-        nickname = name ;
-    }
-    public String getNickname(){
-        return nickname;
-    }
-    public void setUrl(String u) {
-        char lastChar = u.charAt(u.length()-1);
-        if ( lastChar  != '/')
-            u += "/";
-        
-        url = u ;
-    }
-    
-    public void setAdminemail (String u) {
-        adminemail = u ;
-    }
-    
-    public void setDescription (String u) {
-        description = u;
-    }
-    
-    public void setCoordinateSystem (DasCoordinateSystem[] u){
-        coordinateSystem=u ;
-    }
-    
-    public void setCapabilities (String[] u){
-        capabilities = u ;
-    }
-    
-    public String getUrl(){return url;}
-    public String getAdminemail(){return adminemail;}
-    public String getDescription(){return description;}
-    public String[] getCapabilities(){return capabilities;}
-    public DasCoordinateSystem[] getCoordinateSystem(){return coordinateSystem;}
-    
-    public void setRegisterDate(Date d) {
-        registerDate = d;
-    }
-    public Date getRegisterDate() {
-        return registerDate ;
-    }
-    public void setLeaseDate(Date d) {
-        leaseDate =d ;
-    }
-    public Date getLeaseDate() {
-        return leaseDate ;
-    }
-    
-    public void setLabels(String[] ls) {
-        labels = ls ;
-    }
-    
-    public String[] getLabels() {
-        return labels;
-    }
-    
-    public void setHelperurl(String url) {
-        helperurl = url;
-    }
-    
-    public String getHelperurl() {
-        return helperurl;
-    }
-    
-    public void setAlertAdmin(boolean flag) {
-        alertAdmin = flag;
-    }
-    
-    public boolean getAlertAdmin() {
-        return alertAdmin;
-    }
-    
+	}
+
+	public int hashCode() {
+		int h = 7;
+
+		h = 31 * h + ( null == nickname ? 0 : nickname.hashCode());
+		h = 31 * h + ( null == url ? 0 : url.hashCode());
+
+		return h;
+	}
+
+	/** the DAS2 string representation of this DAS source
+	 * 
+	 */
+	public String toString() {
+
+		StringWriter writer = new StringWriter();
+
+		PrintWriter pw = new PrintWriter(writer);
+		PrettyXMLWriter xw = new PrettyXMLWriter(pw);
+
+		DasSourceWriter dswriter = new DasSourceWriterImpl();
+		try {
+			dswriter.writeDasSource(xw,this);
+		} catch (IOException e){
+			e.printStackTrace();
+		}
+
+		return writer.toString();
+
+	}
+	public void setLocal(boolean flag){ local = flag;}
+	public boolean isLocal(){return local;}
+
+	public void setId(String i) { id = i; }
+
+	/** get a the Id of the DasSource. The Id is a unique db
+	 * identifier. The public DAS-Registry has Auto_Ids that look like
+	 * DASSOURCE:12345; public look like XYZ:12345, where the XYZ
+	 * prefix can be configured in the config file.
+	 */
+	public String getId() { return id;}
+
+	public void setNickname(String name) {
+		nickname = name ;
+	}
+	public String getNickname(){
+		return nickname;
+	}
+	public void setUrl(String u) {
+		char lastChar = u.charAt(u.length()-1);
+		if ( lastChar  != '/')
+			u += "/";
+
+		url = u ;
+	}
+
+	public void setAdminemail (String u) {
+		adminemail = u ;
+	}
+
+	public void setDescription (String u) {
+		description = u;
+	}
+
+	public void setCoordinateSystem (DasCoordinateSystem[] u){
+		coordinateSystem=u ;
+	}
+
+	public void setCapabilities (String[] u){
+		capabilities = u ;
+	}
+
+	public String getUrl(){return url;}
+	public String getAdminemail(){return adminemail;}
+	public String getDescription(){return description;}
+	public String[] getCapabilities(){return capabilities;}
+	public DasCoordinateSystem[] getCoordinateSystem(){return coordinateSystem;}
+
+	public void setRegisterDate(Date d) {
+		registerDate = d;
+	}
+	public Date getRegisterDate() {
+		return registerDate ;
+	}
+	public void setLeaseDate(Date d) {
+		leaseDate =d ;
+	}
+	public Date getLeaseDate() {
+		return leaseDate ;
+	}
+
+	public void setLabels(String[] ls) {
+		labels = ls ;
+	}
+
+	public String[] getLabels() {
+		return labels;
+	}
+
+	public void setHelperurl(String url) {
+		helperurl = url;
+	}
+
+	public String getHelperurl() {
+		return helperurl;
+	}
+
+	public void setAlertAdmin(boolean flag) {
+		alertAdmin = flag;
+	}
+
+	public boolean getAlertAdmin() {
+		return alertAdmin;
+	}
+
 }

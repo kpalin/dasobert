@@ -92,11 +92,11 @@ public class DAS_Stylesheet_Handler extends DefaultHandler {
         } else if ( qName.equals("CROSS")){
             currentType.put("style","cross");
         } else if ( qName.equals("EX")){
-            currentType.put("style","EX");
+            currentType.put("style","ex");
         } else if ( qName.equals("HELIX")){
             currentType.put("style","helix");
         } else if ( qName.equals("LINE")){
-            currentType.put("style","LINE");
+            currentType.put("style","line");
         }  else if ( qName.equals("SPAN")){
             currentType.put("style","span");
         } else if ( qName.equals("TRIANGLE")){
