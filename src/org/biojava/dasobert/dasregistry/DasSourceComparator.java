@@ -26,6 +26,7 @@
 package org.biojava.dasobert.dasregistry ;
 
 import java.util.Comparator ;
+import java.util.Date;
 import java.util.Map ;
 import java.util.HashMap ;
 
@@ -42,6 +43,7 @@ public abstract class DasSourceComparator
     private final String name ;
     private static final Map COMPS_BY_NAME;
 
+    private static final int TWODAYS = 1000 * 60 * 60 * 24 * 2;
 
     public DasSourceComparator(String str) {
 	//System.out.println("new dasSourceComparator " + str);
@@ -59,6 +61,19 @@ public abstract class DasSourceComparator
             return ds.getNickname();
         }
     };    
+    
+    public static final Comparator BY_STATUS = new DasSourceComparator("status"){
+		protected Comparable getField(DasSource ds) {
+			
+			Date now = new Date();
+			
+			if (ds.getLeaseDate().getTime() < (now.getTime() - TWODAYS))
+				return new Integer(0);
+			return new Integer(1);
+		}
+	};
+    
+    
     public static final Comparator BY_REGISTER_DATE = new DasSourceComparator("registerdate") {
         protected Comparable getField(DasSource ds) {
             return ds.getRegisterDate();
@@ -108,6 +123,7 @@ public abstract class DasSourceComparator
         COMPS_BY_NAME.put(BY_DESCRIPTION.toString(),       BY_DESCRIPTION);
         COMPS_BY_NAME.put(BY_CAPABILITIES.toString(),      BY_CAPABILITIES);
         COMPS_BY_NAME.put(BY_COORDINATE_SYSTEM.toString(), BY_COORDINATE_SYSTEM);
+        COMPS_BY_NAME.put(BY_STATUS.toString(),            BY_STATUS);
     }
 
    
