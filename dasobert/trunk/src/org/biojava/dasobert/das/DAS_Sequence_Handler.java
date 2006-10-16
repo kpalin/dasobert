@@ -35,74 +35,105 @@ import java.util.logging.*                ;
  */
 public class DAS_Sequence_Handler extends DefaultHandler {
 
-	String sequence ;
+	StringBuffer sequence ;
 	int length ;
+
+	int maxLength;
+
 	boolean dna_flag; 
 	/**
 	 * 
 	 */
 	public DAS_Sequence_Handler() {
 		super();
-		// TODO Auto-generated constructor stub
-		sequence = "" ;
+
+		sequence = new StringBuffer() ;
 		length = 0;
 		dna_flag = false ;
+		maxLength = -1;
 	}
+
+
+
+	/** set a maximum length of sequence that should be loaded
+	 * default: -1. if -1 no length restriction is being supplied
+	 * @return the maximum length or -1 if no restriction
+	 */
+	public int getMaxLength() {
+		return maxLength;
+	}
+
+
+
+	/** set a maximum length of sequence that should be loaded
+	 * default: -1. if -1 no length restriction is being supplied
+	 * @param maxLength the maximum length or -1 if unrestricted
+	 */
+	public void setMaxLength(int maxLength) {
+		this.maxLength = maxLength;
+	}
+
+
+
 
 	public void startElement (String uri, String name, String qName, Attributes atts){
 
-	    if ( qName.equals("SEQUENCE")){
-		//System.out.println("new element >" + name + "< >" + qName+"<");
-		// was : length
-		String lenstr 	= atts.getValue("stop");
-		length = Integer.parseInt(lenstr);
-		dna_flag = true ;
-	    }
+		if ( qName.equals("SEQUENCE")){
+			
+			String lenstr 	= atts.getValue("stop");
+			length = Integer.parseInt(lenstr);
+			dna_flag = true ;
+		}
+
+	}
+
+	public void characters (char ch[], int start, int length){		
 		
-	}
-	
-	public void characters (char ch[], int start, int length){
-	    //System.out.print("Characters:    \"");
+		if (maxLength > 0)
+			if ( sequence.length() > maxLength)
+				return;
+		
 		if (dna_flag) 
-		 for (int i = start; i < start + length; i++) {
-		 	switch (ch[i]) {
-		 	case '\\':
-		 		//System.out.print("\\\\");
-		 		break;
-		 	case '"':
-		 		//System.out.print("\\\"");
-		 		break;
-		 	case '\n':
-		 		//System.out.print("\\n");
-		 		break;
-		 	case '\r':
-		 		//System.out.print("\\r");
-		 		break;
-		 	case '\t':
-		 		//System.out.print("\\t");
-		 		break;
-		 	case ' ':
-		 		break;
-		 	default:
-		 		sequence = sequence + ch[i];
-		 		//System.out.print(ch[i]);
-		 break;
-		 }
-		 }
-		 //System.out.print("\"\n");
-		 
+			for (int i = start; i < start + length; i++) {
+				
+				// all sorts of characters can be found in "seqeunces" ... ignore them...
+				switch (ch[i]) {
+				case '\\':
+					//System.out.print("\\\\");
+					break;
+				case '"':
+					//System.out.print("\\\"");
+					break;
+				case '\n':
+					//System.out.print("\\n");
+					break;
+				case '\r':
+					//System.out.print("\\r");
+					break;
+				case '\t':
+					//System.out.print("\\t");
+					break;
+				case ' ':
+					break;
+				default:
+					sequence = sequence.append(ch[i]);
+				
+				break;
+				}
+			}
+
 	}
-	
+
 	public String get_sequence() {
 		if ( length != sequence.length()) {	
-		    Logger logger  = Logger.getLogger("org.biojava.spice");
-		    logger.warning("Sequence does not match specified length!");
-			
+			Logger logger  = Logger.getLogger("org.biojava.spice");
+			logger.warning("Sequence does not match specified length!");
+
 		}
-		
-		return sequence;
+
+		return sequence.toString();
 	}
-		
-	
-	
+
+
+
 }
