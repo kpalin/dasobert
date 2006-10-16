@@ -30,31 +30,42 @@ import org.xml.sax.Attributes;
 /** a class to parse the reponse of a DAS - types request 
  */
 public class DAS_Entry_Points_Handler extends DefaultHandler {
- 
-    String version ;
-    
-    public DAS_Entry_Points_Handler() {
-	super();
-	
-	version = null;
-    }
 
-    public void startElement (String uri, String name, String qName, Attributes atts){
-	if ( qName.equals("DASEP")) {
-	    
-	}  else if ( qName.equals("ENTRY_POINTS")) {
-	 
-	    String v = atts.getValue("version");
-	    version = v;	    
-	} 	
-    }
-    
-    /** returns a String if the server returns an entry points 
-     * @return a String containing the version
-     * */
-    public String getVersion() {
-	return version;
-    }
-   
+	String version ;
+
+	// This is to prevent problems with excessive DAS servers...
+	// We had one case where one DAS server hat ~200.000 entry points.
+	// the returned file was 18 M big and took the DAS server 1 minute to create.
+	
+	public static final int MAX_NUMBER_ENTRY_POINTS=1000;
+	
+	
+	int entry_points_counter;
+	
+	public DAS_Entry_Points_Handler() {
+		super();
+
+		version = null;
+		
+		entry_points_counter = 0;
+	}
+
+	public void startElement (String uri, String name, String qName, Attributes atts){
+		if ( qName.equals("DASEP")) {
+
+		}  else if ( qName.equals("ENTRY_POINTS")) {
+
+			String v = atts.getValue("version");
+			version = v;	    
+		} 	
+	}
+
+	/** returns a String if the server returns an entry points 
+	 * @return a String containing the version
+	 * */
+	public String getVersion() {
+		return version;
+	}
+
 }
 

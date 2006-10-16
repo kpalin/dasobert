@@ -49,6 +49,9 @@ implements Comparator
 		name = str ;
 	}
 
+	
+	
+	
 	public static final Comparator BY_NAME = new DasCoordSysComparator("name") {
 		protected Comparable getField(DasCoordinateSystem ds) {
 			return ds.getName();
