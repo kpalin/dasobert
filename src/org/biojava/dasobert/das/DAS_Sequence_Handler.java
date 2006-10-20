@@ -125,10 +125,12 @@ public class DAS_Sequence_Handler extends DefaultHandler {
 	}
 
 	public String get_sequence() {
-		if ( length != sequence.length()) {	
-			Logger logger  = Logger.getLogger("org.biojava.spice");
-			logger.warning("Sequence does not match specified length!");
 
+		if ( maxLength < 0) {		
+			if ( length != sequence.length()) {	
+				Logger logger  = Logger.getLogger("org.biojava.spice");
+				logger.warning("Sequence does not match specified length!");
+			}
 		}
 
 		return sequence.toString();
