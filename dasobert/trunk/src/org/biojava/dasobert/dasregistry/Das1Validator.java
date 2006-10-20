@@ -512,7 +512,7 @@ public class Das1Validator {
 		// make sure only 50 bp are being read!
 		String reference = "";
 		String start = "";
-		String stop  = "";
+		
 		String[] spl = testcode.split(":");
 		if (spl.length <2) {
 			reference = testcode;
@@ -522,7 +522,7 @@ public class Das1Validator {
 			String[] splc = coordsspl.split(",");
 			if ( splc.length == 2 ) {
 				start = splc[0];
-				stop  = splc[1];
+				
 			}
 		}
 		
