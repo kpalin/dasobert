@@ -44,8 +44,6 @@ import org.biojava.bio.program.das.dasalignment.Alignment;
 import org.biojava.bio.structure.Structure;
 import org.biojava.bio.structure.Chain;
 import org.biojava.dasobert.das.*;
-import org.biojava.dasobert.das.DAS_Entry_Points_Handler;
-import org.biojava.dasobert.das.DAS_Types_Handler;
 
 
 
@@ -509,7 +507,37 @@ public class Das1Validator {
 	}
 	private boolean validateSequence(String url, String testcode) {
 		URL dasUrl;
-		String cmd = url+"sequence?segment="+testcode;
+		
+		// try to parse the test region from the testcode - if it looks like a chromosomal one 
+		// make sure only 50 bp are being read!
+		String reference = "";
+		String start = "";
+		String stop  = "";
+		String[] spl = testcode.split(":");
+		if (spl.length <2) {
+			reference = testcode;
+		} else if ( spl.length ==2) {
+			reference = spl[0];
+			String coordsspl = spl[1];
+			String[] splc = coordsspl.split(",");
+			if ( splc.length == 2 ) {
+				start = splc[0];
+				stop  = splc[1];
+			}
+		}
+		
+		
+		int startInt = -9999 ; 
+		try { 
+			startInt = Integer.parseInt(start);
+		} catch (NumberFormatException ex){}
+		
+		String cmd = url+"sequence?segment="+reference;
+		if ( startInt != -9999)
+			cmd += ":" + startInt + "," + (startInt+50);
+		
+		System.out.println(cmd);
+		
 		try {
 			dasUrl = new URL(cmd);
 
@@ -518,7 +546,7 @@ public class Das1Validator {
 			return false;
 		}
 		try {
-			System.out.println("opening " + dasUrl);
+			//System.out.println("opening " + dasUrl);
 			InputStream dasInStream =open(dasUrl); 
 			SAXParserFactory spfactory =
 				SAXParserFactory.newInstance();
@@ -553,7 +581,7 @@ public class Das1Validator {
 			insource.setByteStream(dasInStream);
 			xmlreader.parse(insource);
 			String sequence = cont_handle.get_sequence();
-			System.out.println("done parsing sequence ...");
+			//System.out.println("done parsing sequence ...");
 			if ( ( sequence==null) || (sequence.equals(""))) {
 				validationMessage += "---<br/>contacting " + cmd +"<br/>";
 				validationMessage += "no sequence found";

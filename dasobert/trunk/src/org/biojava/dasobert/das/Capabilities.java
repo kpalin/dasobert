@@ -37,8 +37,10 @@ public class Capabilities {
 	public static final String ALIGNMENT    = "alignment";
 	public static final String STRUCTURE    = "structure";
 	public static final String TYPES        = "types";
-	public static final String DNA	        = "DNA";
+	public static final String DNA	        = "dna";
 	
+	// this is also the order of the fields in the DasSourceManager capabilities sql...
+	// DO NOT CHANGE!
 	public final static String[] DAS_CAPABILITIES = { 
 		SEQUENCE,
 		STRUCTURE,
