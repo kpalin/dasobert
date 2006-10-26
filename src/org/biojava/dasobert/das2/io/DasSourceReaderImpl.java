@@ -23,7 +23,6 @@
 package org.biojava.dasobert.das2.io;
 
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -35,7 +34,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.XMLReader;
 
-import sun.misc.BASE64Encoder;
 
 public class DasSourceReaderImpl implements DasSourceReader {
 
@@ -44,66 +42,14 @@ public class DasSourceReaderImpl implements DasSourceReader {
 	public DasSourceReaderImpl() {
 		super();
 		loggedException = null;
+    }
 
-		// open the stream to a server and then parse the result ...
-	}
-
-	public static String encode (String source) {
-		BASE64Encoder enc = new BASE64Encoder();
-		return(enc.encode(source.getBytes()));
-	}
-
-	public InputStream open(URL url, String name, String password)
-	throws java.io.IOException, java.net.ConnectException
-	{
-		InputStream inStream = null;
-
-
-		HttpURLConnection huc = HttpConnectionTools.openHttpURLConnection(url);
-		
-		huc.setRequestProperty("Authorization", "Basic " + encode(name + ":"
-				+ password));
-
-		inStream = huc.getInputStream();        
-
-		return inStream;
-
-	}
 	
-	
-	private InputStream open(URL url)
-	throws java.io.IOException, java.net.ConnectException
-	{
-		InputStream inStream = null;
-
-
-		HttpURLConnection huc = HttpConnectionTools.openHttpURLConnection(url);
-		
-		inStream = huc.getInputStream();        
-
-		return inStream;
-
-	}
-
-	public DasSource[] readDasSource(URL url, String name, String password){
-		DasSource[] sources = new DasSource[0];
-
-		try {
-			InputStream stream = open(url,name, password);
-
-			sources = readDasSource(stream);
-		} catch (Exception e){
-			e.printStackTrace();
-			loggedException = e;
-		}
-		return sources;
-	}
-
 	public DasSource[] readDasSource(URL url){
 		DasSource[] sources = new DasSource[0];
 
 		try {
-			InputStream stream = open(url);
+			InputStream stream = HttpConnectionTools.getInputStream(url);
 
 			sources = readDasSource(stream);
 		} catch (Exception e){
