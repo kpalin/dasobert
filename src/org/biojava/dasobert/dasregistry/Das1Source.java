@@ -231,11 +231,29 @@ public class Das1Source implements DasSource {
 		capabilities = u ;
 	}
 
+    /** test if a this source has a particular capability
+     * 
+     * @param testCapability
+     * @return <code>true</code> if the server has this capability.
+     */
+    public boolean hasCapability(String testCapability){
+        for (int i=0 ; i< capabilities.length;i++){
+            String cap = capabilities[i];
+            if ( cap.equals(testCapability))
+                return true;
+        }
+        return false;
+    }
+    
 	public String getUrl(){return url;}
+    
 	public String getAdminemail(){return adminemail;}
-	public String getDescription(){return description;}
-	public String[] getCapabilities(){return capabilities;}
-	public DasCoordinateSystem[] getCoordinateSystem(){return coordinateSystem;}
+	
+    public String getDescription(){return description;}
+	
+    public String[] getCapabilities(){return capabilities;}
+	
+    public DasCoordinateSystem[] getCoordinateSystem(){return coordinateSystem;}
 
 	public void setRegisterDate(Date d) {
 		registerDate = d;
