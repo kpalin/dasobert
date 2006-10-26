@@ -23,11 +23,13 @@
 package org.biojava.dasobert.util;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
 
 /** a class that takes care about opening HttpURLConnections and sets the proper timeouts
  * 
@@ -129,6 +131,54 @@ public class HttpConnectionTools {
         
     }
     
-    
+    /** connect to DAS server and return result as an InputStream.
+     * always asks for response to be in GZIP encoded
+     * 
+     * @param url the URL to connect to
+     * @return an InputStream
+     * @throws IOException 
+    *
+    */    
+   public static InputStream getInputStream(URL url) 
+   throws IOException
+   {
+	   return getInputStream(url,true);
+   }
+   
+   /** open a URL and return an InputStream to it
+    *  if acceptGzipEncoding == true, use GZIPEncoding to
+    *  compress communication
+    * 
+    * @param url
+    * @param acceptGzipEncoding
+    * @return an InputStream to the URL
+    * @throws IOException
+    */
+   public static InputStream getInputStream(URL url, boolean acceptGzipEncoding)
+   throws IOException {
+       InputStream inStream = null ;
+       
+       //System.out.println("opening connection to "+url);
+       HttpURLConnection huc = HttpConnectionTools.openHttpURLConnection(url);  
+                       
+       if ( acceptGzipEncoding) {
+       // should make communication faster
+    	   huc.setRequestProperty("Accept-Encoding", "gzip");
+       }
+       
+       String contentEncoding = huc.getContentEncoding();
+   
+       inStream = huc.getInputStream();
+       
+       if (contentEncoding != null) {
+           if (contentEncoding.indexOf("gzip") != -1) {
+               // we have gzip encoding
+               inStream = new GZIPInputStream(inStream);               
+           }
+       }
+       
+       return inStream;
+       
+   }
     
 }

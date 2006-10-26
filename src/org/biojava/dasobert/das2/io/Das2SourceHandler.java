@@ -40,7 +40,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @since 6:53:45 PM
  * @version %I% %G%
  */
-public class DAS2SourceHandler extends DefaultHandler{
+public class Das2SourceHandler extends DefaultHandler{
 
 	List sources;
 	Das2Source currentSource;
@@ -50,7 +50,7 @@ public class DAS2SourceHandler extends DefaultHandler{
 
 	public static final String LABELPROPERTY = "label";
 
-	public DAS2SourceHandler() {
+	public Das2SourceHandler() {
 		super();
 
 		sources       = new ArrayList();
@@ -125,7 +125,14 @@ public class DAS2SourceHandler extends DefaultHandler{
 		} else if ( qName.equals("CAPABILITY")){
 			Das2Capability cap = getCapability(uri,name,qName,atts);
 			capabilities.add(cap);
-		} else if (qName.equals("PROPERTY")) {
+			
+			
+		} else if (qName.equals("PROPERTY") ||
+				qName.equals("PROP")) {
+			
+			// todo: remove PROPERTY from sources description
+			// the DAS/2 validator accepted this element for too long...
+			
 			addProperty(uri,name,qName,atts);
 		}                
 	}
@@ -145,8 +152,10 @@ public class DAS2SourceHandler extends DefaultHandler{
 	private void addProperty(String uri, String name, String qName, Attributes atts){
 		String pname = atts.getValue("name");
 		String label = atts.getValue("value");
-		if ( pname.equals(LABELPROPERTY) )
-			labels.add(label);
+		if ( pname.equals(LABELPROPERTY) ) {
+			if (! labels.contains(label)) 
+				labels.add(label);
+		}
 	}
 
 	public void startDocument(){

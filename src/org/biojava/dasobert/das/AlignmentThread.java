@@ -24,7 +24,6 @@ package org.biojava.dasobert.das;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -32,7 +31,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
 import java.util.ArrayList;
 
 import org.biojava.bio.Annotation;
@@ -362,7 +360,7 @@ extends Thread{
             throw new IOException("error during creation of URL " + e.getMessage());
         }
         
-        InputStream inStream = connectDASServer(dasUrl);
+        InputStream inStream = HttpConnectionTools.getInputStream(dasUrl);
         
         
         Alignment[] ali = null;
@@ -378,33 +376,7 @@ extends Thread{
     
   
     
-    /** connect to DAS server and return result as an InputStream.
-     *
-     */    
-    private InputStream connectDASServer(URL url) 
-    throws IOException
-    {
-        InputStream inStream = null ;
-        
-        //System.out.println("opening connection to "+url);
-        HttpURLConnection huc = HttpConnectionTools.openHttpURLConnection(url);  
-                        
-        // should make communication faster
-        huc.setRequestProperty("Accept-Encoding", "gzip");
-            
-        String contentEncoding = huc.getContentEncoding();
-    
-        inStream = huc.getInputStream();
-        if (contentEncoding != null) {
-            if (contentEncoding.indexOf("gzip") != -1) {
-                // we have gzip encoding
-                inStream = new GZIPInputStream(inStream);               
-            }
-        }
-        
-        return inStream;
-        
-    }
+   
     
     private void triggerNoAlignmentFound(String q, String s){
         Alignment a = new Alignment();
