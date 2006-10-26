@@ -31,13 +31,9 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
-import org.biojava.dasobert.das.DAS_Sequence_Handler;
 import org.biojava.dasobert.das2.io.Das2ValidationHandler;
 import org.biojava.dasobert.util.HttpConnectionTools;
 import org.xml.sax.InputSource;
