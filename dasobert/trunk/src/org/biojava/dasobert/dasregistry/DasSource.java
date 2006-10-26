@@ -68,6 +68,13 @@ public interface DasSource {
 
     public  void setCapabilities(String[] u);
 
+    /** test if a this source has a particular capability
+     * 
+     * @param testCapability
+     * @return <code>true</code> if the server has this capability.
+     */
+    public boolean hasCapability(String testCapability);
+    
     public  String getUrl();
 
     public  String getAdminemail();
