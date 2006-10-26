@@ -39,7 +39,7 @@ import org.biojava.utils.xml.XMLWriter;
 public class DasSourceWriterImpl implements DasSourceWriter {
 
 
-	public static final String COORDSYSURI = "http://das.sanger.ac.uk/dasregistry/coordsys/";
+	public static final String COORDSYSURI = "http://www.dasregistry.org/dasregistry/coordsys/";
 
 	public DasSourceWriterImpl() {
 		super();
