@@ -163,7 +163,7 @@ public class DasSourceReaderImpl implements DasSourceReader {
 
 			}
 
-			DAS2SourceHandler cont_handle = new DAS2SourceHandler() ;
+			Das2SourceHandler cont_handle = new Das2SourceHandler() ;
 
 			xmlreader.setContentHandler(cont_handle);
 			xmlreader.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
