@@ -174,7 +174,7 @@ public class DAS_Stylesheet_Handler extends DefaultHandler {
         } else if ( qName.equals("CARTOON")){
             currentType.put("display","cartoon");
         } else if ( qName.equals("RIBBONS")){
-            currentType.put("display","ribbons");
+            currentType.put("display","ribbons");            
         } else if ( qName.equals("WIDTH")){
             currentType.put("width",chars);
         }

@@ -28,8 +28,9 @@ import java.lang.reflect.Method;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
+
+import sun.misc.BASE64Encoder;
 
 /** a class that takes care about opening HttpURLConnections and sets the proper timeouts
  * 
@@ -40,11 +41,6 @@ import java.util.zip.GZIPInputStream;
 public class HttpConnectionTools {
     
     
-    public static String VERSION = "0.2";
-    
-    public static final String PROJECTNAME = "dasobert - Java ";
-    
-    static Logger logger = Logger.getLogger("org.biojava.spice");
     
     static int    DEFAULT_CONNECTION_TIMEOUT = 15000; // timeout for http connection = 15. sec
     
@@ -72,15 +68,7 @@ public class HttpConnectionTools {
         HttpURLConnection huc = null;
         
         huc = (HttpURLConnection) url.openConnection();
-        
-        String os_name    = java.lang.System.getProperty("os.name");
-        String os_version = java.lang.System.getProperty("os.version");
-        String os_arch    = java.lang.System.getProperty("os.arch");    
-        
-        String userAgent = PROJECTNAME+ " " + VERSION + "("+os_name+"; "+os_arch + " ; "+ os_version+")";
-        //e.g. "Mozilla/5.0 (Windows; U; Win98; en-US; rv:1.7.2) Gecko/20040803"
-        huc.addRequestProperty("User-Agent", userAgent);
-        
+        huc.addRequestProperty("User-Agent", DasobertDefaults.USERAGENT);
         
         // this sets the timeouts for Java 1.4
         System.setProperty("sun.net.client.defaultConnectTimeout", ""+timeout);
@@ -180,5 +168,42 @@ public class HttpConnectionTools {
        return inStream;
        
    }
+
+   
+   /** request an InputStream and provide username and password for logging in.
+    *  (using BASE64 Encoding)
+    * 
+    * @param url
+    * @param name
+    * @param password
+    * @return an InputStream
+    * @throws IOException
+    * @throws ConnectException
+    */
+    public static InputStream getInputStream(URL url, String name, String password)
+    throws IOException, ConnectException
+    {
+        InputStream inStream = null;
+
+
+        HttpURLConnection huc = openHttpURLConnection(url);
+        
+        huc.setRequestProperty(
+                "Authorization", 
+                "Basic " + 
+                encode(name + ":" + password)
+                );
+
+        inStream = huc.getInputStream();        
+
+        return inStream;
+
+    }
+   
     
+
+    public static String encode (String source) {
+         BASE64Encoder enc = new BASE64Encoder();
+         return(enc.encode(source.getBytes()));
+     }
 }

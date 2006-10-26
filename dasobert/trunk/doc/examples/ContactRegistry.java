@@ -34,35 +34,67 @@ import org.biojava.dasobert.dasregistry.Das1Source;
 import org.biojava.dasobert.dasregistry.DasSource;
 
 
-public class ContactRegistry {
-    
-    public ContactRegistry () {
-        
-        
-    }
-    
-    
-    public static void main(String[] args) {
-        try {
+/** a class to contact the registration server and obtain a list of available DAS sources from it.
+ * example usage:
+ * <pre>
+ *   try {
             
-	// if you are behind a proxy, please uncomment the following lines
-			System.setProperty("proxySet", "true");
-			System.setProperty("proxyHost", "wwwcache.sanger.ac.uk");
-			System.setProperty("proxyPort", "3128");
-
-
+            // if you are behind a proxy, please change the following lines
+            // for your proxy setup ...
+            //System.setProperty("proxySet", "true");
+            //System.setProperty("proxyHost", "wwwcache.sanger.ac.uk");
+            //System.setProperty("proxyPort", "3128");
+            
+            
 //          make sure we use the Xerces XML parser..
             System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
-                    "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+            "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
             System.setProperty("javax.xml.parsers.SAXParserFactory",
-                    "org.apache.xerces.jaxp.SAXParserFactoryImpl");
+            "org.apache.xerces.jaxp.SAXParserFactoryImpl");
             
             ContactRegistry contact = new ContactRegistry();
             Das1Source[] sources = contact.getDas1Sources();
             System.out.println("got " + sources.length + "das1 sources");
-
-	    contact.displaySources(sources);
-	    
+            
+            contact.displaySources(sources);
+            
+        } catch ( Exception e) {
+            e.printStackTrace();
+        }
+        
+ * </pre>
+ * @author Andreas Prlic
+ * @since 4:32:34 PM
+ * @version %I% %G%
+ */
+public class ContactRegistry {
+    
+    public ContactRegistry () {        
+        
+    }
+        
+    public static void main(String[] args) {
+        try {
+            
+            // if you are behind a proxy, please change the following lines
+            // for your proxy setup ...
+            //System.setProperty("proxySet", "true");
+            //System.setProperty("proxyHost", "wwwcache.sanger.ac.uk");
+            //System.setProperty("proxyPort", "3128");
+            
+            
+//          make sure we use the Xerces XML parser..
+            System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
+            "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+            System.setProperty("javax.xml.parsers.SAXParserFactory",
+            "org.apache.xerces.jaxp.SAXParserFactoryImpl");
+            
+            ContactRegistry contact = new ContactRegistry();
+            Das1Source[] sources = contact.getDas1Sources();
+            System.out.println("got " + sources.length + "das1 sources");
+            
+            contact.displaySources(sources);
+            
         } catch ( Exception e) {
             e.printStackTrace();
         }
@@ -70,14 +102,13 @@ public class ContactRegistry {
     }
     
     
-
+    
     public Das1Source[] getDas1Sources() throws MalformedURLException, DASException{
         
         DasSourceReaderImpl reader = new DasSourceReaderImpl();
         
-        String u = "http://das.sanger.ac.uk/registry/das1/sources";
-
-        
+        //String u = "http://das.sanger.ac.uk/registry/das1/sources";
+        String u = "http://ensarc-1-14.internal.sanger.ac.uk:9020/das/sources";
         URL url = new URL(u);
         
         DasSource[] sources = reader.readDasSource(url);
@@ -91,7 +122,7 @@ public class ContactRegistry {
                     Das1Source d1s = DasSourceConverter.toDas1Source(d2s);
                     das1sources.add(d1s);
                 }
-                    
+                
             } else if ( ds instanceof Das1Source){
                 das1sources.add((Das1Source)ds);
             }
@@ -104,11 +135,15 @@ public class ContactRegistry {
     }
     
     private void displaySources(DasSource[] sources){
-	for (int i=0;i<sources.length;i++) {
-	    DasSource ds = sources[i];
-	    System.out.println(ds);
-	    
-	}
+        for (int i=0;i<2;i++) {
+            DasSource ds = sources[i];
+            System.out.println(ds);
+            String[] caps = ds.getCapabilities();
+            for (int c=0;c<caps.length;c++){
+                String cap = caps[c];
+                System.out.println(cap);
+            }
+        }
     }
-
+    
 }

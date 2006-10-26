@@ -148,7 +148,7 @@ public class DAS_FeatureRetrieve {
         }
     }
     
-    /** 
+    /** open a HttpURLConnection to a URL and return an InputStream
      * 
      * @param url
      * @return an open stream
@@ -159,8 +159,7 @@ public class DAS_FeatureRetrieve {
     throws java.io.IOException, java.net.ConnectException
     {
         InputStream inStream = null;
-        
-        
+                
         HttpURLConnection huc = HttpConnectionTools.openHttpURLConnection(url);
         
         inStream = huc.getInputStream();		
