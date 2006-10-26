@@ -54,7 +54,7 @@ import org.biojava.dasobert.dasregistry.DasSource;
             
             ContactRegistry contact = new ContactRegistry();
             Das1Source[] sources = contact.getDas1Sources();
-            System.out.println("got " + sources.length + "das1 sources");
+            System.out.println("got " + sources.length + " DAS/1 sources:");
             
             contact.displaySources(sources);
             
@@ -68,6 +68,8 @@ import org.biojava.dasobert.dasregistry.DasSource;
  * @version %I% %G%
  */
 public class ContactRegistry {
+    
+    public static final String REGISTRY_LOCATION =  "http://www.dasregistry.org/registry/das1/sources";
     
     public ContactRegistry () {        
         
@@ -91,7 +93,8 @@ public class ContactRegistry {
             
             ContactRegistry contact = new ContactRegistry();
             Das1Source[] sources = contact.getDas1Sources();
-            System.out.println("got " + sources.length + "das1 sources");
+            
+            System.out.println("got " + sources.length + " DAS/1 sources:");
             
             contact.displaySources(sources);
             
@@ -107,9 +110,8 @@ public class ContactRegistry {
         
         DasSourceReaderImpl reader = new DasSourceReaderImpl();
         
-        //String u = "http://das.sanger.ac.uk/registry/das1/sources";
-        String u = "http://ensarc-1-14.internal.sanger.ac.uk:9020/das/sources";
-        URL url = new URL(u);
+                
+        URL url = new URL(REGISTRY_LOCATION);
         
         DasSource[] sources = reader.readDasSource(url);
         
