@@ -87,8 +87,19 @@ public class Das1Validator {
 	
 	public String[] validate(String url, DasCoordinateSystem[] coords, String[] capabilities, boolean verbose){
 		validationMessage="";
+		
+		if ( url == null )
+			return new String[0];
+		
+		if ( coords == null )
+			return new String[0];
+		
+		if ( capabilities == null )
+			return new String[0];
+		
+		
 		// a list containing all valid DAS requests ...
-
+		
 		List lst =new ArrayList();
 
 		char lastChar = url.charAt(url.length()-1);
@@ -337,8 +348,9 @@ public class Das1Validator {
 	}
 
 	private boolean validateAlignment(String url, String testcode){
+		String cmd = url+"alignment?query=" ;
 		try {
-			String cmd = url+"/alignment?query=" ;
+			
 			DASAlignmentClient dasc= new DASAlignmentClient(cmd);
 			Alignment[] alignments = dasc.getAlignments(testcode);
 			if ( alignments.length > 0 ) {
@@ -351,7 +363,7 @@ public class Das1Validator {
 			}
 
 		} catch (Exception e) {
-			validationMessage += "<br/>---<br/> contacting " + url+"features?segment="+testcode + "<br/>";
+			validationMessage += "<br/>---<br/> contacting " + cmd +testcode + "<br/>";
 
 			Throwable cause = e.getCause();
 			if ( cause != null) 

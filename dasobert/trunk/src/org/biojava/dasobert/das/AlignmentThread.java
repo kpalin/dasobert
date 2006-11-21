@@ -63,6 +63,7 @@ extends Thread{
     String PDB_COORD_SYS  ;
     
     static Logger logger = Logger.getLogger("org.biojava.spice");
+    Das1Source successfullSource ;
     
     public AlignmentThread(AlignmentParameters params) {
         super();
@@ -75,7 +76,7 @@ extends Thread{
         clearAlignmentListeners();
         
         dasalignmentCall= new DASAlignmentCall();
-        
+        successfullSource = null;
     }
     
     
@@ -199,6 +200,7 @@ extends Thread{
         
         
         AlignmentEvent event = new AlignmentEvent(query,finalAlig,aligs); 
+        event.setSource(successfullSource);
         Iterator iter = alignmentListeners.iterator();
         while (iter.hasNext()){
             AlignmentListener li = (AlignmentListener ) iter.next();
@@ -324,9 +326,10 @@ extends Thread{
             try{
                 //alignments = dasc.getAlignments(code);
                 alignments= retrieveAlignments(dasalignmentcommand);
-                
+                successfullSource = sds;    
                 //logger.finest(logname + " DASAlignmentHandler: got "+ alignments.length +" alignment(s):");
                 if ( alignments.length == 0 ) {
+                	successfullSource = null;
                     // check next alignment server ...
                     continue ;
                 }
@@ -419,6 +422,7 @@ extends Thread{
         }
         
         AlignmentEvent event = new AlignmentEvent(q,a,new Alignment[0]); 
+        event.setSource(null);
         Iterator iter = alignmentListeners.iterator();
         while (iter.hasNext()){
             AlignmentListener li = (AlignmentListener ) iter.next();

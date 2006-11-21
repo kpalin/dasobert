@@ -50,9 +50,10 @@ public class Das2ValidatorCall {
 		
 		try {
 	      
-			String check = "http://www.dasregistry.org/registry/das1/sources";
-			
-			
+			//String check = "http://www.dasregistry.org/registry/das1/sources";
+			//String check = "http://das.biopackages.net/das/genome";
+			//String check = "http://das.biopackages.net/das/genome/human/17/type";
+			String check = "http://das.biopackages.net/das/genome/human/17/feature?segment=http://www.ncbi.nlm.nih.gov/genome/H_sapiens/B36.1/dna/chr1:overlaps=1:1000";
 			URL u = new URL(check);
 		
 			
@@ -71,7 +72,7 @@ public class Das2ValidatorCall {
 		
 	}
 	
-	public void validate(URL checkMe) 
+	public Map[] validate(URL checkMe) 
 	throws MalformedURLException,
 	IOException,
 	SAXException{
@@ -84,9 +85,7 @@ public class Das2ValidatorCall {
 		
      
         Das2ValidationHandler contentHandler = new Das2ValidationHandler();
-        
-        
-     
+                     
         xmlreader.setContentHandler(contentHandler);
         xmlreader.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
                 
@@ -105,7 +104,7 @@ public class Das2ValidatorCall {
         	
         	System.out.println("severity:" + severity + " : " + text);
         }
-        
+        return (Map[]) messages.toArray(new Map[messages.size()]); 
 	}
 	
 	private XMLReader getXMLReader() 
