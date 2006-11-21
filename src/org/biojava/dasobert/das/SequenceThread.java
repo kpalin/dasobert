@@ -107,7 +107,7 @@ extends Thread {
                 gotSequence = true ;
                 // set the sequence ...
                 
-                triggerNewSequence(sp_accession,sequence);
+                triggerNewSequence(sp_accession,sequence,ds);
                 
                 
                 return;
@@ -137,13 +137,14 @@ extends Thread {
 //        }
 //    }
     
-    private void triggerNewSequence(String sp_accession,String sequence){
+    private void triggerNewSequence(String sp_accession,String sequence,Das1Source source){
 
         Iterator iter = seqListeners.iterator();
         while (iter.hasNext()){
            SequenceListener li = (SequenceListener)iter.next();
             //SequenceEvent event = new SequenceEvent(sequence);
            SequenceEvent event = new SequenceEvent(sp_accession,sequence); 
+           event.setSource(source);
            li.newSequence(event);
         }
     }

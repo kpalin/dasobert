@@ -176,6 +176,7 @@ extends Thread{
                     if ( structure != null ){
                     	logger.info("found structure " + structure.getPDBCode());
                         StructureEvent event = new StructureEvent(structure);
+                        event.setSource(ds);
                         triggerNewStructure(event);
                         return;
                     }
@@ -186,8 +187,10 @@ extends Thread{
                 }
             }
         }
+        
         if ( structure != null ){
-            StructureEvent event = new StructureEvent(structure);
+        	System.out.println("StrucutureThread got structure, but not sure from which DAS source...");
+            StructureEvent event = new StructureEvent(structure);            
             triggerNewStructure(event);
         } else {
         	 triggerNoStructure(accessionCode);

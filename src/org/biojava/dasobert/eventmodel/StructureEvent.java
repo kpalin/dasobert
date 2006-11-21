@@ -24,7 +24,8 @@ package org.biojava.dasobert.eventmodel;
 
 import org.biojava.bio.structure.*;
 
-public class StructureEvent {
+public class StructureEvent 
+extends AbstractDasEvent{
 
     String pdbCode;
     Structure structure;

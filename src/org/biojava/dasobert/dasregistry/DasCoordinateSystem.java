@@ -50,9 +50,10 @@ public class DasCoordinateSystem {
     public boolean equals(DasCoordinateSystem other){
         boolean match = true;
         //System.out.println("comparing " + this.toString() + " to " + other.toString());
+
         // URI has piority 
-        if ( (! uniqueId.equals("")) && ( uniqueId.equals( other.getUniqueId())))
-            return true;
+      //  if ( (! uniqueId.equals("")) && ( uniqueId.equals( other.getUniqueId())))
+      //      return true;
         
         if ( ncbi_tax_id != other.getNCBITaxId()) {
             //System.out.println("mismatch in ncbi tax id " + ncbi_tax_id + " != " + other.getNCBITaxId());
@@ -110,8 +111,13 @@ public class DasCoordinateSystem {
 
 
 
-    public void setUniqueId(String id) { uniqueId = id ;   }
-    public String getUniqueId() { return uniqueId;         }
+    public void setUniqueId(String id) { 
+    	uniqueId = id ; 
+    }
+    
+    public String getUniqueId() {
+    	return uniqueId;     
+    }
 
     public void setName(String n) { name = n; }
     public String getName() { return name; }

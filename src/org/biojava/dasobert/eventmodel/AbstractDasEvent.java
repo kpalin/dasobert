@@ -17,30 +17,28 @@
  *
  *      http://www.biojava.org/
  * 
- * Created on Nov 20, 2005
- *
+ * Created on Nov 17, 2006
+ * 
  */
+
 package org.biojava.dasobert.eventmodel;
 
+import org.biojava.dasobert.dasregistry.Das1Source;
 
-public class SequenceEvent
-extends AbstractDasEvent{
+public class AbstractDasEvent {
 
-    String sequence;
-    String accessionCode;
-    
-    public SequenceEvent(String accessionCode, String seq) {
-        super();
-        sequence = seq;
-        this.accessionCode = accessionCode;        
-    }
-    
-    public String getAccessionCode(){
-        return accessionCode;
-    }
-    
-    public String getSequence(){
-        return sequence;
-    }
+	Das1Source dasSource;
 
+	public Das1Source getSource() {
+		return dasSource;
+	}
+
+	public void setSource(Das1Source source) {
+		this.dasSource = source;
+	}
+	
+	
+
+	
+	
 }

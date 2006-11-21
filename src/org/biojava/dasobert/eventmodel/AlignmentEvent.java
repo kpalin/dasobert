@@ -23,23 +23,44 @@
 package org.biojava.dasobert.eventmodel;
 
 import org.biojava.bio.program.das.dasalignment.Alignment;
+import org.biojava.dasobert.dasregistry.Das1Source;
 
-public class AlignmentEvent {
-
+public class AlignmentEvent 
+extends AbstractDasEvent{
+	
+	
     String accessionCode;
     Alignment alignment ;
     Alignment[] allAlignments;
     
-    public AlignmentEvent(String accessionCode, Alignment ali,Alignment[] allAlignments) {
+    public AlignmentEvent(String accessionCode, 
+    		Alignment ali,
+    		Alignment[] allAlignments) {
         super();
-        this.accessionCode = accessionCode;
-        
+        this.accessionCode = accessionCode;        
         alignment=ali;
         this.allAlignments = allAlignments;
 
     }
     
-    
+    /** create a new AlignmentEvent
+     * 
+     * @param accessionCode the accession code of the alignment
+     * @param ali 
+     * @param allAlignments 
+     * @param source
+     */
+    public AlignmentEvent(String accessionCode, 
+    		Alignment ali,
+    		Alignment[] allAlignments,
+    		Das1Source source) {
+        super();
+        this.accessionCode = accessionCode;        
+        alignment=ali;
+        this.allAlignments = allAlignments;
+        this.dasSource = source;
+
+    }
     
     public String getAccessionCode() {
         return accessionCode;

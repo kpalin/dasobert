@@ -123,7 +123,7 @@ public class GetFeatures {
     class MyListener 
 	implements FeatureListener{
 	public synchronized void newFeatures(FeatureEvent e){
-	    Das1Source ds = e.getDasSource();
+	    Das1Source ds = e.getSource();
 	    Map[] features = e.getFeatures();
 
 	    System.out.println("das source " + ds.getNickname() + " returned " + features.length +" features");

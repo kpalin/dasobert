@@ -25,10 +25,11 @@ package org.biojava.dasobert.eventmodel;
 import java.util.Map;
 
 import org.biojava.dasobert.dasregistry.Das1Source;
-public class FeatureEvent {
-    
+public class FeatureEvent 
+extends AbstractDasEvent {
+	
     Map[] features;
-    Das1Source dasSource;
+   
     int comeBackLater;
     
     public FeatureEvent(Map[] features,Das1Source dasSource) {
@@ -64,9 +65,7 @@ public class FeatureEvent {
         return features;
     }
     
-    public Das1Source getDasSource(){
-        return dasSource;
-    }
+   
     
 }
 
