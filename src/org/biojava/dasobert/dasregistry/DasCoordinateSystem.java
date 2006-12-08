@@ -119,10 +119,26 @@ public class DasCoordinateSystem {
     	return uniqueId;     
     }
 
+    /** set the name / authority for this coordiante system
+     * e.g. UniProt, PDB, Ensembl, etc.
+     * 
+     * @param n the name
+     */
     public void setName(String n) { name = n; }
+    
+    /** get the name / authority for this coordiante system
+     * e.g. UniProt, PDB, Ensembl, etc.
+     * @return the name / authority of this coordinate system
+     *     
+     */
     public String getName() { return name; }
     
     public void setCategory(String c) { category = c;}
+    
+    /** returns the type of the coordinate system.
+     * e.g if it is a Chromosomal, Protein Sequence, Protein Structure, etc.
+     * @return the category
+     */
     public String getCategory() { return category;}
 
     public void setOrganismName(String t) { organism_name  =t;} 
