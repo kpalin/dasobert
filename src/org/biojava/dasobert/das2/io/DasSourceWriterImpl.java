@@ -97,7 +97,7 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 			String version = co.getVersion();
 			if (( version != null ) && ( ! version.equals("") ))                
 				xw.attribute("version",version);                
-
+			xw.print(co.toString());
 			xw.closeTag("COORDINATES");            
 		}
 		//System.out.println("before das specific part");
