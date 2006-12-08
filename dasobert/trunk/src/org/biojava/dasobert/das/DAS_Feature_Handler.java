@@ -44,24 +44,55 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 	boolean first_flag ;
 	HashMap feature ;
 	String featurefield ;
-	String characterdata ;
+	StringBuffer characterdata ;
 	String dasCommand ;
 
 	int comeBackLater ;
 
 	int maxFeatures ;
 
+	String segmentId ;
+	String version;
+	
 	public DAS_Feature_Handler() {
 		super();
 
 		features= new ArrayList() ;
 		first_flag = true ;
 		featurefield = "" ;
-		characterdata = "";
+		characterdata = new StringBuffer();
 		dasCommand = "" ;
 		comeBackLater = -1; 
 		maxFeatures = -1;
+		segmentId = "";
+		version   = "";
 	}
+
+	
+	
+	/** get the id information specified int the SEGMENT field of the DAS response
+	 * 
+	 * @return the segmentId or an emtpy string if not available
+	 */
+	public String getSegmentId() {
+		return segmentId;
+	}
+
+	/** get the version informationspecified in the SEGMENT field of the DAS response
+	 * 
+	 * @return the version information of an empty string if not available 
+	 */
+	public String getVersion() {
+		return version;
+	}
+	
+	public boolean isMD5Checksum(){
+		
+		if ((version != null) && (version.length() == 32))
+			return true;
+		return false;
+	}
+
 
 	/** specifies a maximum number of features to be downloaded. if a
 	server returns more, they will be ignored.  default is to load
@@ -91,14 +122,14 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 	void start_feature(String uri, String name, String qName, Attributes atts) {
 
 		if (( maxFeatures > 0 ) && ( features.size() > maxFeatures ) ) {
-			characterdata = "";
+			characterdata = new StringBuffer();
 			return;
 		}
 		feature = new HashMap() ;
 		String id 	= atts.getValue("id");
 		feature.put("id",id);
 		feature.put("dassource",dasCommand);
-		characterdata = "";
+		characterdata = new StringBuffer();
 	}
 
 	void add_featuredata(String uri, String name, String qName) {
@@ -111,19 +142,20 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 
 
 		String data = (String)feature.get(featurefield);
+		String featureText = characterdata.toString();
 		if (data != null){
-			characterdata = data + " " + characterdata;
+			featureText = data + " " + featureText;
 		}
 
-		feature.put(featurefield,characterdata);
+		feature.put(featurefield,featureText);
 		featurefield = "";
-		characterdata = "";
+		characterdata = new StringBuffer();
 	}
 
 	private void addLink(String uri, String name, String qName, Attributes atts) {
 		String href = atts.getValue("href");
 		feature.put("LINK",href);
-		characterdata="";
+		characterdata= new StringBuffer();
 		featurefield = "LINK-TEXT";
 
 	}
@@ -142,17 +174,24 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 				qName.equals("NOTE") ||                
 				qName.equals("SCORE")
 		){
-			characterdata ="";
+			characterdata = new StringBuffer();
 			featurefield = qName ;
+		} else if (qName.equals("SEGMENT")){
+			String id = atts.getValue("id");
+			if (id != null)
+				segmentId = id;
+			
+			String v = atts.getValue("version");
+			if ( v != null)
+				version = v;
+			
+			
 		}
 
 	}
 
-	public void startDocument() {
-	}
 
-	public void endDocument ()	{        
-	}
+
 	public void endElement(String uri, String name, String qName) {
 
 		if ( qName.equals("METHOD") || 
@@ -185,7 +224,7 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 
 		for (int i = start; i < start + length; i++) {
 
-			characterdata += ch[i];
+			characterdata.append(ch[i]);
 		}
 
 	}
