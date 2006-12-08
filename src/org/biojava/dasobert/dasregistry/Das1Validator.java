@@ -54,7 +54,7 @@ public class Das1Validator {
 
 	//private final static String DATASOURCE_NAME = "jdbc/mysql";
 	String validationMessage;
-
+	boolean supportsMD5Checksum;
 	public boolean VALIDATION = false; // DTD validation ..
 
 	private static final int MAX_SEQUENCE_LENGTH = 1000;
@@ -63,7 +63,7 @@ public class Das1Validator {
 	
 	List all_capabilities;
 	public Das1Validator() {
-		
+		supportsMD5Checksum = false;
 		validationMessage = "" ;
 		
 		all_capabilities = new ArrayList();
@@ -71,6 +71,10 @@ public class Das1Validator {
 		for ( int i = 0 ; i< Capabilities.DAS_CAPABILITIES.length; i++ ) {
 			all_capabilities.add(Capabilities.DAS_CAPABILITIES[i]);
 		}
+	}
+	
+	public boolean supportsMD5Checksum(){
+		return supportsMD5Checksum;
 	}
 
 	/** return which errors have been produced during validation...
@@ -413,6 +417,59 @@ public class Das1Validator {
 		return false;
 	}
 
+	
+	/** validate the DSN command for a DAS source.
+	 * 
+	 * @param url the full url of a source, including the name of the das source
+	 * @return flag if the DSN  response is o.k.
+	 */
+	public boolean validateDSN(String url){
+		try {
+			
+			String[] spl = url.split("/");
+			
+			String dsnurl = "";
+			
+			for (int i=0 ; i< spl.length -1;i++){
+				dsnurl+=spl[i]+"/";
+			}
+			
+			
+			URL u = new URL(dsnurl+"dsn");
+			
+			System.out.println(u.toString());
+			
+			// parse dsn ...
+			InputStream dasInStream = open(u); 
+			XMLReader xmlreader = getXMLReader();
+
+			DAS_DSN_Handler cont_handle = new DAS_DSN_Handler() ;
+
+			xmlreader.setContentHandler(cont_handle);
+			xmlreader.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
+			InputSource insource = new InputSource() ;
+			insource.setByteStream(dasInStream);
+			xmlreader.parse(insource);
+			List sources = cont_handle.getDsnSources();
+			
+			System.out.println("got " + sources.size() + " sources listed in DSN");
+			if ( sources.size() > 0 )
+				return true;
+			
+		} catch ( Exception e) {
+			//e.printStackTrace();
+			validationMessage += "<br/>---<br/> contacting " + url+ "types <br/>";
+
+			Throwable cause = e.getCause();
+			if ( cause != null) 
+				validationMessage += cause.toString();
+			else
+				validationMessage += e.toString();
+		}
+		return false;
+		
+	}
+	
 	private boolean validateTypes(String url){
 		try {
 			URL u = new URL(url+"types");
@@ -468,6 +525,10 @@ public class Das1Validator {
 			insource.setByteStream(dasInStream);
 			xmlreader.parse(insource);
 			List features = cont_handle.get_features();
+			
+			if ( cont_handle.isMD5Checksum())
+				supportsMD5Checksum = true;
+			
 			if ( features.size() > 0 ) {
 				return true;
 			} else {
@@ -548,7 +609,7 @@ public class Das1Validator {
 		if ( startInt != -9999)
 			cmd += ":" + startInt + "," + (startInt+50);
 		
-		System.out.println(cmd);
+		//System.out.println(cmd);
 		
 		try {
 			dasUrl = new URL(cmd);
