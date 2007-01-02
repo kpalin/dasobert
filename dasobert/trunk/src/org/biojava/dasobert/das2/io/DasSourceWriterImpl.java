@@ -41,6 +41,8 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 
 	public static final String COORDSYSURI = "http://www.dasregistry.org/dasregistry/coordsys/";
 
+	
+	
 	public DasSourceWriterImpl() {
 		super();
 
@@ -148,8 +150,15 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 				xw.attribute("value",labels[i]) ;
 				xw.closeTag("PROP");
 			}
+									
 
 		}
+		
+		xw.openTag("PROP");
+		xw.attribute("name","leaseTime");
+		//TODO: deal with Date localisation
+		xw.attribute("value",source.getLeaseDate().toString());			
+		xw.closeTag("PROP");
 
 		xw.closeTag("VERSION");
 
