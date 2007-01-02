@@ -69,8 +69,8 @@ import org.biojava.dasobert.dasregistry.DasSource;
  */
 public class ContactRegistry {
     
-    public static final String REGISTRY_LOCATION =  "http://www.dasregistry.org/registry/das1/sources";
-    
+	public static final String REGISTRY_LOCATION =  "http://www.dasregistry.org/das1/sources";
+   
     public ContactRegistry () {        
         
     }
