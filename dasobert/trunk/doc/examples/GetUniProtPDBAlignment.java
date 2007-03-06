@@ -104,7 +104,7 @@ public class GetUniProtPDBAlignment implements AlignmentListener {
 
 	public void newAlignment(AlignmentEvent e) {
 		
-		System.out.println("got alignment " +e.getAlignment());
+		//System.out.println("got alignment " +e.getAlignment());
 		
 		
 		Alignment ali = e.getAlignment();
@@ -118,10 +118,11 @@ public class GetUniProtPDBAlignment implements AlignmentListener {
 			
 			Set s = m.keySet();
 			Iterator iter = s.iterator();
-			while (iter.hasNext()){
+			while (iter.hasNext()){				
 				String key = (String)iter.next();
 				System.out.println("key: " + key + " value:" + m.get(key));
 			}
+			System.out.println("--");
 			
 		}
 		System.exit(0);
