@@ -63,7 +63,6 @@ public class GetUniProtPDBAlignment implements AlignmentListener {
 		Das1Source dasSource = new Das1Source();
 
 		dasSource.setUrl("http://das.sanger.ac.uk/das/msdpdbsp/");
-
 		
 		
 		AlignmentParameters params = new AlignmentParameters();
@@ -76,7 +75,7 @@ public class GetUniProtPDBAlignment implements AlignmentListener {
 
 		thread.start();
 		
-//		 do an (almost) endless loop which is terminated in the StructureListener...
+//		 do an (almost) endless loop which is terminated in the AlignmentListener...
 		
 		try {
 			int i = 0;
