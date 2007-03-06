@@ -74,6 +74,12 @@ public class AlignmentParameters {
     public void setDasSources(SpiceDasSource[] dasSources) {
         this.dasSources = dasSources;
     }
+    
+    public void setDasSource(Das1Source dasSource){
+    	
+    	dasSources = new Das1Source[] {dasSource};
+    	
+    }
 
 
 
