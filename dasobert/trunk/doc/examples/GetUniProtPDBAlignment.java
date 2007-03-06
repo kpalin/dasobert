@@ -1,15 +1,3 @@
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import org.biojava.bio.Annotation;
-import org.biojava.bio.program.das.dasalignment.Alignment;
-import org.biojava.dasobert.das.AlignmentParameters;
-import org.biojava.dasobert.das.AlignmentThread;
-import org.biojava.dasobert.dasregistry.Das1Source;
-import org.biojava.dasobert.eventmodel.AlignmentEvent;
-import org.biojava.dasobert.eventmodel.AlignmentListener;
-
 /*
  *                  BioJava development code
  *
@@ -33,7 +21,20 @@ import org.biojava.dasobert.eventmodel.AlignmentListener;
  * 
  */
 
-/** get the Uniprot to PDB mapping from the mapping server
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import org.biojava.bio.Annotation;
+import org.biojava.bio.program.das.dasalignment.Alignment;
+import org.biojava.dasobert.das.AlignmentParameters;
+import org.biojava.dasobert.das.AlignmentThread;
+import org.biojava.dasobert.dasregistry.Das1Source;
+import org.biojava.dasobert.eventmodel.AlignmentEvent;
+import org.biojava.dasobert.eventmodel.AlignmentListener;
+
+
+/** Example for how to get the Uniprot to PDB mapping from the mapping server
  * 
  */
 public class GetUniProtPDBAlignment implements AlignmentListener {
@@ -47,6 +48,7 @@ public class GetUniProtPDBAlignment implements AlignmentListener {
 
 	public void showExample(){
 		
+		// use the Sax XML parser
 		System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
 		"org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
 		System.setProperty("javax.xml.parsers.SAXParserFactory",
@@ -83,7 +85,7 @@ public class GetUniProtPDBAlignment implements AlignmentListener {
 				System.out.println(i + " seconds have passed");
 				i++;
 				Thread.sleep(1000);
-				if (i > 1000) {
+				if (i > 100) {
 					System.err.println("something went wrong. Perhaps a proxy problem?");
 					System.exit(1);
 				}
