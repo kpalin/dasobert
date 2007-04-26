@@ -51,6 +51,9 @@ extends Das1Source
     Map[] threeDstyles;
     public static String DEFAULT_NICKNAME = "MyDASsource";
     public static String DEFAULT_CAPABILITY = "features";
+    
+    public String displayType = "default";
+    
     public SpiceDasSource() {
         super();
         
@@ -64,7 +67,21 @@ extends Das1Source
         setCapabilities(caps);
     }
     
-    public void loadStylesheet(){
+    
+    
+    public String getDisplayType() {
+		return displayType;
+	}
+
+
+
+	public void setDisplayType(String displayType) {
+		this.displayType = displayType;
+	}
+
+
+
+	public void loadStylesheet(){
         DAS_StylesheetRetrieve dsr = new DAS_StylesheetRetrieve();
         String cmd = getUrl()+"stylesheet";
         URL url = null;
