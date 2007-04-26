@@ -60,14 +60,17 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 			helperurl = "";
 		if ( ! helperurl.equals(""))
 			xw.attribute("doc_href",source.getHelperurl());
-		xw.attribute("description", source.getDescription());
+		String desc = source.getDescription();
+		desc = desc.replaceAll("\n", " ");
+		desc = desc.replaceAll("\r", " ");
+		xw.attribute("description", desc );
 
 		xw.openTag("MAINTAINER");
 		xw.attribute("email",source.getAdminemail());        
 		xw.closeTag("MAINTAINER");
 		//System.out.println("before version");
 		xw.openTag("VERSION");
-		xw.attribute("uri","latest");
+		xw.attribute("uri",source.getId());
 
 		Date d = source.getRegisterDate();
 		if ( d== null)
