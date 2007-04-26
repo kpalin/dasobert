@@ -84,11 +84,25 @@ public class Das1Validator {
 	}
 
 
-
+	/** validate the DAS source that is located at the provided url
+	 * 
+	 * @param url the URL of the DAS source
+	 * @param coords the coordinate systems that should be supported by it
+	 * @param capabilities the capabilities that should be tested.
+	 * @return an array of capabilities that were tested successfully.
+	 */ 
 	public String[] validate(String url, DasCoordinateSystem[] coords, String[] capabilities){
 		return validate(url,coords,capabilities,false);
 	}
-	
+
+	/** validate the DAS source that is located at the provided url
+	 * 
+	 * @param url the URL of the DAS source
+	 * @param coords the coordinate systems that should be supported by it
+	 * @param capabilities the capabilities that should be tested.
+	 * @param verbose flag if the output should be verbose or not
+	 * @return an array of capabilities that were tested successfully.
+	 */ 
 	public String[] validate(String url, DasCoordinateSystem[] coords, String[] capabilities, boolean verbose){
 		validationMessage="";
 		
@@ -353,9 +367,12 @@ public class Das1Validator {
 
 	private boolean validateAlignment(String url, String testcode){
 		String cmd = url+"alignment?query=" ;
+		//System.out.println(cmd + " " + testcode);
 		try {
 			
+			
 			DASAlignmentClient dasc= new DASAlignmentClient(cmd);
+			System.out.println("getting alignments for testcode " + testcode);
 			Alignment[] alignments = dasc.getAlignments(testcode);
 			if ( alignments.length > 0 ) {
 				return true;
