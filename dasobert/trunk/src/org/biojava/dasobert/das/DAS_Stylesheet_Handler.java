@@ -101,6 +101,14 @@ public class DAS_Stylesheet_Handler extends DefaultHandler {
             currentType.put("style","span");
         } else if ( qName.equals("TRIANGLE")){
             currentType.put("style","triangle");
+        } else if ( qName.equals("GRADIENT")){
+            currentType.put("style","gradient");
+        }  else if ( qName.equals("HISTOGRAM")){
+            currentType.put("style","histogram");
+        }  else if ( qName.equals("LINEPLOT")){
+            currentType.put("style","lineplot");
+        }   else if ( qName.equals("TILING")){
+            currentType.put("style","histogram");
         }
         
     }
@@ -177,7 +185,21 @@ public class DAS_Stylesheet_Handler extends DefaultHandler {
             currentType.put("display","ribbons");            
         } else if ( qName.equals("WIDTH")){
             currentType.put("width",chars);
-        }
+        } else if ( qName.equals("COLOR1")){
+            currentType.put("color1",chars);
+        } else if ( qName.equals("COLOR2")){
+            currentType.put("color2",chars);
+        } else if ( qName.equals("COLOR3")){
+            currentType.put("color3",chars);
+        } else if ( qName.equals("MAX")){
+            currentType.put("max",chars);
+        } else if ( qName.equals("MIN")){
+            currentType.put("min",chars);
+        } else if ( qName.equals("MIN")){
+            currentType.put("min",chars);
+        } else if ( qName.equals("STEPS")){
+            currentType.put("steps",chars);
+        } 
         
         else if ( qName.equals("TYPE")){           
             if ( threeDstyle){
