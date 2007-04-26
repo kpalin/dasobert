@@ -53,6 +53,7 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 
 	String segmentId ;
 	String version;
+	String types_id;
 	
 	public DAS_Feature_Handler() {
 		super();
@@ -66,6 +67,7 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 		maxFeatures = -1;
 		segmentId = "";
 		version   = "";
+		types_id = "";
 	}
 
 	
@@ -147,6 +149,13 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 			featureText = data + " " + featureText;
 		}
 
+		if ( qName.equals("TYPE")){
+			if ( featureText.length() < 1)
+				featureText = types_id;
+			types_id = "";
+		}
+		
+		
 		feature.put(featurefield,featureText);
 		featurefield = "";
 		characterdata = new StringBuffer();
@@ -186,6 +195,9 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 				version = v;
 			
 			
+		}
+		if ( qName.equals("TYPE")){
+			types_id = atts.getValue("id");
 		}
 
 	}
