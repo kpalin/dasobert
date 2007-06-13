@@ -29,6 +29,7 @@ import org.xml.sax.Attributes;
 import java.util.ArrayList ;
 import java.util.HashMap ;
 import java.util.List;
+import java.util.Map;
 
 /**
  * a class to parse the response of a DAS - Feature request
@@ -42,7 +43,7 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 	 */
 	List features ;
 	boolean first_flag ;
-	HashMap feature ;
+	Map feature ;
 	String featurefield ;
 	StringBuffer characterdata ;
 	String dasCommand ;
