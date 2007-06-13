@@ -1,3 +1,9 @@
+2007 06 13
+	This release directory is out of date now, please install from source.
+	We are currently in the process of adding a few new DAS commands (e.g. interactions), then we
+	will provide a new release for download from here.
+	
+
 version 0.1 - 20060419
 
 	* extracted DAS communication from SPICE and DAS registration server into the new Dasobert library.
