@@ -50,7 +50,7 @@ public class AlignmentParameters {
     
     public AlignmentParameters() {
         super();
-        dasSources = new SpiceDasSource[0];
+        dasSources = new Das1Source[0];
 
     }
 
@@ -71,7 +71,7 @@ public class AlignmentParameters {
 
 
 
-    public void setDasSources(SpiceDasSource[] dasSources) {
+    public void setDasSources(Das1Source[] dasSources) {
         this.dasSources = dasSources;
     }
     
