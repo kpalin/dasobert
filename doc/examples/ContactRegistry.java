@@ -118,16 +118,16 @@ public class ContactRegistry {
         List das1sources = new ArrayList();
         for (int i=0;i< sources.length;i++){
             DasSource ds = sources[i];
-            if ( ds instanceof Das2Source){
+             if ( ds instanceof Das1Source){
+                das1sources.add((Das1Source)ds);
+            } else if ( ds instanceof Das2Source){
                 Das2Source d2s = (Das2Source)ds;
                 if (d2s.hasDas1Capabilities()){
                     Das1Source d1s = DasSourceConverter.toDas1Source(d2s);
                     das1sources.add(d1s);
                 }
                 
-            } else if ( ds instanceof Das1Source){
-                das1sources.add((Das1Source)ds);
-            }
+            } 
         }
         
         return (Das1Source[])das1sources.toArray(new Das1Source[das1sources.size()]);
