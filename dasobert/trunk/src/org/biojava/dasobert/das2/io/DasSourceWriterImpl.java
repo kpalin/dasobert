@@ -48,6 +48,31 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 
 	}
 
+	
+	public void writeCoordinateSystem(XMLWriter xw, DasCoordinateSystem co) 
+	throws IOException{
+		xw.openTag("COORDINATES");
+		String uri = co.getUniqueId();
+		if (! ( uri.indexOf(COORDSYSURI) > 0) )
+			uri = COORDSYSURI+uri;
+
+		xw.attribute("uri",uri);
+
+		int taxid =  co.getNCBITaxId();
+		if ( taxid != 0) {
+			xw.attribute("taxid",taxid +"" );
+		}
+
+		xw.attribute("source",co.getCategory());
+		xw.attribute("authority",co.getName());
+		xw.attribute("test_range",co.getTestCode());
+		//TODO: get version from name;
+		String version = co.getVersion();
+		if (( version != null ) && ( ! version.equals("") ))                
+			xw.attribute("version",version);                
+		xw.print(co.toString());
+		xw.closeTag("COORDINATES"); 
+	}
 
 	public void writeDasSource(XMLWriter xw, DasSource source) throws IOException {
 		xw.openTag("SOURCE");
@@ -82,28 +107,9 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 
 		for ( int i=0;i< coords.length;i++){
 			DasCoordinateSystem co = coords[i];
+			writeCoordinateSystem(xw, co);
 
-			xw.openTag("COORDINATES");
-			String uri = co.getUniqueId();
-			if (! ( uri.indexOf(COORDSYSURI) > 0) )
-				uri = COORDSYSURI+uri;
-
-			xw.attribute("uri",uri);
-
-			int taxid =  co.getNCBITaxId();
-			if ( taxid != 0) {
-				xw.attribute("taxid",taxid +"" );
-			}
-
-			xw.attribute("source",co.getCategory());
-			xw.attribute("authority",co.getName());
-			xw.attribute("test_range",co.getTestCode());
-			//TODO: get version from name;
-			String version = co.getVersion();
-			if (( version != null ) && ( ! version.equals("") ))                
-				xw.attribute("version",version);                
-			xw.print(co.toString());
-			xw.closeTag("COORDINATES");            
+			           
 		}
 		//System.out.println("before das specific part");
 		if ( source instanceof Das2Source){
