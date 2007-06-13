@@ -22,8 +22,8 @@
  */
 
 import org.biojava.bio.structure.Structure;
-import org.biojava.dasobert.das.SpiceDasSource;
 import org.biojava.dasobert.das.StructureThread;
+import org.biojava.dasobert.dasregistry.Das1Source;
 import org.biojava.dasobert.eventmodel.StructureEvent;
 import org.biojava.dasobert.eventmodel.StructureListener;
 
@@ -55,7 +55,7 @@ public class GetStructure {
 			// first let's create a SpiceDasSource which knows where the
 			// DAS server is located.
 
-			SpiceDasSource dasSource = new SpiceDasSource();
+			Das1Source dasSource = new Das1Source();
 
 			dasSource.setUrl("http://das.sanger.ac.uk/das/structure/");
 
