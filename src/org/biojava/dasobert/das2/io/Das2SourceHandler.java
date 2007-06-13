@@ -25,10 +25,13 @@ package org.biojava.dasobert.das2.io;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.biojava.bio.program.das.dasalignment.DASException;
 import org.biojava.dasobert.das2.Das2Capability;
 import org.biojava.dasobert.das2.Das2CapabilityImpl;
 import org.biojava.dasobert.das2.Das2Source;
 import org.biojava.dasobert.das2.Das2SourceImpl;
+import org.biojava.dasobert.das2.DasSourceConverter;
+import org.biojava.dasobert.dasregistry.Das1Source;
 import org.biojava.dasobert.dasregistry.DasCoordinateSystem;
 import org.biojava.dasobert.dasregistry.DasSource;
 import org.xml.sax.Attributes;
@@ -173,9 +176,17 @@ public class Das2SourceHandler extends DefaultHandler{
 			currentSource.setLabels((String[])labels.toArray(new String[labels.size()]));
 			labels.clear();
 
-			//System.out.println("Das2SourceHandler endElement name " + name + " uri " + uri + " qName " + qName);
-			//System.out.println("Das2SourceHandler adding to source: " + currentSource.getId());    
-			sources.add(currentSource);   
+			if (currentSource.hasDas1Capabilities()){
+				try {
+					Das1Source ds1 = DasSourceConverter.toDas1Source(currentSource);
+					sources.add(ds1);
+				} catch (DASException e){
+					e.printStackTrace();
+					sources.add(currentSource);
+				}
+			} else { 
+				sources.add(currentSource);   
+			}
 			currentSource = new Das2SourceImpl();
 		} 		
 	}
