@@ -93,7 +93,7 @@ public class InteractionThread extends Thread{
      * @return an array containg all found interactions
      * TODO allow multiple query interactors
      */
-    private Interaction[] getInteractions(String id) {
+    public Interaction[] getInteractions(String id) {
     	Interaction[] interactions = new Interaction[0] ;
         Das1Source dasSource = parameters.getDasSource();
         String  interactionCommand = null  ;
@@ -129,6 +129,7 @@ public class InteractionThread extends Thread{
      * @throws IOException
      */
     private Interaction[] retrieveInteractions(String url) throws IOException{
+    	System.out.println("contacting " + url);
     //	System.setProperty("org.xml.sax.driver", "org.apache.xerces.SAXParser");
         URL dasUrl = null;
         try {
