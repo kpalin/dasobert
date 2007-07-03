@@ -1,3 +1,22 @@
+/** 
+ * 
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * 
+ */
+
 package de.mpg.mpiinf.ag3.dasmi.model;
 
 import java.util.Iterator;
@@ -15,7 +34,7 @@ import de.mpg.mpiinf.ag3.dasmi.Constants;
  */
 public class Detail {
 	
-	private List sources = null; // contains the names of all sources that report this interaction
+	private List <String> sources = null; // contains the names of all sources that report this interaction
 	private String property = null;
 	private String value = null;
 	private String propertyCvId = null;
@@ -28,7 +47,7 @@ public class Detail {
 	 *
 	 */
 	public Detail(){
-		this.sources = new ArrayList();
+		this.sources  = new ArrayList<String>();
 		this.property = Constants.INVALID_STRING;
 		this.propertyCvId = Constants.INVALID_STRING;
 		this.value = Constants.INVALID_STRING;
@@ -42,7 +61,7 @@ public class Detail {
 	 * @param value The value of the detail
 	 */
 	public Detail(String property, String value){
-		this.sources = new ArrayList();
+		this.sources = new ArrayList<String>();
 		this.property = property;
 		this.propertyCvId = Constants.INVALID_STRING;
 		this.value = value;
@@ -141,7 +160,7 @@ public class Detail {
 	
 	/**
 	 * 
-	 * @return
+	 * @return list of sources
 	 */
 	public List getSources(){
 		return this.sources;
@@ -151,7 +170,7 @@ public class Detail {
 	 * 
 	 * @param sources
 	 */
-	public void setSources(List sources){
+	public void setSources(List <String> sources){
 		this.sources = sources;
 	}
 	
@@ -181,7 +200,7 @@ public class Detail {
 	/**
 	 * 
 	 * @param comp
-	 * @return
+	 * @return flag
 	 */
 	public boolean isEqual(Detail comp){
 		if (comp.getProperty().equalsIgnoreCase(this.property)
