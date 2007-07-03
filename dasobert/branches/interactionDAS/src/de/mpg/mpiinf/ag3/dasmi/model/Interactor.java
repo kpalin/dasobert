@@ -1,3 +1,21 @@
+/** 
+ * 
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * 
+ */
 package de.mpg.mpiinf.ag3.dasmi.model;
 
 import java.util.List;
@@ -25,7 +43,7 @@ public class Interactor {
 	private String description = null;
 	
 	private Sequence sequence = null;
-	private List details = new ArrayList();
+	private List <Detail>details = new ArrayList<Detail>();
 	
 	/**
 	 * Basic initialization
@@ -69,7 +87,7 @@ public class Interactor {
 	/**
 	 * @param details the details to set
 	 */
-	public void setDetails(List details) {
+	public void setDetails(List<Detail> details) {
 		this.details = details;
 	}
 	
@@ -213,9 +231,15 @@ public class Interactor {
 	 * Checks whether two interactors are equal, ie. have the same accession, source,
 	 * version and coord sys
 	 * @param check The interactor to compare with
+	 * @return flag
 	 * @returntrue if both interactors are the same, false otherwise
 	 */
 	public boolean equals(Interactor check){
+		//TODO: if  the equals method is implemented
+		// one also should implement the hashCode method
+		// see also http://www.geocities.com/technofundo/tech/java/equalhash.html
+		
+		
 		if (this.dbAccessionId == check.dbAccessionId &&
 			this.dbCoordSys == check.dbCoordSys &&
 			this.dbSource == check.dbSource &&
@@ -250,11 +274,14 @@ public class Interactor {
 	
 	 /**
      * Hashes the properties of the interactor.
-     * @param inter
      * @return the hased string
      */
     public String hashify(){
+    	//TODO: should this actually be the hashCode method? AP
+    	// then one should return hash.hashCode() ...
+    	
     	String hash = this.dbAccessionId + this.dbSource + this.dbVersion;
+    	
     	return hash.toLowerCase();
     }
 	

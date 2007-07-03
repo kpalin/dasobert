@@ -1,3 +1,22 @@
+/** 
+ * 
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * 
+ */
+
 package de.mpg.mpiinf.ag3.dasmi.model;
 
 import java.util.Iterator;
@@ -14,7 +33,7 @@ import de.mpg.mpiinf.ag3.dasmi.Constants;
  */
 public class Interaction {
 	
-	private List sources = null; // contains the names of all sources that report this interaction
+	private List <String> sources = null; // contains the names of all sources that report this interaction
 
 	private int id;
 	private String name = null;
@@ -22,8 +41,8 @@ public class Interaction {
 	private String dbSourceCvId = null;
 	private String dbVersion = null;
 	private String dbAccessionId = null;
-	private List participants = new ArrayList();
-	private List details = new ArrayList();
+	private List <Participant> participants = new ArrayList<Participant>();
+	private List <Detail> details = new ArrayList<Detail>();
 	
 	
 	/**
@@ -32,7 +51,7 @@ public class Interaction {
 	 */
 	public Interaction(){
 		this.id = Constants.INVALID_INT;
-		this.sources = new ArrayList();
+		this.sources = new ArrayList <String>();
 		this.name = Constants.INVALID_STRING;
 		this.dbSource = Constants.INVALID_STRING;
 		this.dbSourceCvId = Constants.INVALID_STRING;
@@ -132,7 +151,7 @@ public class Interaction {
 	/**
 	 * @param details the details to set
 	 */
-	public void setDetails(List details) {
+	public void setDetails(List <Detail> details) {
 		this.details = details;
 	}
 	
@@ -155,16 +174,16 @@ public class Interaction {
 	
 	
 	/**
-	 * @param interactors the interactors to set
+	 * @param participants the interactors to set
 	 */
-	public void setParticipants(List participants) {
+	public void setParticipants(List<Participant> participants) {
 		this.participants = participants;
 	}
 	
 	
 	/**
 	 * Adds an interactor ref to the list
-	 * @param ref
+	 * @param participant 
 	 */
 	public void addParticipant(Participant participant){
 		this.participants.add(participant);
@@ -196,7 +215,7 @@ public class Interaction {
 	/**
 	 * @param sources the sources to set
 	 */
-	public void setSources(List sources){
+	public void setSources(List<String> sources){
 		this.sources = sources;
 	}
 	
