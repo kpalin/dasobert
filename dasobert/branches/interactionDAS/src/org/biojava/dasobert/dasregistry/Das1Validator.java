@@ -45,6 +45,8 @@ import org.biojava.bio.structure.Structure;
 import org.biojava.bio.structure.Chain;
 import org.biojava.dasobert.das.*;
 
+import de.mpg.mpiinf.ag3.dasmi.model.Interaction;
+
 
 
 public class Das1Validator {
@@ -61,12 +63,12 @@ public class Das1Validator {
 	private static final int MAX_NR_FEATURES     = 10;
 	
 	
-	List all_capabilities;
+	List<String> all_capabilities;
 	public Das1Validator() {
 		supportsMD5Checksum = false;
 		validationMessage = "" ;
 		
-		all_capabilities = new ArrayList();
+		all_capabilities = new ArrayList<String>();
 		
 		for ( int i = 0 ; i< Capabilities.DAS_CAPABILITIES.length; i++ ) {
 			all_capabilities.add(Capabilities.DAS_CAPABILITIES[i]);
@@ -118,7 +120,7 @@ public class Das1Validator {
 		
 		// a list containing all valid DAS requests ...
 		
-		List lst =new ArrayList();
+		List<String> lst =new ArrayList<String>();
 
 		char lastChar = url.charAt(url.length()-1);
 		if ( lastChar  != '/')
@@ -135,7 +137,7 @@ public class Das1Validator {
 			if ( all_capabilities.contains(capability)) {
 				//System.out.println("testing " + capability);
 
-				if ( capability.equals("sequence")) {
+				if ( capability.equals(Capabilities.SEQUENCE)) {
 					boolean sequenceok = true;
 					for ( int i=0;i< coords.length;i++){                        
 						DasCoordinateSystem ds =coords[i];
@@ -150,7 +152,7 @@ public class Das1Validator {
 					if ( sequenceok) 
 						lst.add(capability);
 				}
-				else if ( capability.equals("structure")) {
+				else if ( capability.equals(Capabilities.STRUCTURE)) {
 					boolean structureok = true;
 					for ( int i=0;i< coords.length;i++){                        
 						DasCoordinateSystem ds =coords[i];
@@ -166,7 +168,7 @@ public class Das1Validator {
 					if (structureok)
 						lst.add(capability);
 				}
-				else if ( capability.equals("features")){
+				else if ( capability.equals(Capabilities.FEATURES)){
 					boolean featureok = true;
 					for ( int i=0;i< coords.length;i++){                        
 						DasCoordinateSystem ds =coords[i];
@@ -180,8 +182,22 @@ public class Das1Validator {
 					} 
 					if ( featureok) 
 						lst.add(capability);
+				} else if ( capability.equals(Capabilities.INTERACTION)){
+					boolean interactionok = true;
+					for ( int i=0;i< coords.length;i++){                        
+						DasCoordinateSystem ds =coords[i];
+						String testcode = ds.getTestCode();
+
+
+						if (! validateInteraction(url, testcode))
+							interactionok = false;
+						if ( verbose)
+							System.out.println(validationMessage);
+					} 
+					if ( interactionok) 
+						lst.add(capability);
 				}
-				else if ( capability.equals("alignment")){
+				else if ( capability.equals(Capabilities.ALIGNMENT)){
 					boolean alignmentok = true;
 					for ( int i=0;i< coords.length;i++){                        
 						DasCoordinateSystem ds =coords[i];
@@ -195,7 +211,7 @@ public class Das1Validator {
 					}    
 					if (alignmentok)
 						lst.add(capability);
-				} else if ( capability.equals("types")){
+				} else if ( capability.equals(Capabilities.TYPES)){
 					if ( validateTypes(url))
 						lst.add(capability);
 					if ( verbose)
@@ -203,21 +219,21 @@ public class Das1Validator {
 					//else
 						//    error =true ;
 
-				} else if ( capability.equals("entry_points")) {
+				} else if ( capability.equals(Capabilities.ENTRY_POINTS)) {
 					if ( validateEntry_Points(url))
 						lst.add(capability);
 					if ( verbose)
 						System.out.println(validationMessage);
 					//else 
 						//    error = true;
-				} else if ( capability.equals("stylesheet")) {
+				} else if ( capability.equals(Capabilities.STYLESHEET)) {
 					if ( validateStylesheet(url))
 						lst.add(capability);
 					if ( verbose)
 						System.out.println(validationMessage);
 					//} else 
 						//    error = true;
-				} else if ( capability.equals("dna")){
+				} else if ( capability.equals(Capabilities.DNA)){
 					boolean dnaok = true;
 					for ( int i=0;i< coords.length;i++){                        
 						DasCoordinateSystem ds =coords[i];
@@ -487,6 +503,8 @@ public class Das1Validator {
 		
 	}
 	
+	
+	
 	private boolean validateTypes(String url){
 		try {
 			URL u = new URL(url+"types");
@@ -524,6 +542,21 @@ public class Das1Validator {
 		return false;
 	}
 
+	private boolean validateInteraction(String url, String testcode){
+		Das1Source source = new Das1Source();
+		source.setUrl(url);
+		InteractionParameters params = new InteractionParameters();
+		params.setDasSource(source);
+		params.setQuery(testcode);
+		InteractionThread thread = new InteractionThread(params);
+		
+		
+		// TODO: how can I do  multiple threads with JUnit??
+		Interaction[] interA = thread.getInteractions(testcode);
+		if ( interA.length > 0)
+			return true;
+		return false;
+	}
 
 	private boolean validateFeatures(String url, String testcode){
 		try {

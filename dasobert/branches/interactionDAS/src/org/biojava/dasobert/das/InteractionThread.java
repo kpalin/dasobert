@@ -107,6 +107,7 @@ public class InteractionThread extends Thread{
         //protect the command
         try {
         	interactionCommand = url +  URLEncoder.encode(interactionCommand,"UTF-8");
+        	System.out.println(interactionCommand);
         } catch (Exception e){
             e.printStackTrace();
         }
