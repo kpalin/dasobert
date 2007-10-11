@@ -24,6 +24,7 @@
 package org.biojava.dasobert.dasregistry;
 
 import java.util.Date ;
+import java.util.Properties;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -39,19 +40,19 @@ import org.biojava.utils.xml.PrettyXMLWriter;
  */
 
 public class Das1Source implements DasSource {
-	String url                ;
-	protected String nickname           ;
-	String adminemail         ;
-	String description        ;
-	DasCoordinateSystem[] coordinateSystem ;
-	String[] capabilities     ;
-	String[] labels           ;
-	String helperurl          ;    
-	Date   registerDate       ;
-	Date   leaseDate          ;
-	String id                 ;
+	String url;
+	protected String nickname;
+	String adminemail;
+	String description ;
+	DasCoordinateSystem[] coordinateSystem;
+	String[] capabilities;
+	String[] labels;
+	String helperurl;    
+	Date   registerDate; 
+	Date   leaseDate;
+	String id;
 	boolean local;
-
+	Properties properties;
 	boolean alertAdmin;
 
 	public static String EMPTY_ID = "UNK:-1" ;
@@ -72,6 +73,7 @@ public class Das1Source implements DasSource {
 		leaseDate        = new Date() ;
 		helperurl        = "";	
 		local=true;
+		properties = new Properties();
 	}
 
 
@@ -291,5 +293,12 @@ public class Das1Source implements DasSource {
 	public boolean getAlertAdmin() {
 		return alertAdmin;
 	}
+	public Properties getProperties() {
+		return properties;
+	}
+	public void setProperties(Properties properties) {
+		this.properties = properties;
+	}
+	
 
 }
