@@ -23,7 +23,7 @@ import de.mpg.mpiinf.ag3.dasmi.Constants;
 /**
  * Specifies a range for a positional feature, such as a binding site
  * 
- * @author Hagen Blankenburg
+ * @author Hagen Blankenburg Max Planck Institute for Informatics
  *
  */
 public class Range {

@@ -27,7 +27,7 @@ import de.mpg.mpiinf.ag3.dasmi.Constants;
  * The interactor, i.e. a protein, domain etc. Contains fields to describe the basic entities of
  * an interactor, like name or database accesion, and optional details for further description
  * 
- * @author Hagen Blankenburg
+ * @author Hagen Blankenburg Max Planck Institute for Informatics
  *
  */
 public class Interactor {

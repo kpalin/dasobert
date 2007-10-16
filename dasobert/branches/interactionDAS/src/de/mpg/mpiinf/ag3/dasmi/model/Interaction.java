@@ -28,7 +28,7 @@ import de.mpg.mpiinf.ag3.dasmi.Constants;
 /**
  * An interaction element with several participants and futher interaction details
  * 
- * @author Hagen Blankenburg
+ * @author Hagen Blankenburg Max Planck Institute for Informatics
  *
  */
 public class Interaction {

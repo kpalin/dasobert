@@ -25,7 +25,7 @@ import java.util.List;
  * An interactor taking part in a certain interaction is called a participant. This distinction is 
  * necessary to give the interactor interaction specific properties, like experimental role
  * 
- * @author Hagen Blankenburg
+ * @author Hagen Blankenburg Max Planck Institute for Informatics
  *
  */
 public class Participant {

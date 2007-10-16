@@ -29,7 +29,7 @@ import de.mpg.mpiinf.ag3.dasmi.Constants;
  * A detail element, contains additional information on an interactor (e.g. domains), 
  * an interaction (e.g. confidence score) or a participant (e.g. experimental role)
  * 
- * @author Hagen Blankenburg
+ * @author Hagen Blankenburg Max Planck Institute for Informatics
  *
  */
 public class Detail {

@@ -23,7 +23,7 @@ import de.mpg.mpiinf.ag3.dasmi.Constants;
 /**
  * Class representing a sequence. The type of the sequence is determined by the interactor type.
  * 
- * @author Hagen Blankenburg
+ * @author Hagen Blankenburg Max Planck Institute for Informatics
  *
  */
 public class Sequence {
