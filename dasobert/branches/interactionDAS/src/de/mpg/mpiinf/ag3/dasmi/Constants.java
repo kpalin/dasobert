@@ -22,7 +22,7 @@ package de.mpg.mpiinf.ag3.dasmi;
 
 /**
  * Constants used by the the web interface and the dasobert parsing method
- * @author Hagen Blankenburg
+ * @author Hagen Blankenburg Max Planck Institute for Informatics
  *
  */
 public class Constants {
