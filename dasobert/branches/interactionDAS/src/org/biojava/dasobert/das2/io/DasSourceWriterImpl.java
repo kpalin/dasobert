@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Date;
-import java.util.Properties;
+import java.util.Map;
 import java.util.Set;
 
 import org.biojava.dasobert.das.DasTimeFormat;
@@ -44,14 +44,14 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 
 	public static final String COORDSYSURI = "http://www.dasregistry.org/dasregistry/coordsys/";
 
-	
-	
+
+
 	public DasSourceWriterImpl() {
 		super();
 
 	}
 
-	
+
 	public void writeCoordinateSystem(XMLWriter xw, DasCoordinateSystem co) 
 	throws IOException{
 		xw.openTag("COORDINATES");
@@ -112,7 +112,7 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 			DasCoordinateSystem co = coords[i];
 			writeCoordinateSystem(xw, co);
 
-			           
+
 		}
 		//System.out.println("before das specific part");
 		if ( source instanceof Das2Source){
@@ -146,50 +146,39 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 		if ( labels != null )  {
 
 			for ( int i=0;i< labels.length;i++) {
-				// the spec actually says PROP, but 
-				// there was a bug in the DAS/2 validation server, 
-				// so PROPERTY was "valid" for many months.
-				// TODO: remove PROPERTY
-				/*xw.openTag("PROPERTY");
-				xw.attribute("name",Das2SourceHandler.LABELPROPERTY) ;
-				xw.attribute("value",labels[i]) ;
-				xw.closeTag("PROPERTY");
-				*/
 				
-				// THE SPEC wants properties to be called PROP
 				xw.openTag("PROP");
 				xw.attribute("name",Das2SourceHandler.LABELPROPERTY) ;
 				xw.attribute("value",labels[i]) ;
 				xw.closeTag("PROP");
 			}
-									
+
 
 		}
-		
+
 		xw.openTag("PROP");
 		xw.attribute("name","leaseTime");
-		
+
 		xw.attribute("value",DasTimeFormat.toDASString(source.getLeaseDate()));			
 		xw.closeTag("PROP");
 
-		Properties props = source.getProperties();
-		
-		Set<Object> keys = props.keySet();
-		for (Object key: keys){
-			if ( key instanceof String){
-				String k = (String)key;
-				String prop = props.getProperty(k);
-				xw.openTag("PROP");
-				xw.attribute("name",k);
-				
-				xw.attribute("value",prop);			
-				xw.closeTag("PROP");
-			}
-			
+		Map<String, String> props = source.getProperties();
+
+		Set<String> keys = props.keySet();
+		for (String key: keys){
+
+			String prop = props.get(key);
+			xw.openTag("PROP");
+			xw.attribute("name",key);
+
+			xw.attribute("value",prop);			
+			xw.closeTag("PROP");
+
+
 		}
-		
-		
-		
+
+
+
 		xw.closeTag("VERSION");
 
 		xw.closeTag("SOURCE");  
