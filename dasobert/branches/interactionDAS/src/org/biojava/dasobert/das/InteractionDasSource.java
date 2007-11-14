@@ -1,4 +1,4 @@
-/** 
+/*
  * 
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  * 
  */
-
 package org.biojava.dasobert.das ;
 
 import org.biojava.dasobert.dasregistry.Das1Source;
@@ -35,7 +34,8 @@ import java.text.SimpleDateFormat;
  */
 public class InteractionDasSource extends Das1Source{
     private boolean isActive ; // if the user included this source or not ..
-    private boolean isCompatible; 
+    private boolean isCompatible;
+    private boolean isConverted; // if the query has been converted from e.g. uniprot to entrez
     private boolean registered ; // a flag to trace if source comes from registry or from user config
     public static String DEFAULT_NICKNAME = "ownSource";
     public static String DEFAULT_CAPABILITY = "interaction";
@@ -48,6 +48,7 @@ public class InteractionDasSource extends Das1Source{
     public InteractionDasSource() {
     	super();
         isCompatible = true;
+        isConverted = false;
         isActive = true;  // default source is actived and used .
         registered = true; // default true = source comes from registry
         setNickname(DEFAULT_NICKNAME);
@@ -76,10 +77,23 @@ public class InteractionDasSource extends Das1Source{
     
     /**
      * Checks whether the source is compatible to the coordinate system passed over
+     * @param queryCoordSys The coordinate system of the query
      * @return True if the coordinate system matches, false otherwise
      */
     public boolean getIsCompatible(){
     	return this.isCompatible;
+    }
+    
+    public void setIsCompatible(boolean val){
+    	this.isCompatible = val;
+    }
+    
+    public boolean getIsConverted(){
+    	return this.isConverted;
+    }
+    
+    public void setIsConverted(boolean conv){
+    	this.isConverted = conv;
     }
     
     /**
