@@ -46,7 +46,7 @@ import javax.xml.parsers.ParserConfigurationException;
  * The interaction thread queries an interaction DAS source and parses its results. 
  * Depending on the outcome of the thread listener methods will be triggered
  * 
- * @author Hagen Blankenburg
+ * @author Hagen Blankenburg, Max Planck Institute for Informatics
  *
  */
 public class InteractionThread extends Thread{

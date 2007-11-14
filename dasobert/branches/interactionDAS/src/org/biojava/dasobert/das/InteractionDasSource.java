@@ -29,7 +29,7 @@ import java.text.SimpleDateFormat;
 
 /**
  * Extends the normal DAS source with some interaction specific things
- * @author Hagen Blankenburg
+ * @author Hagen Blankenburg, Max Planck Institute for Informatics
  *
  */
 public class InteractionDasSource extends Das1Source{

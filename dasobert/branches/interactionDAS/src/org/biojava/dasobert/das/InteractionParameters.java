@@ -22,7 +22,7 @@ import org.biojava.dasobert.dasregistry.DasCoordinateSystem;
 
 /** 
  * 
- * @author Hagen Blankenburg
+ * @author Hagen Blankenburg, Max Planck Institute for Informatics
  *
  */
 public class InteractionParameters {
