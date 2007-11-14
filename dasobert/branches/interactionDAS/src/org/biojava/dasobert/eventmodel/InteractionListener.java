@@ -1,4 +1,4 @@
-ppackage org.biojava.dasobert.eventmodel;
+package org.biojava.dasobert.eventmodel;
 import org.biojava.dasobert.das.InteractionParameters;
 
 /**
