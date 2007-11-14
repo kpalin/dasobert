@@ -156,8 +156,13 @@ public class Das1Validator {
 					boolean structureok = true;
 					for ( int i=0;i< coords.length;i++){                        
 						DasCoordinateSystem ds =coords[i];
+						
+						// don't test for structure if this can't work...
+						if (! ds.getCategory().equals("Protein Structure"))
+							continue;
+						
 						String testcode = ds.getTestCode();
-
+						
 
 						if (! validateStructure(url,testcode)) 
 							structureok = false;
@@ -609,7 +614,7 @@ public class Das1Validator {
 			Structure struc = dasc.getStructureById(testcode);
 			//System.out.println(struc);
 			Chain c = struc.getChain(0);
-			if ( c.getLength() > 0 ) {
+			if ( c.getAtomLength() > 0 ) {
 				return true;
 			} else {
 				validationMessage += "<br/>---<br/>contacting " + cmd + testcode+"<br/>";
