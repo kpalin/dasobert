@@ -32,7 +32,7 @@ import org.biojava.dasobert.dasregistry.DasSource;
 
 public class ValidateSourcesCmd {
 	public static final String SOURCES_LOCATION =  "http://dasmi.bioinf.mpi-inf.mpg.de/sources" ;
-	//"http://localhost:8088/SangerDASSources/sources";
+
 
 	public static void main(String[] args){
 		try {
@@ -65,9 +65,9 @@ public class ValidateSourcesCmd {
 				if ( okCaps.length != testCaps.length){
 					System.err.println("!!! DAS source " + source.getNickname() +" does not validate");
 					System.err.println(validator.getValidationMessage());
-					System.exit(0);
+					
 				} else {
-					System.out.println(" Excellent server is fine! ***");
+					System.out.println(" Excellent, server is fine! ***");
 				}
 
 
