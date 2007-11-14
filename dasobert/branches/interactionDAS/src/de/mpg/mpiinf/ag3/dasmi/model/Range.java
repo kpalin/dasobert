@@ -1,4 +1,4 @@
-/** 
+/*
  * 
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,7 @@ import de.mpg.mpiinf.ag3.dasmi.Constants;
 /**
  * Specifies a range for a positional feature, such as a binding site
  * 
- * @author Hagen Blankenburg Max Planck Institute for Informatics
+ * @author Hagen Blankenburg, Max Planck Institute for Informatics
  *
  */
 public class Range {

@@ -1,4 +1,4 @@
-/** 
+/* 
  * 
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -27,7 +27,7 @@ import de.mpg.mpiinf.ag3.dasmi.Constants;
  * The interactor, i.e. a protein, domain etc. Contains fields to describe the basic entities of
  * an interactor, like name or database accesion, and optional details for further description
  * 
- * @author Hagen Blankenburg Max Planck Institute for Informatics
+ * @author Hagen Blankenburg, Max Planck Institute for Informatics
  *
  */
 public class Interactor {

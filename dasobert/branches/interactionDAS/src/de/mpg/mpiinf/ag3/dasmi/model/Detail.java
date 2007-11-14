@@ -1,4 +1,4 @@
-/** 
+/*
  * 
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  * 
  */
-
 package de.mpg.mpiinf.ag3.dasmi.model;
 
 import java.util.Iterator;
@@ -29,12 +28,12 @@ import de.mpg.mpiinf.ag3.dasmi.Constants;
  * A detail element, contains additional information on an interactor (e.g. domains), 
  * an interaction (e.g. confidence score) or a participant (e.g. experimental role)
  * 
- * @author Hagen Blankenburg Max Planck Institute for Informatics
+ * @author Hagen Blankenburg, Max Planck Institute for Informatics
  *
  */
 public class Detail {
 	
-	private List <String> sources = null; // contains the names of all sources that report this interaction
+	private List<String> sources = null; // contains the names of all sources that report this interaction
 	private String property = null;
 	private String value = null;
 	private String propertyCvId = null;
@@ -47,14 +46,13 @@ public class Detail {
 	 *
 	 */
 	public Detail(){
-		this.sources  = new ArrayList<String>();
+		this.sources = new ArrayList<String>();
 		this.property = Constants.INVALID_STRING;
 		this.propertyCvId = Constants.INVALID_STRING;
 		this.value = Constants.INVALID_STRING;
 		this.valueCvId = Constants.INVALID_STRING;
 	}
 	
-
 	/**
 	 * A new detail with the property value combination
 	 * @param property The property of the detail
@@ -68,15 +66,12 @@ public class Detail {
 		this.valueCvId = Constants.INVALID_STRING;
 	}
 
-
-
 	/**
 	 * @return the property
 	 */
 	public String getProperty() {
 		return property;
 	}
-
 
 	/**
 	 * @param property the property to set
@@ -85,16 +80,12 @@ public class Detail {
 		this.property = property;
 	}
 
-
-
 	/**
 	 * @return the propertyCvId
 	 */
 	public String getPropertyCvId() {
 		return propertyCvId;
 	}
-
-
 
 	/**
 	 * @param propertyCvId the propertyCvId to set
@@ -103,16 +94,12 @@ public class Detail {
 		this.propertyCvId = propertyCvId;
 	}
 
-
-
 	/**
 	 * @return the range
 	 */
 	public Range getRange() {
 		return range;
 	}
-
-
 
 	/**
 	 * @param range the range to set
@@ -121,16 +108,12 @@ public class Detail {
 		this.range = range;
 	}
 
-
-
 	/**
 	 * @return the value
 	 */
 	public String getValue() {
 		return value;
 	}
-
-
 
 	/**
 	 * @param value the value to set
@@ -139,8 +122,6 @@ public class Detail {
 		this.value = value;
 	}
 
-
-
 	/**
 	 * @return the valueCvId
 	 */
@@ -148,21 +129,18 @@ public class Detail {
 		return valueCvId;
 	}
 
-
-
 	/**
 	 * @param valueCvId the valueCvId to set
 	 */
 	public void setValueCvId(String valueCvId) {
 		this.valueCvId = valueCvId;
 	}
-	
-	
+		
 	/**
 	 * 
-	 * @return list of sources
+	 * @return
 	 */
-	public List getSources(){
+	public List<String> getSources(){
 		return this.sources;
 	}
 	
@@ -170,14 +148,13 @@ public class Detail {
 	 * 
 	 * @param sources
 	 */
-	public void setSources(List <String> sources){
+	public void setSources(List<String> sources){
 		this.sources = sources;
 	}
-	
-	
+		
 	/**
-	 * 
-	 * @param sourceId
+	 * Adds the id of a source to the sources list
+	 * @param sourceId The id of the source to be added
 	 */
 	public void addSource(String sourceId){
 		sourceId = sourceId.toLowerCase();
@@ -185,22 +162,22 @@ public class Detail {
 			this.sources.add(sourceId);
 		}
 	}
-	
-	
+		
 	/**
-	 * 
-	 * @param sourceId
+	 * Removes the source with the attributed id from the
+	 * source list. 
+	 * @param sourceId id of the source that should be removed
 	 */
 	public void removeSource(String sourceId){
 		sourceId = sourceId.toLowerCase();
 		this.sources.remove(sourceId);	
 	}
-	
-	
+		
 	/**
-	 * 
-	 * @param comp
-	 * @return flag
+	 * Determinds if two details are the same, i.e., have the same 
+	 * property and value. 
+	 * @param comp The Detail to compare with
+	 * @return True if they are equal, false otherwise
 	 */
 	public boolean isEqual(Detail comp){
 		if (comp.getProperty().equalsIgnoreCase(this.property)
@@ -216,18 +193,18 @@ public class Detail {
 	 * @return True if the source is already contained, false otherwise
 	 */
 	public boolean containsSource(String source){
-		Iterator iter = sources.iterator();
+		Iterator<String> iter = sources.iterator();
 		while (iter.hasNext()){
-			String s = (String) iter.next();
+			String s = iter.next();
 			if (source.equals(s)){
 				return true;
 			}
 		}
 		return false;
 	}
-	
+		
 	/**
-	 * Simple to string function
+	 * Simple printout function
 	 */
 	public String toString(){
 		String help = "Property: " + this.property + 

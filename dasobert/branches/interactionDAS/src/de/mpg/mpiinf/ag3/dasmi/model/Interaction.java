@@ -1,4 +1,4 @@
-/** 
+/* 
  * 
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  * 
  */
-
 package de.mpg.mpiinf.ag3.dasmi.model;
 
 import java.util.Iterator;
@@ -28,12 +27,12 @@ import de.mpg.mpiinf.ag3.dasmi.Constants;
 /**
  * An interaction element with several participants and futher interaction details
  * 
- * @author Hagen Blankenburg Max Planck Institute for Informatics
+ * @author Hagen Blankenburg, Max Planck Institute for Informatics
  *
  */
 public class Interaction {
 	
-	private List <String> sources = null; // contains the names of all sources that report this interaction
+	private List<String> sources = null; // contains the names of all sources that report this interaction
 
 	private int id;
 	private String name = null;
@@ -41,8 +40,8 @@ public class Interaction {
 	private String dbSourceCvId = null;
 	private String dbVersion = null;
 	private String dbAccessionId = null;
-	private List <Participant> participants = new ArrayList<Participant>();
-	private List <Detail> details = new ArrayList<Detail>();
+	private List<Participant> participants = new ArrayList<Participant>();
+	private List<Detail> details = new ArrayList<Detail>();
 	
 	
 	/**
@@ -51,7 +50,7 @@ public class Interaction {
 	 */
 	public Interaction(){
 		this.id = Constants.INVALID_INT;
-		this.sources = new ArrayList <String>();
+		this.sources = new ArrayList<String>();
 		this.name = Constants.INVALID_STRING;
 		this.dbSource = Constants.INVALID_STRING;
 		this.dbSourceCvId = Constants.INVALID_STRING;
@@ -143,7 +142,7 @@ public class Interaction {
 	/**
 	 * @return the details
 	 */
-	public List getDetails() {
+	public List<Detail> getDetails() {
 		return details;
 	}
 	
@@ -151,7 +150,7 @@ public class Interaction {
 	/**
 	 * @param details the details to set
 	 */
-	public void setDetails(List <Detail> details) {
+	public void setDetails(List<Detail> details) {
 		this.details = details;
 	}
 	
@@ -168,13 +167,13 @@ public class Interaction {
 	/**
 	 * @return the interactors
 	 */
-	public List getParticipants() {
+	public List<Participant> getParticipants() {
 		return participants;
 	}
 	
 	
 	/**
-	 * @param participants the interactors to set
+	 * @param interactors the interactors to set
 	 */
 	public void setParticipants(List<Participant> participants) {
 		this.participants = participants;
@@ -183,7 +182,7 @@ public class Interaction {
 	
 	/**
 	 * Adds an interactor ref to the list
-	 * @param participant 
+	 * @param ref
 	 */
 	public void addParticipant(Participant participant){
 		this.participants.add(participant);
@@ -208,7 +207,7 @@ public class Interaction {
 	 * 
 	 * @return the sources
 	 */
-	public List getSources(){
+	public List<String> getSources(){
 		return this.sources;
 	}
 	
@@ -246,9 +245,9 @@ public class Interaction {
 	 */
 	public boolean containsSource(String sourceId){
 		sourceId = sourceId.toLowerCase();
-		Iterator iter = sources.iterator();
+		Iterator<String> iter = sources.iterator();
 		while (iter.hasNext()){
-			String s = (String) iter.next();
+			String s = iter.next();
 			if (sourceId.equals(s)){
 				return true;
 			}

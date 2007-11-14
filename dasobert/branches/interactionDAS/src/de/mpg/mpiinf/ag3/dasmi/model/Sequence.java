@@ -1,4 +1,4 @@
-/** 
+/*
  * 
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -23,7 +23,7 @@ import de.mpg.mpiinf.ag3.dasmi.Constants;
 /**
  * Class representing a sequence. The type of the sequence is determined by the interactor type.
  * 
- * @author Hagen Blankenburg Max Planck Institute for Informatics
+ * @author Hagen Blankenburg, Max Planck Institute for Informatics
  *
  */
 public class Sequence {
