@@ -1,4 +1,4 @@
-/** 
+/*
  * 
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  * 
  */
-
 package org.biojava.dasobert.das;
 
 import org.xml.sax.helpers.DefaultHandler;
@@ -36,7 +35,7 @@ import de.mpg.mpiinf.ag3.dasmi.model.Participant;
  * Class parsing the interaction DAS XML response. Converts the XML content into
  * java objects based on the DASMI model
  * 
- * @author Hagen Blankenburg
+ * @author Hagen Blankenburg, Max Planck Institute for Informatics
  * 
  */
 public class DASInteractionXMLParser extends DefaultHandler {
