@@ -1,4 +1,4 @@
-/** 
+/*
  * 
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,6 @@
  */
 package org.biojava.dasobert.das;
 
-import org.biojava.dasobert.dasregistry.Das1Source;
 import org.biojava.dasobert.dasregistry.DasCoordinateSystem;
 
 /** 
@@ -27,9 +26,10 @@ import org.biojava.dasobert.dasregistry.DasCoordinateSystem;
  *
  */
 public class InteractionParameters {
-    private String query = null;
+    private String[] queries = null;
+    private String[] origQueries = null;
     private DasCoordinateSystem queryCoordinateSystem = null;
-    private Das1Source dasSource = null;
+    private InteractionDasSource dasSource = null;
     private boolean qmSource = false;
         
     /**
@@ -45,8 +45,8 @@ public class InteractionParameters {
      * 
      * @return The source associated with an interaction thread 
      */
-    public Das1Source getDasSource() {
-        return dasSource;
+    public InteractionDasSource getDasSource() {
+        return this.dasSource;
     }
 
     
@@ -54,7 +54,7 @@ public class InteractionParameters {
      * 
      * @param dasSource The source to set
      */
-    public void setDasSource(Das1Source dasSource) {
+    public void setDasSource(InteractionDasSource dasSource) {
         this.dasSource = dasSource;
     }
 
@@ -62,16 +62,32 @@ public class InteractionParameters {
      * 
      * @return The query
      */
-    public String getQuery() {
-        return query;
+    public String[] getQueries() {
+        return this.queries;
     }
 
     /**
      * 
      * @param query the query to set
      */
-    public void setQuery(String query) {
-        this.query = query;
+    public void setQueries(String[] queries) {
+        this.queries = queries;
+    }
+    
+    /**
+     * 
+     * @return The query
+     */
+    public String[] getOrigQueries() {
+        return this.origQueries;
+    }
+
+    /**
+     * 
+     * @param query the query to set
+     */
+    public void setOrigQueries(String[] origQueries) {
+        this.origQueries = origQueries;
     }
 
 
@@ -80,7 +96,7 @@ public class InteractionParameters {
      * @return The coordinate system
      */
     public DasCoordinateSystem getQueryCoordinateSystem() {
-        return queryCoordinateSystem;
+        return this.queryCoordinateSystem;
     }
 
 

@@ -1,4 +1,4 @@
-/** 
+/*
  * 
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,6 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  * 
  */
-
 package org.biojava.dasobert.das;
 
 import java.io.IOException;
@@ -34,8 +33,13 @@ import org.biojava.dasobert.util.HttpConnectionTools;
 
 import de.mpg.mpiinf.ag3.dasmi.model.Interaction;
 
-import org.xml.sax.*;
-import javax.xml.parsers.*;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.SAXNotRecognizedException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 
 /**
@@ -46,7 +50,7 @@ import javax.xml.parsers.*;
  *
  */
 public class InteractionThread extends Thread{
-    private List <InteractionListener> interactionListeners;
+    private List<InteractionListener> interactionListeners;
     private InteractionParameters parameters;
     
     
@@ -74,8 +78,8 @@ public class InteractionThread extends Thread{
      * Starts the interaction thread
      */
     public void run() {
-    	String query = parameters.getQuery();
-        Interaction[] interactions = getInteractions(query);
+    	String[] queries = parameters.getQueries();
+        Interaction[] interactions = getInteractions(queries);
         
         if (interactions.length == 0) {
         	triggerNoInteractionsFound(interactions);
@@ -91,9 +95,9 @@ public class InteractionThread extends Thread{
      * queries the interactions for a specific interactor id 
      * @param id the accession id of the query interactor
      * @return an array containg all found interactions
-     * TODO allow multiple query interactors
+     * TODO detail stuff
      */
-    public Interaction[] getInteractions(String id) {
+    private Interaction[] getInteractions(String[] ids) {
     	Interaction[] interactions = new Interaction[0] ;
         Das1Source dasSource = parameters.getDasSource();
         String  interactionCommand = null  ;
@@ -103,11 +107,14 @@ public class InteractionThread extends Thread{
         	url += "/" ;
         }
         url += "interaction?";
-        interactionCommand  =  "interactor=" + id ;
+        interactionCommand = "interactor=" + ids[0];
+        for (int i = 1; i< ids.length; i++){
+        	interactionCommand  +=  "&interactor=" + ids[i] ;
+        }
+        
         //protect the command
         try {
         	interactionCommand = url +  URLEncoder.encode(interactionCommand,"UTF-8");
-        	System.out.println(interactionCommand);
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -130,7 +137,6 @@ public class InteractionThread extends Thread{
      * @throws IOException
      */
     private Interaction[] retrieveInteractions(String url) throws IOException{
-    	System.out.println("contacting " + url);
     //	System.setProperty("org.xml.sax.driver", "org.apache.xerces.SAXParser");
         URL dasUrl = null;
         try {
@@ -138,7 +144,7 @@ public class InteractionThread extends Thread{
         } catch (Exception e) {
             throw new IOException("Could not create URL " + e.getMessage());
         }
-        //System.out.println("Interaction command issued: "+url);
+       // System.out.println("Interaction command issued: "+url);
         InputStream inStream = HttpConnectionTools.getInputStream(dasUrl);
         
         Interaction[] interactions = null;
@@ -198,7 +204,7 @@ public class InteractionThread extends Thread{
      */
     private void triggerInteractionsFound(Interaction[] interactions){
     	InteractionEvent event = new InteractionEvent(parameters, interactions); 
-        Iterator iter = interactionListeners.iterator();
+        Iterator<InteractionListener> iter = interactionListeners.iterator();
         while (iter.hasNext()){
             InteractionListener li = (InteractionListener ) iter.next();
             //System.out.println("Going to report" + interactions.length + " interactions");
@@ -213,10 +219,10 @@ public class InteractionThread extends Thread{
      * @param interactions
      */
     private void triggerNoInteractionsFound(Interaction[] interactions){
-        Iterator iter = interactionListeners.iterator();
+        Iterator<InteractionListener> iter = interactionListeners.iterator();
         while (iter.hasNext()){
             InteractionListener li = (InteractionListener ) iter.next();
-            li.noObjectFound(parameters.getQuery()) ;
+            li.noObjectFound(parameters) ;
         }
     }
 }
