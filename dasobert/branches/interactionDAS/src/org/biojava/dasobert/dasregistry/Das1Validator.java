@@ -444,7 +444,7 @@ public class Das1Validator {
 
 		} catch ( Exception e) {
 			//e.printStackTrace();
-			validationMessage += "<br/>---<br/> contacting " + url+ "types <br/>";
+			validationMessage += "<br/>---<br/> contacting " + url+ "entry_points <br/>";
 
 			Throwable cause = e.getCause();
 			if ( cause != null) 
