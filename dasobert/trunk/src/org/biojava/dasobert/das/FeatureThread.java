@@ -54,13 +54,13 @@ implements Runnable
 
 	Das1Source dasSource;
 	String ac ;
-	List featureListeners;
+	List<FeatureListener> featureListeners;
 	Thread thread;
 
 	public FeatureThread (String accessionCode, Das1Source dasSource) {
 		this.dasSource = dasSource;
 		this.ac = accessionCode;
-		featureListeners = new ArrayList();
+		featureListeners = new ArrayList<FeatureListener>();
 	}
 
 	public void addFeatureListener(FeatureListener li) {
@@ -80,10 +80,12 @@ implements Runnable
 
 
 	public void run() {
+		
 		Thread me = Thread.currentThread();
 		while ( thread == me) {
 			String url = dasSource.getUrl();
 			String queryString = url + "features?segment="+ ac ;
+			
 			URL cmd = null ;
 			try {
 				cmd = new URL(queryString);
@@ -92,7 +94,7 @@ implements Runnable
 				e.printStackTrace();
 
 			}
-
+			
 			logger.info("requesting features from " + cmd);
 			DAS_FeatureRetrieve ftmp = new DAS_FeatureRetrieve(cmd);
 
@@ -123,7 +125,7 @@ implements Runnable
 				break;
 			}
 
-			List features = ftmp.get_features();
+			List<Map<String,String>> features = ftmp.get_features();
 
 			// a fallback mechanism to prevent DAS sources from bringing down spice
 			if ( features.size() > MAX_NR_FEATURES){

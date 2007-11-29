@@ -38,7 +38,7 @@ public class GetFeatures {
 
     public static void main (String[] args) {
 
-	String accessionCode = "P50225";
+	String accessionCode = "P00123";
 	if ( args.length == 1 ) {
 	    accessionCode = args[0];
 	}

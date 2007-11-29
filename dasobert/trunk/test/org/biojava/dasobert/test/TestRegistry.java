@@ -34,7 +34,7 @@ import junit.framework.TestCase;
 public class TestRegistry extends TestCase {
 
 	public static final String REGISTRY_LOCATION =  "http://www.dasregistry.org/das1/sources";
-
+	//public static final String REGISTRY_LOCATION =  "http://localhost:8088/dasregistry/das1/sources";
 	protected void setUp(){
 		// if you are behind a proxy, please change the following lines
 		// for your proxy setup ...
@@ -72,8 +72,6 @@ public class TestRegistry extends TestCase {
 
 
 
-
-		//System.out.println("got " + sources.length + " DAS/1 sources:");
 
 
 	}

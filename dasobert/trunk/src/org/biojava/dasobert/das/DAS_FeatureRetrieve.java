@@ -34,6 +34,7 @@ import javax.xml.parsers.*                  ;
 import org.xml.sax.*                        ;
 import java.util.ArrayList                  ;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.*                  ;
 import java.net.HttpURLConnection           ;
 
@@ -46,7 +47,7 @@ import java.net.HttpURLConnection           ;
  */
 public class DAS_FeatureRetrieve {
     
-    List features ;
+    List<Map<String,String>> features ;
     Logger logger     ;
     int comeBackLater;
     URL url;
@@ -58,7 +59,7 @@ public class DAS_FeatureRetrieve {
         super();
         
         logger = Logger.getLogger("org.biojava.spice");
-        features = new ArrayList() ;
+        features = new ArrayList<Map<String,String>>() ;
         comeBackLater = -1;
         this.url=url;
         reload();
@@ -139,7 +140,7 @@ public class DAS_FeatureRetrieve {
                 e.printStackTrace();
                 logger.log(Level.FINE,"error while parsing response from "+ url);
                 comeBackLater = -1;
-                features = new ArrayList();
+                features = new ArrayList<Map<String,String>>();
             }
         }
         catch (Exception ex) {
@@ -170,7 +171,7 @@ public class DAS_FeatureRetrieve {
     
     /** returns a List of Features 
      * @return a List of Maps containing the features*/
-    public List get_features() {
+    public List<Map<String,String>> get_features() {
       
         return features;
     }
