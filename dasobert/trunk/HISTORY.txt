@@ -1,0 +1,10 @@
+20071129
+
+	from now on Dasobert requires Java 1.5
+	merged Interaction DAS extension into main trunk
+	added unit test
+	try:
+	ant clean;
+	ant runtests;
+
+	
