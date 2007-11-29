@@ -1,0 +1,332 @@
+<?xml version="1.0"?>
+
+<!--
+	
+		
+
+-->
+
+<project name="Dasobert" default="package" basedir=".">
+
+  <!-- Checks environment and setup variables -->
+  <target name="init" description="Checks environment and setup variables">
+    <tstamp />
+    <property name="version" value="live" />
+
+  
+    <!-- Check for Java 1.4 -->
+    <available classpath="${java.class.path}"
+               classname="java.nio.Buffer"
+               property="java14">
+    </available>
+
+    <!-- Echo information -->
+    <echo message="Building Dasobert-${version}" />
+
+
+    <!-- Main build directory -->
+    <property name="build.dir" value="./ant-build" />
+    <property name="build.classes.dir" value="${build.dir}/classes" />
+    <property name="src.dir" value="./src"/>
+
+    <!-- Javac properties -->
+    <property name="javac.depend" value="false" />
+    <property name="javac.debug" value="true" />
+    <property name="javac.deprecation" value="false" />
+    <property name="javac.source" value="1.4" />
+
+    <!-- Javadoc properties -->
+    <property name="build.dest.docs" value="${build.dir}/docs" />
+    <property name="packages" value="org.*" />
+
+    <!-- Subdirectories for main source and classes -->
+    <property name="name.dasobert" value="dasobert" />
+    <property name="Name.dasobert" value="DASOBERT" />
+    <property name="build.dest.dasobert" value="${build.classes.dir}/${name.dasobert}" />
+    <property name="build.docs.dasobert" value="${build.dest.docs}/${name.dasobert}" />
+
+    <property name="jar.dasobert" value="${build.dir}/${name.dasobert}.jar" />
+    <property name="manifest.file.dasobert" value="${manifest.dir}/MANIFEST.MF" />
+    <!-- Subdirectories for tests source and classes -->
+    <property name="name.tests" value="tests" />
+    <property name="build.dest.tests" value="${build.classes.dir}/${name.tests}" />
+    <property name="build.docs.tests" value="${build.dest.docs}/${name.tests}" />
+    <property name="reports.tests" value="./reports/tests" />
+    <!-- Subdirectories for demos source and classes -->
+    <property name="name.demos" value="demos" />
+    <property name="Name.demos" value="Dasobert Demos" />
+    <property name="build.dest.demos" value="${build.classes.dir}/${name.demos}" />
+    <property name="build.docs.demos" value="${build.dest.docs}/${name.demos}" />
+    <property name="jar.demos" value="${build.dir}/${name.demos}.jar" />
+    <property name="manifest.file.demos" value="${manifest.dir}/${name.demos}.txt" />
+    <!-- Subdirectories for apps source and classes -->
+    <property name="name.apps" value="apps" />
+    <property name="Name.apps" value="Dasobert Applications" />
+    <property name="build.dest.apps" value="${build.classes.dir}/${name.apps}" />
+    <property name="build.docs.apps" value="${build.dest.docs}/${name.apps}" />
+    <property name="jar.apps" value="${build.dir}/${name.apps}.jar" />
+    <property name="manifest.file.apps" value="${manifest.dir}/${name.apps}.txt" />
+
+    <!-- Subdirectory for libraries used during build -->
+    <property name="build.lib" value="${build.dir}/lib" />
+
+    <property name="dist.root" value="./dist" />
+    <property name="dist.dir" value="${dist.root}/${name.dasobert}-${version}" />
+  </target>
+
+
+  <!--
+    Prepare each part of the project.
+
+    Each preparation creates working directories and copies files over.
+  -->
+
+  <!-- Prepares the basic stuff -->
+  <target name="prepare" depends="init" description="creates basic directories">
+    <!-- Creates directories -->
+    <mkdir dir="${build.dir}" />
+    <mkdir dir="${build.lib}" />
+
+    <!-- Copies jars -->
+    <copy todir="${build.dir}">
+      <fileset dir=".">
+        <include name="*.jar" />
+        <exclude name="${docbook.tools.file}" />
+      </fileset>
+    </copy>
+
+  
+  </target>
+
+
+
+  <!-- Prepares the dasobert source code -->
+  <target name="prepare-dasobert" depends="prepare"
+  description="Prepares dasobert source files">
+    <!-- Creates directories -->
+    <mkdir dir="${build.dest.dasobert}"     />
+    <mkdir dir="${build.docs.dasobert}"     />
+
+
+  </target>
+
+  <!-- Prepares the test source code -->
+  <target name="prepare-tests" depends="prepare"
+  description="Prepares the test source code">
+
+    <!-- Creates directories -->
+    <mkdir dir="${build.dest.tests}" />
+    <mkdir dir="${build.docs.tests}" />
+    <mkdir dir="${reports.tests}" />
+  </target>
+
+  <!-- Prepares the demos code -->
+  <target name="prepare-demos" depends="prepare"
+  description="Prepares the demos code">
+
+    <!-- Creates directories -->
+    <mkdir dir="${build.dest.demos}" />
+    <mkdir dir="${build.docs.demos}" />
+  </target>
+
+  <!-- Prepares the apps code -->
+  <target name="prepare-apps" depends="prepare"
+  description="Prepares the apps code">
+
+    <!-- Creates directories -->
+    <mkdir dir="${build.dest.apps}" />
+    <mkdir dir="${build.docs.apps}" />
+  </target>
+
+  <!-- Prepares the javadocs -->
+  <target name="prepare-javadocs" depends="prepare" description="Prepares the javadocs">
+
+    <!-- Creates directories -->
+    <mkdir dir="${build.dest.docs}" />
+  </target>
+
+  <!-- Prepares DocBook environment and encloses it from older Ant versions -->
+  <target name="prepare-docs" depends="prepare" if="outputproperty.support"
+  description="Prepares DocBook environment">
+    <!-- Check the current system classpath for Trax -->
+    <available classpath="${java.class.path}"
+               classname="javax.xml.transform.Transformer"
+               property="trax.present">
+    </available>
+    <echo message="Trax API present:                ${trax.present}" />
+
+    <!-- DocBook XML DTD path -->
+    <property name="docbook.dir" value="${build.lib}/xml-dtd-4.2" />
+    <property name="docbook.dtd" value="${docbook.dir}/docbookx.dtd" />
+
+    <!-- DocBook XML stylesheet path -->
+    <property name="stylesheet.dir" value="${build.lib}/docbook-xsl-1.44" />
+    <property name="docbook.xsl" value="${stylesheet.dir}/xhtml/chunk.xsl" />
+
+    <!-- DocBook Public ID -->
+    <property name="docbook.public.id" value="-//OASIS//DTD DocBook XML V4.2//EN" />
+
+    <!-- Setup DocBook XML catalog -->
+    <xmlcatalog id="docbook.cat">
+      <dtd publicId="${docbook.public.id}" location="${docbook.dtd}" />
+    </xmlcatalog>
+
+    <!-- unjar the DTD and stylesheets for use -->
+    <unjar src="${docbook.tools.file}" dest="${build.lib}">
+      <patternset>
+        <include name="**" />
+        <exclude name="META-INF/*" />
+      </patternset>
+    </unjar>
+  </target>
+
+  <!--
+    Compile each part of the project.
+
+    This runs javac or any other tasks necisary to turn the source code into
+    .class files.
+  -->
+
+ 
+
+
+  <!-- Compiles the source directory -->
+  <target name="compile-dasobert" depends="prepare-dasobert"
+  description="Compiles the source directory">
+    <javac
+      srcdir="${src.dir}"
+      destdir="${build.dest.dasobert}"
+      depend="${javac.depend}"
+      deprecation="${javac.deprecation}"
+      source="${javac.source}"
+      debug="${javac.debug}">
+      <classpath>
+        <pathelement path="${java.class.path}" />
+      </classpath>
+    </javac>
+  </target>
+
+  <!-- Compiles the tests directory -->
+  <target name="compile-tests" depends="prepare-tests,package"
+  description="Compiles the tests directory">
+    <javac
+      srcdir="${tests.dir}"
+      destdir="${build.dest.tests}"
+      depend="${javac.depend}"
+      deprecation="${javac.deprecation}"
+      source="${javac.source}"
+      debug="${javac.debug}">
+      <classpath>
+        <pathelement path="${classpath}" />
+        <pathelement path="${jar.dasobert}" />
+      </classpath>
+    </javac>
+  </target>
+
+  <!-- Compiles the demos directory -->
+  <target name="compile-demos" depends="prepare-demos,package"
+  description="Compiles the demos directory">
+    <javac
+      srcdir="${demos.dir}"
+      destdir="${build.dest.demos}"
+      depend="${javac.depend}"
+      deprecation="${javac.deprecation}"
+      source="${javac.source}"
+      debug="${javac.debug}">
+      <classpath>
+        <pathelement path="${classpath}" />
+        <pathelement path="${jar.dasobert}" />
+      </classpath>
+    </javac>
+  </target>
+
+  <!-- Compiles the apps directory -->
+  <target name="compile-apps" depends="prepare-apps,package"
+  description="Compiles the apps directory">
+    <javac
+      srcdir="${apps.dir}"
+      destdir="${build.dest.apps}"
+      depend="${javac.depend}"
+      deprecation="${javac.deprecation}"
+      source="${javac.source}"
+      debug="${javac.debug}">
+      <classpath>
+        <pathelement path="${classpath}" />
+        <pathelement path="${jar.dasobert}" />
+      </classpath>
+    </javac>
+  </target>
+
+
+
+  <!--
+    Creates the .jar files containing each distributable component.
+
+    This probably just jars up the .class files and any resources as well as
+    a manifest for each distributable component.
+  -->
+
+  <!-- Creates the dasobert package (tests are left in the parallel tree) -->
+
+  <!-- this ought to depend on compile-grammars at well, but until conditional
+        sablecc works, that's a Bad Idea -->
+
+  <target name="package" depends="compile-dasobert"
+  description="create dasobert class jar file">
+  <echo message="did you           ant unjar-libs   ?"/>
+    <jar
+      jarfile="${jar.dasobert}"
+    >
+      <fileset dir="${build.dest.dasobert}"    />
+    </jar>
+
+    
+
+  </target>
+
+
+  <!--
+    Create Javadoc and other documentation for each distribution package.
+
+    This probably just calls javadoc, but may call other documentation gubbins.
+  -->
+
+
+
+
+  <!-- Creates the API documentation -->
+  <target name="javadocs" depends="prepare-dasobert"
+  description="Creates the API documentation">
+    <javadoc
+      packagenames="${packages}"
+      sourcepath="${src.dir}"
+      destdir="${build.docs.dasobert}"
+      author="true"
+      version="true"
+      use="true"
+      source="1.4"
+      windowtitle="${Name.dasobert} API"
+      doctitle="${Name.dasobert}"
+      maxmemory="96m">
+       <link href="http://java.sun.com/j2se/1.4.2/docs/api/" offline="false"/>
+
+       <group title="Biojava DASOBERT"
+       	packages="org.biojava.dasobert" />
+             
+    </javadoc>
+  </target>
+
+ 
+  
+
+ 
+ 
+
+
+
+  <!-- Cleans everything -->
+  <target name="clean" depends="init"
+  description="Cleans everything">
+    <delete dir="${build.dir}" />
+  </target>
+</project>
