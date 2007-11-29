@@ -2,6 +2,7 @@
 
 	from now on Dasobert requires Java 1.5
 	merged Interaction DAS extension into main trunk
+	thanks to Hagen Blankenburg for providing the patches
 	added unit test
 	try:
 	ant clean;
