@@ -97,7 +97,7 @@ public class InteractionThread extends Thread{
      * @return an array containg all found interactions
      * TODO detail stuff
      */
-    private Interaction[] getInteractions(String[] ids) {
+    public Interaction[] getInteractions(String[] ids) {
     	Interaction[] interactions = new Interaction[0] ;
         Das1Source dasSource = parameters.getDasSource();
         String  interactionCommand = null  ;

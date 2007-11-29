@@ -23,6 +23,7 @@ import org.biojava.dasobert.dasregistry.DasCoordinateSystem;
 import org.biojava.dasobert.dasregistry.DasSource;
 import org.biojava.utils.xml.XMLWriter; 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -57,6 +58,35 @@ public class InteractionDasSource extends Das1Source{
         setCapabilities(caps);
     }
     
+    public static InteractionDasSource fromDas1Source(Das1Source orig){
+    	
+    	InteractionDasSource ds = new InteractionDasSource();
+    	
+    	try {
+    	 Class c = Class.forName("org.biojava.dasobert.dasregistry.Das1Source");
+    	 Class ic = Class.forName(" org.biojava.dasobert.das.InteractionDasSource");
+         Method[] methods  = c.getMethods();
+         
+         for (int i = 0; i < methods.length; i++) {
+             Method m = methods[i];     
+             
+             String name = m.getName();
+             if ( name.substring(0,3).equals("get")) {
+                
+                 Object o  = m.invoke(orig, new Object[]{});
+                                  
+                 
+                 Method setter = ic.getMethod("set"+name.substring(3,name.length()),new Class[]{} );
+                 System.out.println(setter);
+                 setter.invoke(ds, o);
+             }
+             
+         }
+    	} catch (Exception e){
+    		e.printStackTrace();
+    	}
+         return ds;
+    }
 
    
     /** 

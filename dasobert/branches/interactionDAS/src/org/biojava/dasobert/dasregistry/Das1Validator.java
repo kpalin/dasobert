@@ -548,16 +548,18 @@ public class Das1Validator {
 	}
 
 	private boolean validateInteraction(String url, String testcode){
-		Das1Source source = new Das1Source();
+		InteractionDasSource source = new InteractionDasSource();
 		source.setUrl(url);
 		InteractionParameters params = new InteractionParameters();
+		
+		
 		params.setDasSource(source);
-		params.setQuery(testcode);
+		params.setQueries(new String[]{testcode});
 		InteractionThread thread = new InteractionThread(params);
 		
 		
 		// TODO: how can I do  multiple threads with JUnit??
-		Interaction[] interA = thread.getInteractions(testcode);
+		Interaction[] interA = thread.getInteractions(new String[]{testcode,});
 		if ( interA.length > 0)
 			return true;
 		return false;
