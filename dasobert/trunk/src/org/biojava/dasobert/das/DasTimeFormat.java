@@ -23,6 +23,7 @@
 
 package org.biojava.dasobert.das;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -35,7 +36,7 @@ import java.util.Date;
  */
 public class DasTimeFormat {
 
-	public static final String DASFORMAT="yyyy-MM-dd'T'HH:mm:ss'Z'Z";
+	public static final String DASFORMAT="yyyy-MM-dd'T'HH:mm:ssZ";
 	
 	
 	public static String toDASString(Date date){
@@ -44,6 +45,17 @@ public class DasTimeFormat {
 		
 		return format.format(date);
 		
+	}
+	
+	public static Date fromDASString(String dasTimeFormat) throws ParseException{
+		
+		SimpleDateFormat format = new SimpleDateFormat(DASFORMAT);
+		
+		Date d = new Date(0);
+				
+		d = format.parse(dasTimeFormat);
+		
+		return d;
 	}
 	
 }
