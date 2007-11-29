@@ -23,6 +23,7 @@
 
 package org.biojava.dasobert.test.servers;
 
+import org.biojava.dasobert.das.InteractionDasSource;
 import org.biojava.dasobert.das.InteractionParameters;
 import org.biojava.dasobert.das.InteractionThread;
 import org.biojava.dasobert.das.SequenceThread;
@@ -37,7 +38,7 @@ import junit.framework.TestCase;
 public class TestServers extends TestCase implements SequenceListener{
 
 	Das1Source uniprot ;
-	Das1Source interactionMPI;
+	InteractionDasSource interactionMPI;
 	
 	String seq;
 	public void setUp(){
@@ -45,10 +46,15 @@ public class TestServers extends TestCase implements SequenceListener{
 		System.setProperty("proxyHost", "wwwcache.sanger.ac.uk");
 		System.setProperty("proxyPort", "3128");
 		
+	
+		System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+		System.setProperty("javax.xml.parsers.SAXParserFactory", "org.apache.xerces.jaxp.SAXParserFactoryImpl");
+		
+		
 		uniprot =  new Das1Source();
 		uniprot.setUrl("http://www.ebi.ac.uk/das-srv/uniprot/das/aristotle/");
 		
-		interactionMPI = new Das1Source();
+		interactionMPI = new InteractionDasSource();
 		interactionMPI.setUrl("http://dasmi.bioinf.mpi-inf.mpg.de/das/intact/");
 		
 		
@@ -70,11 +76,11 @@ public class TestServers extends TestCase implements SequenceListener{
 	public void testInteractionServer(){
 		InteractionParameters params = new InteractionParameters();
 		params.setDasSource(interactionMPI);
-		params.setQuery("1212");
+		params.setQueries(new String[]{"1212"});
 		InteractionThread thread = new InteractionThread(params);
 		
 		// TODO: how can I do  multiple threads with JUnit??
-		Interaction[] interA = thread.getInteractions(params.getQuery());
+		Interaction[] interA = thread.getInteractions(params.getQueries());
 		assertNotNull(interA);
 		assertTrue(interA.length > 0);
 			
