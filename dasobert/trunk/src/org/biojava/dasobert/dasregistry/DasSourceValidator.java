@@ -41,7 +41,7 @@ public class DasSourceValidator {
             Das2Validator validator = new Das2Validator();
             boolean ok = validator.validate(d2s);
             if ( ! ok)
-                throw new DASException("coul not validate DasSource");
+                throw new DASException("could not validate DasSource");
             
         } else {
             

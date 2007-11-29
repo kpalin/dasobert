@@ -24,6 +24,8 @@
 package org.biojava.dasobert.dasregistry;
 
 import java.util.Date ;
+import java.util.HashMap;
+import java.util.Map;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -39,19 +41,19 @@ import org.biojava.utils.xml.PrettyXMLWriter;
  */
 
 public class Das1Source implements DasSource {
-	String url                ;
-	protected String nickname           ;
-	String adminemail         ;
-	String description        ;
-	DasCoordinateSystem[] coordinateSystem ;
-	String[] capabilities     ;
-	String[] labels           ;
-	String helperurl          ;    
-	Date   registerDate       ;
-	Date   leaseDate          ;
-	String id                 ;
+	String url;
+	protected String nickname;
+	String adminemail;
+	String description ;
+	DasCoordinateSystem[] coordinateSystem;
+	String[] capabilities;
+	String[] labels;
+	String helperurl;    
+	Date   registerDate; 
+	Date   leaseDate;
+	String id;
 	boolean local;
-
+	Map<String,String> properties;
 	boolean alertAdmin;
 
 	public static String EMPTY_ID = "UNK:-1" ;
@@ -72,6 +74,7 @@ public class Das1Source implements DasSource {
 		leaseDate        = new Date() ;
 		helperurl        = "";	
 		local=true;
+		properties = new HashMap<String, String>();
 	}
 
 
@@ -122,11 +125,6 @@ public class Das1Source implements DasSource {
 
 			for ( int j = 0 ; j < oldCoords.length; j++){
 				DasCoordinateSystem ocs = oldCoords[j];
-
-				//System.out.println(ncs.getName());
-				//System.out.println(ocs.getName());
-				//System.out.println(ncs.getCategory());
-				//System.out.println(ocs.getCategory());
 
 				if ( ncs.getName().equals(ocs.getName())) {
 					if ( ncs.getCategory().equals(ocs.getCategory())) {
@@ -291,5 +289,12 @@ public class Das1Source implements DasSource {
 	public boolean getAlertAdmin() {
 		return alertAdmin;
 	}
+	public Map<String,String> getProperties() {
+		return properties;
+	}
+	public void setProperties(Map<String,String> properties) {
+		this.properties = properties;
+	}
+	
 
 }
