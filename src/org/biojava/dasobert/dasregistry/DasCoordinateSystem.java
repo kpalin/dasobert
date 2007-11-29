@@ -161,29 +161,29 @@ public class DasCoordinateSystem {
     }
 
     public String toString() {
-        String nam = name;
-        if ( ! version.equals(""))
-            nam += "_" + version;
-        
-	if ( organism_name.equals("") ) 
-	    return nam+","+category ;
-	else 
-	    return nam+","+category+"," + organism_name ;
+    	String nam = name;
+    	if ( ! version.equals(""))
+    		nam += "_" + version;
+
+    	if ( organism_name.equals("") ) 
+    		return nam+","+category ;
+    	else 
+    		return nam+","+category+"," + organism_name ;
     }
 
     public static DasCoordinateSystem fromString(String rawString) {
-	String[] spl = rawString.split(",");
-	DasCoordinateSystem dcs = new DasCoordinateSystem();
-	if ( spl.length == 2 ) {
-	    dcs.setName(spl[0]);	   
-	    dcs.setCategory(spl[1]);
-	} 
-	if ( spl.length == 3 ) {
-	    dcs.setName(spl[0]);
-	    dcs.setCategory(spl[1]);
-	    dcs.setOrganismName(spl[2]);
-	}
-	return dcs;
+    	String[] spl = rawString.split(",");
+    	DasCoordinateSystem dcs = new DasCoordinateSystem();
+    	if ( spl.length == 2 ) {
+    		dcs.setName(spl[0]);	   
+    		dcs.setCategory(spl[1]);
+    	} 
+    	if ( spl.length == 3 ) {
+    		dcs.setName(spl[0]);
+    		dcs.setCategory(spl[1]);
+    		dcs.setOrganismName(spl[2]);
+    	}
+    	return dcs;
     }
 
 

@@ -22,12 +22,17 @@
  */
 package org.biojava.dasobert.das2.io;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.net.ConnectException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.biojava.dasobert.dasregistry.DasSource;
+import org.biojava.dasobert.util.DasobertDefaults;
 import org.biojava.dasobert.util.HttpConnectionTools;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -42,9 +47,9 @@ public class DasSourceReaderImpl implements DasSourceReader {
 	public DasSourceReaderImpl() {
 		super();
 		loggedException = null;
-    }
+	}
 
-	
+
 	public DasSource[] readDasSource(URL url){
 		DasSource[] sources = new DasSource[0];
 
@@ -132,6 +137,9 @@ public class DasSourceReaderImpl implements DasSourceReader {
 	public Exception getLoggedException(){
 		return loggedException;
 	}
+
+	
+
 
 	public static void main (String[] args){
 		String url = "http://das.sanger.ac.uk/registry/das1/sources/";

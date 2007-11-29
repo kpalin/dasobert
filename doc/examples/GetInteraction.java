@@ -85,7 +85,7 @@ public class GetInteraction {
 					if (source.getIsCompatible(queryCoordSys)){
 						// prepare the parameters, equipt the thread, add a listener and start the whole thing
 						InteractionParameters params = new InteractionParameters();
-						params.setQuery(query);
+						params.setQueries(new String[]{query});
 						params.setDasSource(source);
 						InteractionThread thread = new InteractionThread(params);
 						thread.setName(source.getNickname() + "_" + query + "_thread");
@@ -207,6 +207,11 @@ public class GetInteraction {
 		 */
 		public synchronized void newObjectRequested(String accessionCode) {
 			activeThreads--;
+		}
+
+		public void noObjectFound(InteractionParameters params) {
+			// TODO Auto-generated method stub
+			
 		}
 
 	}
