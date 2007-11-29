@@ -23,6 +23,7 @@
 package org.biojava.dasobert.dasregistry;
 
 import java.util.Date;
+import java.util.Map;
 
 public interface DasSource {
 
@@ -108,5 +109,17 @@ public interface DasSource {
     public  void setAlertAdmin(boolean flag);
 
     public  boolean getAlertAdmin();
+    
+    /** set Properties for this DAS source, e.g. project name
+     * 
+     * @param properties
+     */
+    public void setProperties(Map<String,String> properties);
+    
+    /** get Properties for this DAS source
+     * 
+     * @return Properties
+     */
+    public Map<String,String> getProperties();
 
 }

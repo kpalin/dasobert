@@ -182,7 +182,8 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 				qName.equals("START") ||
 				qName.equals("END") ||
 				qName.equals("NOTE") ||                
-				qName.equals("SCORE")
+				qName.equals("SCORE") ||
+				qName.equals("ORIENTATION")
 		){
 			characterdata = new StringBuffer();
 			featurefield = qName ;
@@ -213,7 +214,8 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 				qName.equals("END") ||
 				qName.equals("NOTE") || 
 				qName.equals("LINK") || 
-				qName.equals("SCORE")
+				qName.equals("SCORE") ||
+				qName.equals("ORIENTATION")
 		) {
 			add_featuredata(uri,name,qName);
 		}
