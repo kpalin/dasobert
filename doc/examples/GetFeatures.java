@@ -26,6 +26,9 @@ import org.biojava.dasobert.dasregistry.Das1Source;
 import org.biojava.dasobert.das.FeatureThread;
 import org.biojava.dasobert.eventmodel.FeatureListener;
 import org.biojava.dasobert.eventmodel.FeatureEvent;
+import org.biojava.dasobert.feature.FeatureTrackConverter;
+import org.biojava.dasobert.feature.FeatureTrack;
+
 import java.util.Map;
 
 /** an example that first connects to the DAS registration server,
@@ -124,11 +127,28 @@ public class GetFeatures {
 	implements FeatureListener{
 	public synchronized void newFeatures(FeatureEvent e){
 	    Das1Source ds = e.getSource();
-	    Map[] features = e.getFeatures();
+	    Map<String,String>[] features = e.getFeatures();
 
 	    System.out.println("das source " + ds.getNickname() + " returned " + features.length +" features");
-	    if ( features.length>0) 
-		System.out.println(features[0]);
+	    if ( features.length>0) {
+	    	
+	    	// lets convert the features into FeatureTrack objects.
+	    	
+	    	// we don't care about the stylesheet in this case
+	    	// and we assume this is not a Histogram DAS source, 
+	    	// otherwise the conversion would work differently...
+	    	FeatureTrackConverter conv = new FeatureTrackConverter();
+	    	FeatureTrack[] tracks = conv.convertMap2Features(features);
+	    	
+	    	System.out.println("got " + tracks.length + " tracks");
+	    	for( FeatureTrack track : tracks){
+	    		System.out.println(track );
+	    	}
+
+	    	
+	    	
+	    }
+	    	
 	    System.exit(0);
 	}
 
