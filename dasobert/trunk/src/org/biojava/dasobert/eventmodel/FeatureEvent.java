@@ -28,11 +28,11 @@ import org.biojava.dasobert.dasregistry.Das1Source;
 public class FeatureEvent 
 extends AbstractDasEvent {
 	
-    Map[] features;
+    Map<String,String>[] features;
    
     int comeBackLater;
     
-    public FeatureEvent(Map[] features,Das1Source dasSource) {
+    public FeatureEvent(Map<String,String>[] features,Das1Source dasSource) {
         super();
         this.features =features;
         this.dasSource = dasSource;
@@ -61,7 +61,7 @@ extends AbstractDasEvent {
      * </pre>
      * @return a Map containng the features
      */
-    public Map[] getFeatures(){
+    public Map<String,String>[] getFeatures(){
         return features;
     }
     

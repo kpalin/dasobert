@@ -170,6 +170,13 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 
 	}
 
+	private void addGroup(String uri, String name, String qName, Attributes atts) {
+		String id = atts.getValue("id");
+		feature.put("GROUP",id);
+		characterdata= new StringBuffer();
+		featurefield = "GROUP";
+	}
+	
 	public void startElement (String uri, String name, String qName, Attributes atts){
 		//System.out.println("new element "+qName);
 
@@ -177,13 +184,15 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 			start_feature(uri,  name,  qName,  atts);
 		else if ( qName.equals("LINK"))
 			addLink(uri,name,qName, atts);
+		else if ( qName.equals("GROUP"))
+			addGroup(uri,name,qName, atts);
 		else if ( qName.equals("METHOD") || 
 				qName.equals("TYPE") ||
 				qName.equals("START") ||
 				qName.equals("END") ||
 				qName.equals("NOTE") ||                
 				qName.equals("SCORE") ||
-				qName.equals("ORIENTATION")
+				qName.equals("ORIENTATION") 				
 		){
 			characterdata = new StringBuffer();
 			featurefield = qName ;
@@ -215,7 +224,8 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 				qName.equals("NOTE") || 
 				qName.equals("LINK") || 
 				qName.equals("SCORE") ||
-				qName.equals("ORIENTATION")
+				qName.equals("ORIENTATION") ||
+				qName.equals("GROUP")
 		) {
 			add_featuredata(uri,name,qName);
 		}
