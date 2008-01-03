@@ -51,9 +51,6 @@ import de.mpg.mpiinf.ag3.dasmi.model.Interaction;
 
 public class Das1Validator {
 
-	
-
-
 	//private final static String DATASOURCE_NAME = "jdbc/mysql";
 	String validationMessage;
 	boolean supportsMD5Checksum;
@@ -61,7 +58,7 @@ public class Das1Validator {
 
 	private static final int MAX_SEQUENCE_LENGTH = 1000;
 	private static final int MAX_NR_FEATURES     = 10;
-	
+	public static final boolean VERBOSE = false;
 	
 	List<String> all_capabilities;
 	public Das1Validator() {
@@ -94,7 +91,7 @@ public class Das1Validator {
 	 * @return an array of capabilities that were tested successfully.
 	 */ 
 	public String[] validate(String url, DasCoordinateSystem[] coords, String[] capabilities){
-		return validate(url,coords,capabilities,false);
+		return validate(url,coords,capabilities,VERBOSE);
 	}
 
 	/** validate the DAS source that is located at the provided url
@@ -192,8 +189,11 @@ public class Das1Validator {
 					for ( int i=0;i< coords.length;i++){                        
 						DasCoordinateSystem ds =coords[i];
 						String testcode = ds.getTestCode();
-
-
+						
+						if ( verbose ){
+							System.out.println(" validating interaction ");
+							System.out.println(url + " " + testcode );
+						}
 						if (! validateInteraction(url, testcode))
 							interactionok = false;
 						if ( verbose)
@@ -551,6 +551,7 @@ public class Das1Validator {
 		InteractionDasSource source = new InteractionDasSource();
 		source.setUrl(url);
 		InteractionParameters params = new InteractionParameters();
+		
 		
 		
 		params.setDasSource(source);
