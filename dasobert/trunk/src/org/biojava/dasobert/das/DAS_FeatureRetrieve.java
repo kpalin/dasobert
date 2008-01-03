@@ -80,7 +80,9 @@ public class DAS_FeatureRetrieve {
                 dasInStream	= open(url); 
             } catch (Exception e ){
                 comeBackLater = -1;
-                logger.log(Level.FINE,"could not open connection to " + url,e);
+                if (logger.isLoggable(Level.FINE)){
+                	logger.log(Level.FINE,"could not open connection to " + url,e);
+                }
                 return ;
             }
             
@@ -113,14 +115,18 @@ public class DAS_FeatureRetrieve {
             try {
                 xmlreader.setFeature("http://xml.org/sax/features/validation", validation);
             } catch (SAXException e) {
-                logger.log(Level.FINE,"Cannot set validation " + validation); 
+            	   if (logger.isLoggable(Level.FINE)){
+            		   logger.log(Level.FINE,"Cannot set validation " + validation);
+            	   }
             }
             
             try {
                 xmlreader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd",validation);
             } catch (SAXNotRecognizedException e){
                 e.printStackTrace();
-                logger.log(Level.FINE,"Cannot set load-external-dtd "+validation); 
+                if (logger.isLoggable(Level.FINE)){
+                	logger.log(Level.FINE,"Cannot set load-external-dtd "+validation);
+                }
                 
             }
             
@@ -138,7 +144,9 @@ public class DAS_FeatureRetrieve {
             } 
             catch ( Exception e){
                 e.printStackTrace();
-                logger.log(Level.FINE,"error while parsing response from "+ url);
+                if (logger.isLoggable(Level.FINE)){
+                	logger.log(Level.FINE,"error while parsing response from "+ url);
+                }
                 comeBackLater = -1;
                 features = new ArrayList<Map<String,String>>();
             }
