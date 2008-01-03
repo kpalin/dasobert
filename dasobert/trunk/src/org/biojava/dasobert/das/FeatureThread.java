@@ -95,7 +95,7 @@ implements Runnable
 
 			}
 			
-			logger.info("requesting features from " + cmd);
+			logger.info("FeatureThread requesting features from " + cmd);
 			DAS_FeatureRetrieve ftmp = new DAS_FeatureRetrieve(cmd);
 
 
