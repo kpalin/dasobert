@@ -43,6 +43,7 @@ public abstract class AbstractFeatureTrack implements FeatureTrack,Cloneable {
 	String link   ;
 	String source ;
 	String score;
+	String orientation;
 
 	public AbstractFeatureTrack() {
 		source = "Unknown";
@@ -51,7 +52,7 @@ public abstract class AbstractFeatureTrack implements FeatureTrack,Cloneable {
 		note   = "";
 		link   = "";
 		score  = "";
-
+		orientation = null;
 		segments = new ArrayList<Segment>();
 
 	}
@@ -136,6 +137,14 @@ public abstract class AbstractFeatureTrack implements FeatureTrack,Cloneable {
 		return segments ;
 	}
 
+
+	public String getOrientation() {
+		return orientation;
+	}
+
+	public void setOrientation(String orientation) {
+		this.orientation = orientation;
+	}
 
 	/** test if two features are equivalent 
 	 * important: only comares type,method and source.
