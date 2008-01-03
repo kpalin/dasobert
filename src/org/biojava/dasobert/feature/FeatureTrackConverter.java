@@ -119,6 +119,9 @@ public class FeatureTrackConverter {
 		this.isHistogram = isHistogram;
 	}
 
+	
+
+	
 
 	public  FeatureTrack[] convertMap2Features(Map<String,String>[] mapfeatures){
 		List<FeatureTrack> features = new ArrayList<FeatureTrack>();
@@ -245,7 +248,7 @@ public class FeatureTrackConverter {
 	}
 
 
-	private  List<FeatureTrack> testAddFeatures(List<FeatureTrack> features,FeatureTrack newFeature){
+	protected  List<FeatureTrack> testAddFeatures(List<FeatureTrack> features,FeatureTrack newFeature){
 		// test if this features is added as a new feature to the features list, or if it is joint with an already existing one...
 		//System.out.println("testing " + newFeature + " " + newFeature.getScore());   
 		Iterator iter = features.iterator();
