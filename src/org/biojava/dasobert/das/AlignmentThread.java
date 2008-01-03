@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.ArrayList;
 
@@ -269,8 +270,9 @@ extends Thread{
         Alignment[] alignments = new Alignment[0] ;
         Das1Source[] dasSources = parameters.getDasSources();
         //List aligservers = config.getServers("alignment");
-        logger.finest(logname + "found " + dasSources.length + " alignment servers");
-        
+        if ( logger.isLoggable(Level.FINEST)){
+        	logger.finest(logname + "found " + dasSources.length + " alignment servers");
+        }
         String  dasalignmentcommand = null  ;
         
         String subject = parameters.getSubject();
@@ -310,9 +312,13 @@ extends Thread{
             
 //          protect the command
             try {
-                logger.finest("before encode " + url + dasalignmentcommand);
+            	if ( logger.isLoggable(Level.FINEST)){
+            		logger.finest("before encode " + url + dasalignmentcommand);
+            	}
                 dasalignmentcommand = url +  URLEncoder.encode(dasalignmentcommand,"UTF-8");
-                logger.finest("after encode " + dasalignmentcommand);
+                if ( logger.isLoggable(Level.FINEST)){
+                	logger.finest("after encode " + dasalignmentcommand);
+                }
             } catch (Exception e){
             
             }
