@@ -72,6 +72,10 @@ public interface FeatureTrack {
     
     public  String getScore();
     
+    public void setOrientation(String orientation);
+    
+    public String getOrientation();
+    
     /** test if two features are equivalent
      * 
      * @param feat feature to compare with 
