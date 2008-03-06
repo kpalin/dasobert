@@ -31,12 +31,14 @@ extends AbstractDasEvent {
     Map<String,String>[] features;
    
     int comeBackLater;
+    String version;
     
-    public FeatureEvent(Map<String,String>[] features,Das1Source dasSource) {
+    public FeatureEvent(Map<String,String>[] features,Das1Source dasSource,String version) {
         super();
         this.features =features;
         this.dasSource = dasSource;
         comeBackLater = -1;
+        this.version = version;
     }
     
     public int getComeBackLater(){
@@ -64,6 +66,19 @@ extends AbstractDasEvent {
     public Map<String,String>[] getFeatures(){
         return features;
     }
+
+    /** Get the version of the reference object that has been annotated.
+     * Compare the version string with the version string obtained from the reference server.
+     * If they don;t match there is a version problem between the annotation and the reference!
+     * @return the version string (e.g. an MD5 digest of the reference sequence)
+     */
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
     
    
     
