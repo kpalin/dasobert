@@ -39,6 +39,7 @@ public class DAS_Sequence_Handler extends DefaultHandler {
 	int length ;
 
 	int maxLength;
+	String version;
 
 	boolean dna_flag; 
 	/**
@@ -51,6 +52,7 @@ public class DAS_Sequence_Handler extends DefaultHandler {
 		length = 0;
 		dna_flag = false ;
 		maxLength = -1;
+		version = "";
 	}
 
 
@@ -79,7 +81,7 @@ public class DAS_Sequence_Handler extends DefaultHandler {
 	public void startElement (String uri, String name, String qName, Attributes atts){
 
 		if ( qName.equals("SEQUENCE")){
-			
+			version = atts.getValue("version");
 			String lenstr 	= atts.getValue("stop");
 			length = Integer.parseInt(lenstr);
 			dna_flag = true ;
@@ -88,14 +90,14 @@ public class DAS_Sequence_Handler extends DefaultHandler {
 	}
 
 	public void characters (char ch[], int start, int length){		
-		
+
 		if (maxLength > 0)
 			if ( sequence.length() > maxLength)
 				return;
-		
+
 		if (dna_flag) 
 			for (int i = start; i < start + length; i++) {
-				
+
 				// all sorts of characters can be found in "seqeunces" ... ignore them...
 				switch (ch[i]) {
 				case '\\':
@@ -117,7 +119,7 @@ public class DAS_Sequence_Handler extends DefaultHandler {
 					break;
 				default:
 					sequence = sequence.append(ch[i]);
-				
+
 				break;
 				}
 			}
@@ -136,6 +138,8 @@ public class DAS_Sequence_Handler extends DefaultHandler {
 		return sequence.toString();
 	}
 
-
+	public String getVersion() {
+		return version;
+	}
 
 }

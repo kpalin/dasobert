@@ -53,6 +53,8 @@ extends Thread {
     Das1Source[] sequenceServers;
     String sp_accession;
     List seqListeners;
+    String version ;
+    
     static Logger logger = Logger.getLogger("org.biojava.spice");
     
      public SequenceThread(String sp_accession,Das1Source ds ) {
@@ -62,6 +64,7 @@ extends Thread {
         this.sp_accession = sp_accession;
         this.sequenceServers =dss ;
         clearSequenceListeners();
+        version = "";
     }
     public SequenceThread(String sp_accession,Das1Source[] ds ) {
         super();
@@ -100,6 +103,7 @@ extends Thread {
             String connstr = dascmd + sp_accession ;
             
             try {
+                version = "";
                 
                 String sequence = retrieveSequence(connstr);
                 // bug in aristotle das source?
@@ -107,7 +111,7 @@ extends Thread {
                 gotSequence = true ;
                 // set the sequence ...
                 
-                triggerNewSequence(sp_accession,sequence,ds);
+                triggerNewSequence(sp_accession,sequence,ds,version);
                 
                 
                 return;
@@ -137,13 +141,13 @@ extends Thread {
 //        }
 //    }
     
-    private void triggerNewSequence(String sp_accession,String sequence,Das1Source source){
+    private void triggerNewSequence(String sp_accession,String sequence,Das1Source source,String version){
 
         Iterator iter = seqListeners.iterator();
         while (iter.hasNext()){
            SequenceListener li = (SequenceListener)iter.next();
             //SequenceEvent event = new SequenceEvent(sequence);
-           SequenceEvent event = new SequenceEvent(sp_accession,sequence); 
+           SequenceEvent event = new SequenceEvent(sp_accession,sequence,version); 
            event.setSource(source);
            li.newSequence(event);
         }
@@ -225,7 +229,9 @@ extends Thread {
         
         xmlreader.parse(insource);
         String sequence = cont_handle.get_sequence();
+        version = cont_handle.getVersion();
         //logger.finest("Got sequence from DAS: " +sequence);
+        
         logger.exiting(this.getClass().getName(), "retreiveSequence",  sequence);
         return sequence ;
     }
