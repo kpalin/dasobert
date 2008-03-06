@@ -28,8 +28,9 @@ extends AbstractDasEvent{
 
     String sequence;
     String accessionCode;
+    String version;
     
-    public SequenceEvent(String accessionCode, String seq) {
+    public SequenceEvent(String accessionCode, String seq, String version) {
         super();
         sequence = seq;
         this.accessionCode = accessionCode;        
@@ -43,4 +44,14 @@ extends AbstractDasEvent{
         return sequence;
     }
 
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+    
+    
 }
