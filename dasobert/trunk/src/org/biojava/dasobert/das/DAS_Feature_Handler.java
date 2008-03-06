@@ -54,7 +54,9 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 
 	String segmentId ;
 	String version;
-	String types_id;
+	String type_id;
+	String type_category;
+	
 	
 	public DAS_Feature_Handler() {
 		super();
@@ -68,7 +70,8 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 		maxFeatures = -1;
 		segmentId = "";
 		version   = "";
-		types_id = "";
+		type_id = "";
+		type_category="";
 	}
 
 	
@@ -152,8 +155,12 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 
 		if ( qName.equals("TYPE")){
 			if ( featureText.length() < 1)
-				featureText = types_id;
-			types_id = "";
+				featureText = type_id;
+		
+			feature.put("TYPE_ID",type_id);
+			feature.put("TYPE_CATEGORY", type_category);
+			type_id = "";
+			type_category="";
 		}
 		
 		
@@ -208,7 +215,8 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 			
 		}
 		if ( qName.equals("TYPE")){
-			types_id = atts.getValue("id");
+			type_id      = atts.getValue("id");
+			type_category= atts.getValue("category");
 		}
 
 	}

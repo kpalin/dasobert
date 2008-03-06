@@ -47,6 +47,8 @@ import java.net.HttpURLConnection           ;
  */
 public class DAS_FeatureRetrieve {
     
+	String version;
+	
     List<Map<String,String>> features ;
     Logger logger     ;
     int comeBackLater;
@@ -61,6 +63,7 @@ public class DAS_FeatureRetrieve {
         logger = Logger.getLogger("org.biojava.spice");
         features = new ArrayList<Map<String,String>>() ;
         comeBackLater = -1;
+        version = "";
         this.url=url;
         reload();
     }
@@ -138,8 +141,11 @@ public class DAS_FeatureRetrieve {
             insource.setByteStream(dasInStream);
             
             try {
-                xmlreader.parse(insource);			
+                xmlreader.parse(insource);	
+                
                 features = cont_handle.get_features();
+                version  = cont_handle.getVersion();
+                
                 comeBackLater = cont_handle.getComBackLater();
             } 
             catch ( Exception e){
@@ -184,7 +190,24 @@ public class DAS_FeatureRetrieve {
         return features;
     }
     
-    /** returns the comeBackLater value - if a server returned suchh - 
+    
+    /** Get the version string of the reference object.
+     * If it does not match the version string that is obtained from the 
+     * reference server there is a version problem!
+     *  
+     * @return version string. (e.g. a MD5 digest of the reference sequence)
+     */
+    public String getVersion() {
+		return version;
+	}
+
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+
+	/** returns the comeBackLater value - if a server returned suchh - 
      * 
      * @return comeBackLater in seconds, or -1 if not provided by server 
      */
