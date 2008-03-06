@@ -71,9 +71,12 @@ public class TestSequenceParse extends TestCase {
 
 			xmlreader.parse(insource);
 			String sequence = cont_handle.get_sequence();		        
-
+			
 			assertNotNull(sequence);
 
+			String version = cont_handle.getVersion();
+			assertNotNull(version);
+			
 			assertEquals("the sequence did not match the expected length.",149,sequence.length());
 
 			String shouldSequence = "MLAKATLAIVLSAASLPVLAAQCEATIESNDAMQYNLKEMVVDKSCKQFTVHLKHVGKMAKVAMGHNWVLTKEADKQGVATDGMNAGLAQDYVKAGDTRVIAHTKVIGGGESDSVTFDVSKLTPGEAYAYFCSFPGHWAMMKGTLKLSN";
