@@ -101,6 +101,9 @@ public class TestFeatureParse extends TestCase {
 
 			assertEquals("did not find the right number of features.", 35,features.size());
 			
+			String version = cont_handle.getVersion();
+			assertNotNull(version);
+			
 			Iterator iter = features.iterator();
 			while (iter.hasNext()){
 				Map f = (Map) iter.next();
