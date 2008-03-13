@@ -127,6 +127,8 @@ implements Runnable
 
 			List<Map<String,String>> features = ftmp.get_features();
 
+			String version = ftmp.getVersion();
+			
 			// a fallback mechanism to prevent DAS sources from bringing down spice
 			if ( features.size() > MAX_NR_FEATURES){
 				logger.warning("DAS source returned more than " + MAX_NR_FEATURES + "features. " +
@@ -136,8 +138,8 @@ implements Runnable
 
 
 			// notify FeatureListeners
-			Map[] feats = (Map[])features.toArray(new Map[features.size()]);
-			notifyFeatureListeners(feats);
+			Map<String, String>[] feats = features.toArray(new Map[features.size()]);
+			notifyFeatureListeners(feats,version);
 
 			break;
 
@@ -152,13 +154,13 @@ implements Runnable
 		thread.start();
 	}
 
-	private void notifyFeatureListeners(Map[] feats){
+	private void notifyFeatureListeners(Map<String, String>[] feats,String version){
 		logger.finest("FeatureThread found " + feats.length + " features");
-		FeatureEvent fevent = new FeatureEvent(feats,dasSource);
+		FeatureEvent fevent = new FeatureEvent(feats,dasSource,version);
 		
-		Iterator fiter = featureListeners.iterator();
+		Iterator<FeatureListener> fiter = featureListeners.iterator();
 		while (fiter.hasNext()){
-			FeatureListener fi = (FeatureListener)fiter.next();
+			FeatureListener fi = fiter.next();
 			fi.newFeatures(fevent);
 		}
 	}
@@ -168,11 +170,11 @@ implements Runnable
 	 * @param comeBackLater
 	 */
 	private void notifyComeBackLater(int comeBackLater){
-		FeatureEvent event = new FeatureEvent(new HashMap[0],dasSource);
+		FeatureEvent event = new FeatureEvent(new HashMap[0],dasSource,"");
 		event.setComeBackLater(comeBackLater);
-		Iterator fiter = featureListeners.iterator();
+		Iterator<FeatureListener> fiter = featureListeners.iterator();
 		while (fiter.hasNext()){
-			FeatureListener fi = (FeatureListener)fiter.next();
+			FeatureListener fi = fiter.next();
 			fi.comeBackLater(event);
 		}
 
