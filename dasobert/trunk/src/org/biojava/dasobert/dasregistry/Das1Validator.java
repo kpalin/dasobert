@@ -617,7 +617,7 @@ public class Das1Validator {
 			Structure struc = dasc.getStructureById(testcode);
 			//System.out.println(struc);
 			Chain c = struc.getChain(0);
-			if ( c.getAtomLength() > 0 ) {
+			if ( c.getLength() > 0 ) {
 				return true;
 			} else {
 				validationMessage += "<br/>---<br/>contacting " + cmd + testcode+"<br/>";
