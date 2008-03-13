@@ -35,15 +35,17 @@ import java.util.List;
  */
 public abstract class AbstractFeatureTrack implements FeatureTrack,Cloneable {
 
-	String name   ;
-	String method ;
-	String type   ;
+	String name;
+	String method;
+	String type;
 	List <Segment>  segments ;
-	String note   ;
-	String link   ;
-	String source ;
+	String note;
+	String link;
+	String source;
 	String score;
 	String orientation;
+	String typeID;
+	String typeCategory;
 
 	public AbstractFeatureTrack() {
 		source = "Unknown";
@@ -109,7 +111,10 @@ public abstract class AbstractFeatureTrack implements FeatureTrack,Cloneable {
 	public void setType(String typ) { type = typ ; }
 	public String getType() { return type ; }
 
-	public void setNote(String nte) { note = nte; }
+	public void setNote(String nte) { 
+		if (nte != null)
+			note = nte; 
+		}
 	public String getNote() { return note ; }
 
 	public void setLink(String lnk) { link = lnk;}
@@ -160,15 +165,36 @@ public abstract class AbstractFeatureTrack implements FeatureTrack,Cloneable {
 		//}
 		if ( this.type.equals(feat.getType())){
 			if ( this.method.equals(feat.getMethod())){
-				if ( this.source.equals(feat.getSource())){
-
-					return true;
+				if ( this.source.equals(feat.getSource())){										
+					if (this.note.equals(feat.getNote())){
+						return true;
+					}
 				}
 			}
 		}
 		return false;
 
 	}
+	public String getTypeCategory() {
+		// TODO Auto-generated method stub
+		return typeCategory;
+	}
+
+	public String getTypeID() {
+		// TODO Auto-generated method stub
+		return typeID;
+	}
+
+	public void setTypeCategory(String typeCategory) {
+		this.typeCategory = typeCategory;
+		
+	}
+
+	public void setTypeID(String typeID) {
+		this.typeID = typeID;
+		
+	}
+	
 
 
 }
