@@ -20,16 +20,13 @@
                property="java14">
     </available>
 
-<<<<<<< .mine
     <property name="classpath" value="jars/biojava.jar" />
-
 
    <!-- check for DasobertBioJava library -->
     <available classpath="${classpath}" 
                classname="org.biojava.bio.structure.Structure"
 	       property="biojava.present" />
 
-=======
     <!-- Check the current system classpath for JUnit -->
     <available classpath="${java.class.path}"
                classname="junit.framework.TestCase"
@@ -40,18 +37,13 @@
                classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTest"
                property="junit.support" />
 
->>>>>>> .r1847
     <!-- Echo information -->
     <echo message="Building Dasobert-${version}" />
-<<<<<<< .mine
     <echo message="Biojava present:  ${biojava.present}"/>
-=======
     <echo message="Java Home:                       ${java.home}"/>
     <echo message="JUnit present:                   ${junit.present}" />
     <echo message="JUnit supported by Ant:          ${junit.support}" />
     <echo message="DocCheck present:                ${doccheck.present}" />	
-
->>>>>>> .r1847
 
     <!-- Main build directory -->
     <property name="build.dir" value="./ant-build" />
