@@ -14,6 +14,11 @@
  * "crossfire". It should hopefully handle all xpm types.
  * If it doesnt, please send me email, with a sample xpm image
  * that it fails under, and I'll try to fix it.
+ * 
+ * @(#) Xpm.java 1.9@(#)
+ * Copyright (c) 2001, Phil Brown, phil@bolthole.com
+ * licensed under GNU LGPL version 2
+ * 
  */
 package org.biojava.dasobert.das;
 
