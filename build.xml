@@ -68,7 +68,8 @@
     <property name="build.docs.dasobert" value="${build.dest.docs}/${name.dasobert}" />
 
     <property name="jar.dasobert" value="${build.dir}/${name.dasobert}.jar" />
-    <property name="manifest.file.dasobert" value="${manifest.dir}/MANIFEST.MF" />
+    <property name="manifest.dir" value="manifest"/>
+    <property name="manifest.file.dasobert" value="${manifest.dir}/dasobert.txt" />
     <!-- Subdirectories for tests source and classes -->
     <property name="name.tests" value="tests" />
     <property name="build.dest.tests" value="${build.classes.dir}/${name.tests}" />
@@ -348,9 +349,103 @@
 
  
   
+	<!-- Runs the CruiseControl checks only needed for admins who want to trace the compile state of biojava -->
+	<!-- does the same as runtests, but with XML output, so CruiseControl can parse the outcome -->
+	<target name="cruise" 
+          depends="clean,package,compile-tests"
+          description="Run clean, build and tests for CruiseControl">
+		<property name="test.subtree" value="**" />
+		<echo message="Running tests:           ${test.subtree}" />
+		<junit 	maxmemory="128m" 
+    		printsummary="yes" 
+		haltonfailure="no" 
+		reloading="no"
+		errorProperty="test.failed"
+		>
+			<formatter type="xml" />
+			<classpath>
+				<!-- main classes from build -->
+				<pathelement path="${build.dest.biojava}" />
+				<!-- resources -->
+				<pathelement path="${resources.dir}" />
+				<!-- test classes from build -->
+				<pathelement path="${build.dest.tests}" />
+				<!-- test data from build -->
+				<pathelement path="${tests.dir}/files" />
+				<!-- currently the move isn't complete -->
+				<pathelement path="${tests.dir}" />
+				<!-- classes specified in this file -->
+				<pathelement path="${classpath}" />
+				<!-- classes specified in system classpath -->
+				<pathelement path="${java.class.path}" />
+			</classpath>
+			<!-- The junit task doesn't support 'if' so we test for JUnit here -->
+			<batchtest fork="no" todir="${reports.tests}" if="junit.present">
+				<fileset dir="${build.dest.tests}">
+					<include name="${test.subtree}/*Test.class" />
+					<include name="${test.subtree}/*TestSuite.class" />
+					<exclude name="**/Abstract*Test.class" />
+				</fileset>
+			</batchtest>
+		</junit>
+		<fail message="Tests failed: check test reports." if="test.failed" />
+	</target>
 
  
+      <target name="dist-src" depends="clean-dist, init, prepare"
+  	        description="create a jar file of the biojava source">
+
+		<mkdir dir="${dist.root}"/>
+		<mkdir dir="${dist.dir}"/>
+
+		<!-- copy  src -->
+		<copy todir="${dist.dir}/src">
+			<fileset dir="${src.dir}"/>
+		</copy>
+
+		<!-- copy resources -->
+		<copy todir="${dist.dir}/resources">
+			<fileset dir="${resources.dir}"/>
+		</copy>
+
+		<!-- copy this build file -->
+		<copy file="${ant.file}" tofile="${dist.dir}/build.xml"/>
+
+
+
+		<!-- copy tests -->
+		<copy todir="${dist.dir}/tests">
+			<fileset dir="${tests.dir}"/>
+		</copy>
+
+		<!-- copy the docs -->
+		<copy todir="${dist.dir}/doc">
+			<fileset dir="${build.dest.docs}"/>
+		</copy>
+		
+
+		<!-- copy the jar files -->
+		<copy todir="${dist.dir}">
+			<fileset dir=".">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+
+		<jar
+		  jarfile="${build.dir}/dazzle-src.jar"
+	       	  manifest="${manifest.file.dasobert}">
+			
+			<fileset dir="${dist.dir}" />
+
+		</jar>
+
+	</target>
  
+	<!-- Cleans the dist directory -->
+	<target name="clean-dist" depends="init" description="Cleans the dist root directory">
+		<delete dir="${dist.root}" />
+	</target>
 
 
 
