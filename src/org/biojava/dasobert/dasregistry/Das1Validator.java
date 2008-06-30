@@ -29,21 +29,37 @@ package org.biojava.dasobert.dasregistry ;
 import org.xml.sax.*;
 import javax.xml.parsers.*;
 import java.util.ArrayList                    ;
+import java.util.Iterator;
 import java.util.Map                          ;
 import java.util.List                         ;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.io.BufferedReader;
 import java.io.InputStream                    ;
+import java.io.InputStreamReader;
 
 import java.net.URL                           ;
 
 
 //for validation add dependency on SPICE... :-/
 import java.net.HttpURLConnection;
+
+import org.biojava.bio.Annotation;
 import org.biojava.bio.structure.io.DASStructureClient;
 import org.biojava.bio.program.das.dasalignment.DASAlignmentClient;
 import org.biojava.bio.program.das.dasalignment.Alignment;
+import org.biojava.bio.program.das.dasalignment.DASException;
 import org.biojava.bio.structure.Structure;
 import org.biojava.bio.structure.Chain;
 import org.biojava.dasobert.das.*;
+import org.biojava.ontology.OntoTools;
+import org.biojava.ontology.Ontology;
+import org.biojava.ontology.OntologyException;
+import org.biojava.ontology.OntologyFactory;
+import org.biojava.ontology.Term;
+import org.biojava.ontology.io.OboParser;
 
 import de.mpg.mpiinf.ag3.dasmi.model.Interaction;
 
@@ -56,11 +72,21 @@ public class Das1Validator {
 	boolean supportsMD5Checksum;
 	public boolean VALIDATION = false; // DTD validation ..
 
+	public  static final boolean NO_ONTOLOGY_VALIDATION = false;
+	public  static final boolean ONTOLOGY_VALIDATION = true;
 	private static final int MAX_SEQUENCE_LENGTH = 1000;
 	private static final int MAX_NR_FEATURES     = 10;
-	public static final boolean VERBOSE = false;
+	private static final int MAX_NR_FEATURES_ONTOLOGY     = 1000;
+	public  static final boolean VERBOSE = false;
 	
 	List<String> all_capabilities;
+	
+	private Ontology ontologyBS;
+	private Ontology ontologySO;
+	private Ontology ontologyECO;
+
+	private Ontology[] ontologies ;
+	
 	public Das1Validator() {
 		supportsMD5Checksum = false;
 		validationMessage = "" ;
@@ -91,7 +117,7 @@ public class Das1Validator {
 	 * @return an array of capabilities that were tested successfully.
 	 */ 
 	public String[] validate(String url, DasCoordinateSystem[] coords, String[] capabilities){
-		return validate(url,coords,capabilities,VERBOSE);
+		return validate(url,coords,capabilities,VERBOSE, NO_ONTOLOGY_VALIDATION);
 	}
 
 	/** validate the DAS source that is located at the provided url
@@ -100,9 +126,11 @@ public class Das1Validator {
 	 * @param coords the coordinate systems that should be supported by it
 	 * @param capabilities the capabilities that should be tested.
 	 * @param verbose flag if the output should be verbose or not
+	 * @param ontologyValidation flag if the ontology should be checked as well
 	 * @return an array of capabilities that were tested successfully.
 	 */ 
-	public String[] validate(String url, DasCoordinateSystem[] coords, String[] capabilities, boolean verbose){
+	public String[] validate(String url, DasCoordinateSystem[] coords, 
+			String[] capabilities, boolean verbose, boolean ontologyValidation){
 		validationMessage="";
 		
 		if ( url == null )
@@ -177,7 +205,7 @@ public class Das1Validator {
 						String testcode = ds.getTestCode();
 
 
-						if (! validateFeatures(url,testcode))
+						if (! validateFeatures(url,testcode, ontologyValidation))
 							featureok = false;
 						if ( verbose)
 							System.out.println(validationMessage);
@@ -566,7 +594,8 @@ public class Das1Validator {
 		return false;
 	}
 
-	private boolean validateFeatures(String url, String testcode){
+	private boolean validateFeatures(String url, 
+			String testcode, boolean ontologyValidation){
 		try {
 			URL u = new URL(url+"features?segment="+testcode);
 			InputStream dasInStream = open(u); 
@@ -576,19 +605,26 @@ public class Das1Validator {
 
 			// make sure we do not load the features of a whole chromosome, in case a user specified those...
 			cont_handle.setMaxFeatures(MAX_NR_FEATURES);
+			
+			if (ontologyValidation)
+				cont_handle.setMaxFeatures(MAX_NR_FEATURES_ONTOLOGY);
 			cont_handle.setDASCommand(url.toString());
 			xmlreader.setContentHandler(cont_handle);
 			xmlreader.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
 			InputSource insource = new InputSource() ;
 			insource.setByteStream(dasInStream);
 			xmlreader.parse(insource);
-			List features = cont_handle.get_features();
+			List<Map<String,String>> features = cont_handle.get_features();
 			
 			if ( cont_handle.isMD5Checksum())
 				supportsMD5Checksum = true;
 			
 			if ( features.size() > 0 ) {
-				return true;
+				if ( ! ontologyValidation)
+					return true;
+				validationMessage  +="<br/>---<br/> contacting " + url+"features?segment="+testcode + "<br/>";				
+				return validateFeatureOntology(features);
+				
 			} else {
 				validationMessage  +="<br/>---<br/> contacting " + url+"features?segment="+testcode + "<br/>";
 				validationMessage += " no features were returned";
@@ -608,6 +644,200 @@ public class Das1Validator {
 		}
 		return false;
 	}
+	
+	
+	private void initOntologies(){
+		try {
+			ontologyBS = readOntology("BioSapiens","the BioSapiens Ontology", "biosapiens.obo");
+			ontologySO = readOntology("SequenceOntology", "the Sequence Ontology" , "so.obo");			
+			ontologies =  new Ontology[]{ontologyBS, ontologySO};
+			ontologyECO = readOntology("ECO", "the Evidence Code Ontology" , "evidence_code.obo");
+		} catch (OntologyException ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+
+	private Ontology readOntology(String ontoName, String ontoDesc, String fileName) throws OntologyException{
+
+
+		OboParser parser = new OboParser();
+		InputStream inStream = this.getClass().getResourceAsStream("/ontologies/"+fileName);
+		System.out.println("reading ontology: /ontologies/" + fileName);
+		if (inStream == null){
+			System.err.println("did not find " + fileName );
+		}
+		
+		BufferedReader oboFile = new BufferedReader ( new InputStreamReader ( inStream ) );
+		
+		try {
+			Ontology ontology = parser.parseOBO(oboFile, ontoName, ontoDesc );
+
+			//System.out.println("finished parsing: " + ontology);
+			//Set keys = ontology.getTerms();
+			//Iterator<Term> iter = keys.iterator();
+			//while (iter.hasNext()){
+			//	Term term = iter.next();				
+			//	System.out.println(term + " " + term.getDescription());
+
+			//}
+			return ontology;
+
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+
+		// return a dummy ontology
+		OntologyFactory factory = OntoTools.getDefaultFactory();
+		Ontology ontology = factory.createOntology(ontoName, ontoDesc);
+
+		return ontology;
+
+	}
+	
+
+	private Term getTerm(String typeID) {
+		if ( typeID == null){
+			System.err.println("typeID is NULL, no terms in an ontology");
+			return null;
+		}
+		Term t = null;
+
+		if ( ontologies == null) {
+			initOntologies();
+		}
+		
+		try {
+			for (Ontology ontology: ontologies){
+				if ( ontology.containsTerm(typeID)) {
+					t = ontology.getTerm(typeID);
+					if (t != null)
+						return t;
+				}
+			}
+		} catch (NoSuchElementException ex){
+			ex.printStackTrace();
+			//System.err.println(ex.getMessage());
+		}
+		return t;
+	}
+
+	
+	
+	/**validates a track for consistency with the BioSapiens annotation
+	 * @param feature 
+	 * 
+	 * @return true if the track validates
+	 * @throws DASException 
+	 */
+	public boolean  validateTrack(Map<String,String> feature) throws DASException{
+
+		Pattern ecoPattern = Pattern.compile("(ECO:[0-9]+)");
+		
+		// validate type:
+		String type         = feature.get("TYPE");
+		String typeID       = feature.get("TYPE_ID");
+		String typeCategory = feature.get("TYPE_CATEGORY");
+		/*System.out.println("type  " + type);
+		System.out.println("method " + feature.get("METHOD"));
+		System.out.println("typeID " + typeID);
+		System.out.println("typeCategory " + typeCategory);
+	*/
+		if ( typeID == null) {
+			throw new DASException("track does not have the TYPE - id field set");
+		}
+		if ( typeCategory == null) {
+			throw new DASException("track does not have the TYPE - category field set");
+		}
+
+		Term t = getTerm(typeID);
+		
+		if ( t == null){
+			throw new DASException ("term " + typeID +" not found in any Ontology");
+		}
+						
+		Annotation anno = t.getAnnotation();
+		try {
+			Boolean obsolete = (Boolean) anno.getProperty("is_obsolete");
+			if ((obsolete != null )&& (obsolete.equals(true))) {
+				throw new DASException("Feature uses an obsolete term: "+ t.getName() + " " + t.getDescription());
+			}
+		} catch (NoSuchElementException e){
+			// the property is_obsolete is not set, 
+			// which means the term is still current
+			// and we proceed as normal
+		}
+		
+
+		if (! t.getDescription().equals(type)){
+			boolean synonymUsed = false;
+			Object[] synonyms = t.getSynonyms();
+			for (Object syno :  synonyms){
+				//System.out.println(syno);
+				if ( syno.equals(type)){
+					synonymUsed = true;
+					break;
+				}
+			}
+			if ( ! synonymUsed) {			
+				throw new DASException("feature type ("+ type + 
+						") does not match Ontology description (" + 
+						t.getDescription()+" for termID: " +
+				typeID+")");
+			}
+		}
+
+		// test evidence code
+
+		// parse the ECO id from the typeCategory;
+		Matcher m = ecoPattern.matcher(typeCategory);
+		String eco = null;
+		if ( m.find() ) {
+			eco = m.group(0);
+		}
+
+		if ( eco == null){
+			throw new DASException("could not identify ECO id in " + typeCategory);
+		}
+		if (! ontologyECO.containsTerm(eco)){
+			throw new DASException("unknown evidence code >" + eco + "<");
+		}
+
+
+
+		return true;
+
+	}
+	
+	private boolean validateFeatureOntology(List<Map<String, String>> featuresList){
+		
+		validationMessage += "got " + featuresList.size() + " features\n";
+		boolean ontologyOK = true;
+		int i = 0;
+		for( Map<String,String>feature : featuresList){
+			i++;
+			validationMessage += "*** validating track " + i +": " + feature.get("TYPE") +"\n";
+			try {
+				
+				if (( feature.get("START").equals(feature.get("END"))) &&
+						(feature.get("START").equals("0"))){
+					validationMessage +="  Non-positional features are currently not supported, yet.\n";
+					continue;
+				}
+				if ( validateTrack(feature)) {
+					validationMessage +="  track ok!\n";
+				}
+			} catch (DASException ex){
+				//System.out.println(ex.getMessage());
+				//ex.printStackTrace();
+				validationMessage += "   " + ex.getMessage() +"\n";
+				validationMessage += "   This DAS source does NOT comply with the BioSapiens ontology!\n";
+				ontologyOK = false;
+
+			}
+		}
+		return ontologyOK;
+	}
 
 	private boolean validateStructure(String url, String testcode) {
 		String cmd = url+"structure?model=1&query=";
@@ -617,7 +847,7 @@ public class Das1Validator {
 			Structure struc = dasc.getStructureById(testcode);
 			//System.out.println(struc);
 			Chain c = struc.getChain(0);
-			if ( c.getLength() > 0 ) {
+			if ( c.getAtomLength() > 0 ) {
 				return true;
 			} else {
 				validationMessage += "<br/>---<br/>contacting " + cmd + testcode+"<br/>";
