@@ -94,7 +94,7 @@ public class InteractionThread extends Thread{
         
     /**
      * queries the interactions for a specific interactor id 
-     * @param id the accession id of the query interactor
+     * @param ids the accession ids of the query interactor
      * @return an array containg all found interactions
      * TODO detail stuff
      */

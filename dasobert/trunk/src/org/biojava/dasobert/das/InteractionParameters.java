@@ -68,7 +68,7 @@ public class InteractionParameters {
 
     /**
      * 
-     * @param query the query to set
+     * @param queries the queries to set
      */
     public void setQueries(String[] queries) {
         this.queries = queries;
@@ -84,7 +84,7 @@ public class InteractionParameters {
 
     /**
      * 
-     * @param query the query to set
+     * @param origQueries the queries to set
      */
     public void setOrigQueries(String[] origQueries) {
         this.origQueries = origQueries;

@@ -107,7 +107,6 @@ public class InteractionDasSource extends Das1Source{
     
     /**
      * Checks whether the source is compatible to the coordinate system passed over
-     * @param queryCoordSys The coordinate system of the query
      * @return True if the coordinate system matches, false otherwise
      */
     public boolean getIsCompatible(){
