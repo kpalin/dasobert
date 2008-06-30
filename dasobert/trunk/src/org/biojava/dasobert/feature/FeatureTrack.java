@@ -94,5 +94,20 @@ public interface FeatureTrack {
     public abstract void addSegment(Segment s);
 
     public abstract List<Segment> getSegments();
+    
+    /** set the data from the DAS - type - id field
+     * (used for Ontology support)
+     * @param typeID
+     */
+    public void setTypeID(String typeID);
+    
+    /** set the data from the DAS - type - category field
+     * (used for Ontology support)
+     * @param typeCategory
+     */
+    public void setTypeCategory(String typeCategory);
+    
+    public String getTypeID();
+    public String getTypeCategory();
    
 }

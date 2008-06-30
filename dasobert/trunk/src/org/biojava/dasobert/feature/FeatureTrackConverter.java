@@ -141,6 +141,8 @@ public class FeatureTrackConverter {
 			Map<String,String> currentFeatureMap = mapfeatures[i];
 			String type = (String) currentFeatureMap.get("TYPE") ;
 
+			
+			
 			String group = currentFeatureMap.get("GROUP");
 			if ( group != null){
 				if ( prevGroup != null) {
@@ -227,6 +229,7 @@ public class FeatureTrackConverter {
 				if ( ! isGroup) {
 					try {
 						feat.setName(type);
+					
 					} catch ( NullPointerException e) {
 						//e.printStackTrace();
 						feat.setName("null");
@@ -247,14 +250,22 @@ public class FeatureTrackConverter {
 		return (FeatureTrack[]) features.toArray(new FeatureTrack[features.size()]);
 	}
 
-
+	/**	 test if this features is added as a new feature to the features list, 
+	 * or if it is joint with an already existing one...
+	 * 
+	 * @param features
+	 * @param newFeature
+	 * @return
+	 */
 	protected  List<FeatureTrack> testAddFeatures(List<FeatureTrack> features,FeatureTrack newFeature){
-		// test if this features is added as a new feature to the features list, or if it is joint with an already existing one...
+		
 		//System.out.println("testing " + newFeature + " " + newFeature.getScore());   
 		Iterator iter = features.iterator();
 
 
-		if ( isHistogramFeatureType(newFeature)) {            	
+		if ( isHistogramFeatureType(newFeature)) {  
+			
+			// return histogram type features
 			type = TYPE_HISTOGRAM;
 
 			Segment seg = getHistogramSegmentFromFeature(newFeature);
@@ -306,6 +317,7 @@ public class FeatureTrackConverter {
 
 			if ( ( knownFeature.getSource().equals(newFeature.getSource() )) &&
 					( knownFeature.getMethod().equals(newFeature.getMethod())) &&
+					( knownFeature.getNote().equals(newFeature.getNote())) &&
 					isSecondaryStructureFeat(knownFeature) && 
 					isSecondaryStructureFeat(newFeature))
 				sameFeat =true;
@@ -360,6 +372,12 @@ public class FeatureTrackConverter {
 		feat.setType(  (String)currentFeatureMap.get("TYPE"));
 		feat.setLink(  (String)currentFeatureMap.get("LINK"));
 		feat.setNote(  (String)currentFeatureMap.get("NOTE"));
+		
+		String typeID       = (String) currentFeatureMap.get("TYPE_ID");
+		String typeCategory = (String) currentFeatureMap.get("TYPE_CATEGORY");
+		feat.setTypeID(typeID);
+		feat.setTypeCategory(typeCategory);
+		
 		String method = (String)currentFeatureMap.get("METHOD");
 		if ( method == null) { method = "";}
 		feat.setMethod(method);
