@@ -34,6 +34,8 @@ import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
+import org.biojava.bio.program.das.dasalignment.DASException;
 import org.biojava.dasobert.das2.io.Das2ValidationHandler;
 import org.biojava.dasobert.util.HttpConnectionTools;
 import org.xml.sax.InputSource;
@@ -75,7 +77,7 @@ public class Das2ValidatorCall {
 	public Map[] validate(URL checkMe) 
 	throws MalformedURLException,
 	IOException,
-	SAXException{
+	SAXException,DASException{
 		
 		URL u = new URL(dasypus + "?url=" +  URLEncoder.encode(checkMe.toString(),"UTF-8" ));
 		

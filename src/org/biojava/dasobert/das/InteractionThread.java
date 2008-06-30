@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.biojava.bio.program.das.dasalignment.DASException;
 import org.biojava.dasobert.dasregistry.Das1Source;
 import org.biojava.dasobert.eventmodel.InteractionEvent;
 import org.biojava.dasobert.eventmodel.InteractionListener;
@@ -136,7 +137,7 @@ public class InteractionThread extends Thread{
      * @return the interactions returned from the source
      * @throws IOException
      */
-    private Interaction[] retrieveInteractions(String url) throws IOException{
+    private Interaction[] retrieveInteractions(String url) throws IOException, DASException{
     //	System.setProperty("org.xml.sax.driver", "org.apache.xerces.SAXParser");
         URL dasUrl = null;
         try {

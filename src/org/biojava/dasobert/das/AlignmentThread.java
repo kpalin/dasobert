@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import org.biojava.bio.Annotation;
 import org.biojava.bio.program.das.dasalignment.Alignment;
 import org.biojava.bio.program.das.dasalignment.DASAlignmentCall;
+import org.biojava.bio.program.das.dasalignment.DASException;
 import org.biojava.bio.program.ssbind.AnnotationFactory;
 import org.biojava.dasobert.dasregistry.Das1Source;
 import org.biojava.dasobert.dasregistry.DasCoordinateSystem;
@@ -167,7 +168,9 @@ extends Thread{
                 query = query.substring(0,4);
             }
         }
-        //logger.info("requesting for query " + query);
+        if (logger.isLoggable(Level.FINEST)){
+        	logger.finest(" AlignmentThread: requesting alig for query " + query);
+        }
         Alignment[] aligs = getAlignments(query);
         if ( aligs.length == 0) {
             triggerNoAlignmentFound(query,subject);
@@ -346,20 +349,15 @@ extends Thread{
             
         }
         
-        
-        
         // logger.log(Level.SEVERE,logname +" no  alignment found!");
-        
-        
-        
         return new Alignment[0] ;
     }
     
     private Alignment[] retrieveAlignments(String url)
-    throws IOException
+    throws IOException,DASException
     {
-        
-        logger.info("requesting alignment " + url);
+        if (logger.isLoggable(Level.INFO))
+        	logger.info("requesting alignment " + url);
         /* now connect to DAS server */
         
         URL dasUrl = null ;
