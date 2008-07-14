@@ -255,7 +255,7 @@ public class FeatureTrackConverter {
 	 * 
 	 * @param features
 	 * @param newFeature
-	 * @return
+	 * @return a List of FeatureTrack objects
 	 */
 	protected  List<FeatureTrack> testAddFeatures(List<FeatureTrack> features,FeatureTrack newFeature){
 		
