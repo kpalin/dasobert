@@ -174,7 +174,11 @@ public class DASInteractionXMLParser extends DefaultHandler {
 	 */
 	private void interactorStart(Attributes atts) {
 		interactor = new Interactor();
-		interactor.setId(atts.getValue("id"));
+		if (atts.getValue("intId") == null){
+			interactor.setId(atts.getValue("id"));
+		}else{
+			interactor.setId(atts.getValue("intId"));
+		}
 		interactor.setName(atts.getValue("shortLabel"));
 		interactor.setDbAccessionId(atts.getValue("dbAccessionId"));
 		interactor.setDbCoordSys(atts.getValue("dbCoordSys"));
@@ -207,7 +211,11 @@ public class DASInteractionXMLParser extends DefaultHandler {
 	 */
 	private void participantStart(Attributes atts) {
 		participant = new Participant();
-		participant.setId(atts.getValue("id"));
+		if (atts.getValue("intId") == null){
+			participant.setId(atts.getValue("id"));
+		}else{
+			participant.setId(atts.getValue("intId"));
+		}
 		detailParent = "participant";
 	}
 
