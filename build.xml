@@ -2,7 +2,7 @@
 
 <!--
 	
-		
+Build file for the Dasobert DAS client library		
 
 -->
 
@@ -20,7 +20,7 @@
                property="java14">
     </available>
 
-    <property name="classpath" value="jars/biojava.jar" />
+    <property name="classpath" value="jars/biojava.jar;jars/xerces.jar;jars/isorelax.jar;jars/msv.jar;jars/relaxngDatatype.jar;jars/isorelax-jaxp-bridge1.0.jar;jars/xercesImpl.jar;jars/xmlParserApi.jar;jars/xsdlib.jar" />
 
    <!-- check for DasobertBioJava library -->
     <available classpath="${classpath}" 
@@ -71,7 +71,7 @@
     <property name="manifest.dir" value="manifest"/>
     <property name="manifest.file.dasobert" value="${manifest.dir}/dasobert.txt" />
     <!-- Subdirectories for tests source and classes -->
-    <property name="name.tests" value="tests" />
+    <property name="name.tests" value="test" />
     <property name="build.dest.tests" value="${build.classes.dir}/${name.tests}" />
     <property name="build.docs.tests" value="${build.dest.docs}/${name.tests}" />
     <property name="reports.tests" value="./reports/tests" />
@@ -335,12 +335,11 @@
       author="true"
       version="true"
       use="true"
-      source="1.4"
+      source="1.5"
       windowtitle="${Name.dasobert} API"
       doctitle="${Name.dasobert}"
       maxmemory="96m">
-       <link href="http://java.sun.com/j2se/1.4.2/docs/api/" offline="false"/>
-
+       <link href="http://java.sun.com/j2se/1.5.0/docs/api/" offline="false"/>
        <group title="Biojava DASOBERT"
        	packages="org.biojava.dasobert" />
              
@@ -356,16 +355,11 @@
           description="Run clean, build and tests for CruiseControl">
 		<property name="test.subtree" value="**" />
 		<echo message="Running tests:           ${test.subtree}" />
-		<junit 	maxmemory="128m" 
-    		printsummary="yes" 
-		haltonfailure="no" 
-		reloading="no"
-		errorProperty="test.failed"
-		>
-			<formatter type="xml" />
+		<junit maxmemory="128m" printsummary="yes" haltonfailure="no" reloading="no">
+			<formatter type="plain" usefile="true" />
 			<classpath>
 				<!-- main classes from build -->
-				<pathelement path="${build.dest.biojava}" />
+				<pathelement path="${build.dest.dasobert}" />
 				<!-- resources -->
 				<pathelement path="${resources.dir}" />
 				<!-- test classes from build -->
@@ -382,18 +376,19 @@
 			<!-- The junit task doesn't support 'if' so we test for JUnit here -->
 			<batchtest fork="no" todir="${reports.tests}" if="junit.present">
 				<fileset dir="${build.dest.tests}">
-					<include name="${test.subtree}/*Test.class" />
+					<include name="${test.subtree}/Test*.class" />
 					<include name="${test.subtree}/*TestSuite.class" />
 					<exclude name="**/Abstract*Test.class" />
 				</fileset>
 			</batchtest>
 		</junit>
+
 		<fail message="Tests failed: check test reports." if="test.failed" />
 	</target>
 
  
       <target name="dist-src" depends="clean-dist, init, prepare"
-  	        description="create a jar file of the biojava source">
+  	        description="create a jar file of the dasobert source">
 
 		<mkdir dir="${dist.root}"/>
 		<mkdir dir="${dist.dir}"/>
@@ -414,7 +409,7 @@
 
 
 		<!-- copy tests -->
-		<copy todir="${dist.dir}/tests">
+		<copy todir="${dist.dir}/test">
 			<fileset dir="${tests.dir}"/>
 		</copy>
 
@@ -433,7 +428,7 @@
 
 
 		<jar
-		  jarfile="${build.dir}/dazzle-src.jar"
+		  jarfile="${build.dir}/dasobert-src.jar"
 	       	  manifest="${manifest.file.dasobert}">
 			
 			<fileset dir="${dist.dir}" />
