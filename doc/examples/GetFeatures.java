@@ -16,7 +16,7 @@
  * at:
  *
  *      http://www.biojava.org/
- * 
+ *
  * Created on Nov 20, 2005
  *
  */
@@ -48,16 +48,16 @@ public class GetFeatures {
 
 	GetFeatures f = new GetFeatures();
 	f.showExample(accessionCode);
-	
-	
+
+
 
     }
-    
+
     public void showExample(String accessionCode) {
 	try {
 
 	    // first we set some system properties
-	   
+
 	    // make sure we use the Xerces XML parser..
 	    System.setProperty("javax.xml.parsers.DocumentBuilderFactory","org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
 	    System.setProperty("javax.xml.parsers.SAXParserFactory","org.apache.xerces.jaxp.SAXParserFactoryImpl");
@@ -68,87 +68,88 @@ public class GetFeatures {
 	    System.setProperty("proxyPort","3128");
 
 
-	    
+
 	    Das1Source dasSource = new Das1Source();
-	    
+
 	    dasSource.setUrl("http://www.ebi.ac.uk/das-srv/uniprot/das/aristotle/");
 
 	    // we want to get the features for this UniProt entry:
-	   
-	    
+
+
 
 	    requestFeatures(accessionCode,dasSource);
 
-	    
+
 	    // do a loop over 10 seconds. the das sources really should respond during this time.
 	    int i = 0 ;
 	    while (true){
 		System.out.println(i  + " seconds have passed");
-		i++;	
+		i++;
 		Thread.sleep(1000);
 		if ( i > 10) {
 		    System.err.println("We assume that das source do not take more than 10 seconds to provide a response.");
 		    System.out.println("In case you see SAX parser exceptions above - they are the result of some DAS servers not having any features in their responses and this can be ignored");
 		    System.exit(1);
-		}	    
-	    }	
+		}
+	    }
 	} catch (Exception e){
 	    e.printStackTrace();
 	}
     }
 
-   
-    
-  
 
 
-   
- 
-   
+
+
+
+
+
+
     /** request the features for a singe das source.
      */
     private void requestFeatures(String accessionCode, Das1Source source) {
-	
+
 	// that is the class that listens to features
 	FeatureListener listener = new MyListener();
 
 	// now create the thread that will do the DAS requests
 	FeatureThread thread = new FeatureThread(accessionCode, source);
-	
+
 	// and register the listener
 	thread.addFeatureListener(listener);
 
 	// launch the thread
 	thread.start();
-	
+
     }
 
-    class MyListener 
+    class MyListener
 	implements FeatureListener{
 	public synchronized void newFeatures(FeatureEvent e){
 	    Das1Source ds = e.getSource();
 	    Map<String,String>[] features = e.getFeatures();
 
 	    System.out.println("das source " + ds.getNickname() + " returned " + features.length +" features");
+	    System.out.println("version: " + e.getVersion());
 	    if ( features.length>0) {
-	    	
+
 	    	// lets convert the features into FeatureTrack objects.
-	    	
+
 	    	// we don't care about the stylesheet in this case
-	    	// and we assume this is not a Histogram DAS source, 
+	    	// and we assume this is not a Histogram DAS source,
 	    	// otherwise the conversion would work differently...
 	    	FeatureTrackConverter conv = new FeatureTrackConverter();
 	    	FeatureTrack[] tracks = conv.convertMap2Features(features);
-	    	
+
 	    	System.out.println("got " + tracks.length + " tracks");
 	    	for( FeatureTrack track : tracks){
 	    		System.out.println(track );
 	    	}
 
-	    	
-	    	
+
+
 	    }
-	    	
+
 	    System.exit(0);
 	}
 
