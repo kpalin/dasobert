@@ -56,7 +56,7 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 	throws IOException{
 		xw.openTag("COORDINATES");
 		String uri = co.getUniqueId();
-		if (! ( uri.indexOf(COORDSYSURI) > 0) )
+		if (!  uri.startsWith(COORDSYSURI)  )
 			uri = COORDSYSURI+uri;
 
 		xw.attribute("uri",uri);
