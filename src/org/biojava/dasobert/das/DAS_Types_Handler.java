@@ -37,6 +37,7 @@ public class DAS_Types_Handler extends DefaultHandler {
     boolean dastypesPresent;
     boolean gffPresent;
     boolean segmentPresent;
+	private int maxNrFeaturesOntolgy;
     
     public DAS_Types_Handler() {
 	super();
@@ -73,5 +74,10 @@ public class DAS_Types_Handler extends DefaultHandler {
     public String[] getTypes(){
 	return (String[])types.toArray(new String[types.size()]);
     }
+
+	public void setMaxFeatures(int maxNrFeaturesOntology) {
+		// TODO Auto-generated method stub
+		this.maxNrFeaturesOntolgy=maxNrFeaturesOntology;
+	}
 }
 

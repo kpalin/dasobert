@@ -453,6 +453,7 @@ public class Das1Validator {
 				if(tempCs.equals(cs)){
 					//System.out.println("coordinate sytem found in registry");
 					isValid=true;
+					
 				}
 				
 				//System.out.println("authority in reg="+tempCs.getAuthority());

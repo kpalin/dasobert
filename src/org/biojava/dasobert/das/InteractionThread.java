@@ -20,6 +20,7 @@ package org.biojava.dasobert.das;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Iterator;
@@ -99,6 +100,7 @@ public class InteractionThread extends Thread{
      * TODO detail stuff
      */
     public Interaction[] getInteractions(String[] ids) {
+    	System.out.println("started getInteractions method");
     	Interaction[] interactions = new Interaction[0] ;
         Das1Source dasSource = parameters.getDasSource();
         String  interactionCommand = null  ;
@@ -108,24 +110,32 @@ public class InteractionThread extends Thread{
         	url += "/" ;
         }
         url += "interaction?";
-        interactionCommand = "interactor=" + ids[0];
-        for (int i = 1; i< ids.length; i++){
-        	interactionCommand  +=  "&interactor=" + ids[i] ;
-        }
+        try {
+			interactionCommand = "interactor=" + URLEncoder.encode(ids[0],"UTF-8");
+			for (int i = 1; i< ids.length; i++){
+				interactionCommand  +=  "&interactor=" + URLEncoder.encode(ids[i],"UTF-8") ;
+			}
+		} catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         
         //protect the command
         try {
-        	interactionCommand = url +  URLEncoder.encode(interactionCommand,"UTF-8");
+        	//interactionCommand = url +  URLEncoder.encode(interactionCommand,"UTF-8");
+        	interactionCommand = url + interactionCommand;
+        	//System.out.println("interaction cmd not encoded hopefully="+interactionCommand);
         } catch (Exception e){
             e.printStackTrace();
         }
         
         try{
+        	//System.out.println("calling retrieveInteractions");
         	interactions = retrieveInteractions(interactionCommand);
         	return interactions ;
             } catch (Exception e) {
             	// TODO determine why there is content in the prolog of the xml document
-                //e.printStackTrace();
+                e.printStackTrace();
             }
         return new Interaction[0] ;
     }
@@ -141,7 +151,11 @@ public class InteractionThread extends Thread{
     //	System.setProperty("org.xml.sax.driver", "org.apache.xerces.SAXParser");
         URL dasUrl = null;
         try {
-            dasUrl = new URL(url);
+        	
+        	//url="http://localhost:8080/dasregistryOID/interactionTestNewNoDetails.xml";
+        	//url="http://localhost:8080/dasregistryOID/interactionTestCBS.xml";
+            //System.out.println("calling url in retrieveInteractions method="+url);
+        	dasUrl = new URL(url);
         } catch (Exception e) {
             throw new IOException("Could not create URL " + e.getMessage());
         }

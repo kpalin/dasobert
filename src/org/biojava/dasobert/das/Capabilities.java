@@ -39,6 +39,7 @@ public class Capabilities {
 	public static final String TYPES        = "types";
 	public static final String DNA	        = "dna";
 	public static final String INTERACTION  = "interaction";
+	public static final String SOURCES		= "sources";
 	
 	// this is also the order of the fields in the DasSourceManager capabilities sql...
 	// DO NOT CHANGE!
@@ -51,7 +52,8 @@ public class Capabilities {
 		ENTRY_POINTS,
 		DNA,
 		STYLESHEET,
-		INTERACTION
+		INTERACTION,
+		SOURCES
 		
 	} ;
 	

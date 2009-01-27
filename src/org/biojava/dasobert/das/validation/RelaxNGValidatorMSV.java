@@ -1,21 +1,10 @@
 package org.biojava.dasobert.das.validation;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.Map;
 
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
+import org.biojava.dasobert.das.validation.RegistryRelaxNG;
+import org.biojava.services.das.registry.RegistryConfiguration;
 
-import org.iso_relax.verifier.*;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
-
-import com.sun.msv.driver.textui.ReportErrorHandler;
-
-import com.sun.msv.driver.textui.*;
 /**
  * 
  * @author jw12
@@ -23,14 +12,20 @@ import com.sun.msv.driver.textui.*;
  */
 public class RelaxNGValidatorMSV {
 
-	private static String PATH = "http://deskpro20727.dynamic.sanger.ac.uk:8080/dasregistryOID/";
-	public static String SOURCES = "validation/sources.rng";
-	public static String SEQUENCE = "validation/sequence.rng";
-	public static String FEATURE = "validation/feature.rng";
-	public static String TYPES = "validation/types.rng";
-	public static String STRUCTURE = "validation/structure.rng";
-	public static String ALIGNMENT = "validation/alignment.rng";
-	public static String ENTRY_POINTS = "validation/entry_points.rng";
+	
+
+
+	private static String PATH = null;//default also set here
+	
+	public static final String INTERACTION = "interaction.rng";
+	public static final String SOURCES = "sources.rng";
+	public static final String SEQUENCE = "sequence.rng";
+	public static final String FEATURE = "features.rng";
+	public static final String TYPES = "types.rng";
+	public static final String STRUCTURE = "structure.rng";
+	public static final String ALIGNMENT = "alignment.rng";
+	public static final String ENTRY_POINTS = "entry_points.rng";
+	
 
 	/**
 	 * @param args
@@ -39,17 +34,28 @@ public class RelaxNGValidatorMSV {
 
 	}
 
-	private String message;
+	private String message="";
+	private Map configuration;
+	private RegistryRelaxNG rng;
+	
+	public RelaxNGValidatorMSV(){
+		RegistryConfiguration rconfig = new RegistryConfiguration();
+		// rconfig is set by the outside via Spring
+		configuration = rconfig.getConfiguration();
+		PATH=(String)configuration.get("relaxNgBasePath");
+		System.out.println("setting relaxng base path in msv validator="+PATH);
+		rng = new RegistryRelaxNG();
+	}
 
 	public boolean validateUsingRelaxNG(String cmdType, String input) {
 		boolean isValid = true;
-		boolean ignoreExternalDocs = true;
-
-		RegistryRelaxNG rng = new RegistryRelaxNG();
+		
+		
+		
 		if (-1 == rng.validateCatchingExceptions(PATH + cmdType, input)) {
 			isValid = false;
-			this.message = rng.getRegMessage();
-			//System.out.println("valmsg in msv=" + rng.getRegMessage());
+			this.message += rng.getRegMessage();
+			System.out.println("valmsg in msv=" + rng.getRegMessage());
 
 		}
 		return isValid;
@@ -60,5 +66,7 @@ public class RelaxNGValidatorMSV {
 
 		return message;
 	}
+	
+	
 
 }

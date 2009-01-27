@@ -24,12 +24,12 @@ public class RelaxNGValidatorJing {
 	private static String PATH="http://deskpro20727.dynamic.sanger.ac.uk:8080/dasregistryOID/";
 	public static String SOURCES="validation/sources.rng";
 	public static String SEQUENCE="validation/sequence.rng";
-	public static String FEATURE="validation/feature.rng";
+	public static String FEATURE="validation/features.rng";
 	public static String TYPES="validation/types.rng";
 	public static String STRUCTURE="validation/structure.rng";
 	public static String ALIGNMENT="validation/alignment.rng"; 
 	public static String ENTRY_POINTS="validation/entry_points.rng";
-		
+	private String message=null;
 	
 	/**
 	 * @param args
@@ -85,6 +85,7 @@ public class RelaxNGValidatorJing {
 			} catch (MalformedURLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
+				message+=e1.getLocalizedMessage();
 			}
 			
 			try {
@@ -92,10 +93,12 @@ public class RelaxNGValidatorJing {
 				schema.newValidator().validate(new StreamSource(input));
 			} catch (IOException e) {
 				e.printStackTrace();
+				message+=e.getLocalizedMessage();
 			}
             
 		} catch (SAXException e) {
 			e.printStackTrace();
+			message+=e.getLocalizedMessage();
 		}
 	
 		return isValid;
@@ -112,6 +115,11 @@ public class RelaxNGValidatorJing {
 
         SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.RELAXNG_NS_URI);
 		return sf;
+	}
+
+	public String getMessage() {
+		
+		return message;
 	}
 
 }

@@ -32,7 +32,7 @@ public class Das2Validator {
     }
     
     public boolean validate(Das2Source ds){
-        
+        System.out.println("calling validate in DAS2Validator with no implementation");
         // TODO this bit still needs to be implemented!
         
         return true;
