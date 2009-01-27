@@ -62,6 +62,7 @@ public class DASInteractionXMLParser extends DefaultHandler {
 		super();
 		interactors = new HashMap<String,Interactor>();
 		interactions = new ArrayList<Interaction>();
+		//System.out.println("constructed DASInteractionXMLParser");
 	}
 
 	/**
@@ -176,8 +177,10 @@ public class DASInteractionXMLParser extends DefaultHandler {
 		interactor = new Interactor();
 		if (atts.getValue("intId") == null){
 			interactor.setId(atts.getValue("id"));
+			//System.out.println("setting id by getting id");
 		}else{
 			interactor.setId(atts.getValue("intId"));
+			//System.out.println("setting id by getting intId");
 		}
 		interactor.setName(atts.getValue("shortLabel"));
 		interactor.setDbAccessionId(atts.getValue("dbAccessionId"));
@@ -211,10 +214,15 @@ public class DASInteractionXMLParser extends DefaultHandler {
 	 */
 	private void participantStart(Attributes atts) {
 		participant = new Participant();
+		//System.out.println("intId= "+atts.getValue("intId"));
+		//System.out.println("id= "+atts.getValue("id"));
 		if (atts.getValue("intId") == null){
 			participant.setId(atts.getValue("id"));
+			//System.out.println("participant set id from id");
+			
 		}else{
 			participant.setId(atts.getValue("intId"));
+			//System.out.println("participant set id using intId");
 		}
 		detailParent = "participant";
 	}
@@ -350,7 +358,7 @@ public class DASInteractionXMLParser extends DefaultHandler {
 		for (int i = start; i < start + length; i++) {
 			elementContent += ch[i];
 		}
-		//System.out.println(content);
+		//System.out.println("content"+elementContent);
 	}
 
 }

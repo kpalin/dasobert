@@ -166,13 +166,14 @@ public class RegistryRelaxNG {
 			XMLReader reader = factory.newSAXParser().getXMLReader();
 			if (entityResolver != null)
 				reader.setEntityResolver(entityResolver);
-			reader.setErrorHandler(new ReportErrorHandler());
+			reader.setErrorHandler(new RegReportErrorHandler());
 			System.out.println("set handler");
 
 			result = verifier.verify(reader, Util.getInputSource(instName),
 					usePanicMode);
 			System.out.println("result is here, result=" + result);
 		} catch (com.sun.msv.verifier.ValidationUnrecoverableException vv) {
+			vv.printStackTrace();
 			regMessage += localize(MSG_BAILOUT) + "\n";
 		} catch (SAXParseException se) {
 			if (se.getException() != null)
@@ -203,31 +204,7 @@ public class RegistryRelaxNG {
 		return test;
 	}
 
-	public static void dumpRELAXModule(RELAXModule m) throws Exception {
-
-		System.out.println("*** top level ***");
-		System.out.println(ExpressionPrinter.printFragment(m.topLevel));
-
-		System.out.println("\n $$$$$$[ " + m.targetNamespace + " ]$$$$$$");
-
-		System.out.println("*** elementRule ***");
-		System.out.print(ExpressionPrinter.fragmentInstance
-				.printRefContainer(m.elementRules));
-		System.out.println("*** hedgeRule ***");
-		System.out.print(ExpressionPrinter.fragmentInstance
-				.printRefContainer(m.hedgeRules));
-		System.out.println("*** attPool ***");
-		System.out.print(ExpressionPrinter.fragmentInstance
-				.printRefContainer(m.attPools));
-		System.out.println("*** tag ***");
-		System.out.print(ExpressionPrinter.fragmentInstance
-				.printRefContainer(m.tags));
-	}
-
-	public static void dumpRELAXGrammar(RELAXGrammar m) throws Exception {
-		System.out.println("operation is not implemented yet.");
-	}
-
+	
 	/** acts as a function closure to validate a document. */
 	private interface DocumentVerifier {
 		boolean verify(XMLReader p, InputSource instance, boolean usePanicMode)
@@ -323,40 +300,41 @@ public class RegistryRelaxNG {
 			valid = this.validate(rng, input);
 		} catch (MalformedURLException e) {
 
-			regMessage += e.getLocalizedMessage();
+			regMessage += "Problem with URL "+e.getLocalizedMessage();
 			return -1;
 		} catch (InstantiationException e) {
 
-			regMessage += e.getLocalizedMessage();
+			regMessage +="Problem with Instantiation "+ e.getLocalizedMessage();
 			return -1;
 		} catch (IllegalAccessException e) {
 
-			regMessage += e.getLocalizedMessage();
+			regMessage +="Problem with Illegal Access? "+ e.getLocalizedMessage();
 			return -1;
 		} catch (ClassNotFoundException e) {
 
-			regMessage += e.getLocalizedMessage();
+			regMessage += "Class not found problem "+e.getLocalizedMessage();
 			return -1;
 		} catch (IOException e) {
 
-			System.out.println("error in IO");
-			regMessage += e.getLocalizedMessage();
+			System.out.println("error in IO"+e.getLocalizedMessage());
+			System.out.println("Setting io error in message");
+			regMessage += "error in IO data source may not be found at "+e.getLocalizedMessage();
 			return -1;
 		} catch (FactoryConfigurationError e) {
 
-			regMessage += e.getLocalizedMessage();
+			regMessage += "Problem with Factory configuration "+e.getLocalizedMessage();
 			return -1;
 		} catch (ParserConfigurationException e) {
 
-			regMessage += e.getLocalizedMessage();
+			regMessage +="Problem with Parser Configuration "+ e.getLocalizedMessage();
 			return -1;
 		} catch (SAXException e) {
 
-			regMessage += e.getLocalizedMessage();
+			regMessage +="SAXException problem "+ e.getLocalizedMessage();
 			return -1;
 		} catch (Exception e) {
 
-			regMessage += e.getLocalizedMessage();
+			regMessage += "Problem with a Non Specific Exception "+e.getLocalizedMessage();
 			return -1;
 		}
 		return valid;

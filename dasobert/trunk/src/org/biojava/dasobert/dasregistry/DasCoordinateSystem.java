@@ -23,168 +23,197 @@
  */
 package org.biojava.dasobert.dasregistry;
 
-
-/** a Bean to be returned via SOAP. It takes care of the DAS -  coordinate Systems 
+/**
+ * a Bean to be returned via SOAP. It takes care of the DAS - coordinate Systems
+ * 
  * @author Andreas Prlic
  */
 public class DasCoordinateSystem {
 
-    String name;
-    String category;
-    String organism_name;
-    int ncbi_tax_id ;
-    String uniqueId ;
-    String version;
-    String testCode;
-    
-    public DasCoordinateSystem () {
-        uniqueId = "";
-        name = "";
-        category ="";
-        organism_name = "";
-        ncbi_tax_id = 0;
-        version = "";
-        testCode = "";
-    }
+	String name;// name also seems to be Authority?
+	String category;
+	String organism_name;
+	int ncbi_tax_id;
+	String uniqueId;
+	String version;
+	String testCode;
 
-    public boolean equals(DasCoordinateSystem other){
-        boolean match = true;
-        //System.out.println("comparing " + this.toString() + " to " + other.toString());
+	public DasCoordinateSystem() {
+		uniqueId = "";
+		name = "";
+		category = "";
+		organism_name = "";
+		ncbi_tax_id = 0;
+		version = "";
+		testCode = "";
+	}
 
-        // URI has piority 
-      //  if ( (! uniqueId.equals("")) && ( uniqueId.equals( other.getUniqueId())))
-      //      return true;
-        
-        if ( ncbi_tax_id != other.getNCBITaxId()) {
-            //System.out.println("mismatch in ncbi tax id " + ncbi_tax_id + " != " + other.getNCBITaxId());
-            match = false;
-        }
-        if ( ! version.equals(other.getVersion() )){
-            //System.out.println("mismatch in version");
-            match = false;
-        }
-        if ( ! category.equals(other.getCategory())  ) {
-            //System.out.println("mismatch in category");
-            match = false;
-        }
-        if ( ! name.equals(other.getName())) {
-            //System.out.println("mismatch in name");   
-            match = false;
-        }
-        //System.out.println(" match: " + match);
-        
-        return match;
-    }
-    
-    public int hashCode() {
-        int h = 7;
-        
-        h = 31 * h + ( null == name ? 0 : name.hashCode());
-        h = 31 * h + ( null == category ? 0 : category.hashCode());
-        
-        return h;
-    }
-    
-    public Object clone() {
-        DasCoordinateSystem d = new DasCoordinateSystem();
-        d.setTestCode(testCode);
-        d.setCategory(category);
-        d.setName(name);
-        d.setNCBITaxId(ncbi_tax_id);
-        d.setUniqueId(getUniqueId());
-        d.setOrganismName(getOrganismName());
-        d.setVersion(getVersion());
-        return d;
-    }
-    
-    public String getTestCode() {
-        return testCode;
-    }
+	public boolean equals(DasCoordinateSystem other) {
+		boolean match = true;
+		// System.out.println("comparing " + this.toString() + " to " +
+		// other.toString());
 
+		// URI has piority
+		// if ( (! uniqueId.equals("")) && ( uniqueId.equals(
+		// other.getUniqueId())))
+		// return true;
 
+		if (ncbi_tax_id != other.getNCBITaxId()) {
+			// System.out.println("mismatch in ncbi tax id " + ncbi_tax_id +
+			// " != " + other.getNCBITaxId());
+			match = false;
+		}
+		if (!version.equals(other.getVersion())) {
+			// System.out.println("mismatch in version");
+			match = false;
+		}
+		if (!category.equals(other.getCategory())) {
+			// System.out.println("mismatch in category");
+			match = false;
+		}
+		if (!name.equals(other.getName())) {
+			// System.out.println("mismatch in name");
+			match = false;
+		}
+		// System.out.println(" match: " + match);
 
-    public void setTestCode(String testCode) {
-        if ( testCode == null)
-            testCode = "";
-        this.testCode = testCode;
-    }
+		return match;
+	}
 
+	public int hashCode() {
+		int h = 7;
 
+		h = 31 * h + (null == name ? 0 : name.hashCode());
+		h = 31 * h + (null == category ? 0 : category.hashCode());
 
-    public void setUniqueId(String id) { 
-    	uniqueId = id ; 
-    }
-    
-    public String getUniqueId() {
-    	return uniqueId;     
-    }
+		return h;
+	}
 
-    /** set the name / authority for this coordiante system
-     * e.g. UniProt, PDB, Ensembl, etc.
-     * 
-     * @param n the name
-     */
-    public void setName(String n) { name = n; }
-    
-    /** get the name / authority for this coordiante system
-     * e.g. UniProt, PDB, Ensembl, etc.
-     * @return the name / authority of this coordinate system
-     *     
-     */
-    public String getName() { return name; }
-    
-    public void setCategory(String c) { category = c;}
-    
-    /** returns the type of the coordinate system.
-     * e.g if it is a Chromosomal, Protein Sequence, Protein Structure, etc.
-     * @return the category
-     */
-    public String getCategory() { return category;}
+	public Object clone() {
+		DasCoordinateSystem d = new DasCoordinateSystem();
+		d.setTestCode(testCode);
+		d.setCategory(category);
+		d.setName(name);
+		d.setNCBITaxId(ncbi_tax_id);
+		d.setUniqueId(getUniqueId());
+		d.setOrganismName(getOrganismName());
+		d.setVersion(getVersion());
+		return d;
+	}
 
-    public void setOrganismName(String t) { organism_name  =t;} 
-    public String getOrganismName() { return organism_name;}
+	public String getTestCode() {
+		return testCode;
+	}
 
-    public void setNCBITaxId(int id) { ncbi_tax_id = id;}
-    public int getNCBITaxId(){ return ncbi_tax_id ;}
-    
-    
-    
+	public void setTestCode(String testCode) {
+		if (testCode == null)
+			testCode = "";
+		this.testCode = testCode;
+	}
 
-    public String getVersion() {
-        return version;
-    }
+	public void setUniqueId(String id) {
+		uniqueId = id;
+	}
 
-    public void setVersion(String version) {
-        if ( version == null)
-            version = "";
-        this.version = version;
-    }
+	public String getUniqueId() {
+		return uniqueId;
+	}
 
-    public String toString() {
-    	String nam = name;
-    	if ( ! version.equals(""))
-    		nam += "_" + version;
+	/**
+	 * set the name / authority for this coordiante system e.g. UniProt, PDB,
+	 * Ensembl, etc.
+	 * 
+	 * @param n
+	 *            the name
+	 */
+	public void setName(String n) {
+		name = n;
+	}
 
-    	if ( organism_name.equals("") ) 
-    		return nam+","+category ;
-    	else 
-    		return nam+","+category+"," + organism_name ;
-    }
+	/**
+	 * get the name / authority for this coordiante system e.g. UniProt, PDB,
+	 * Ensembl, etc.
+	 * 
+	 * @return the name / authority of this coordinate system
+	 * 
+	 */
+	public String getName() {
+		return name;
+	}
 
-    public static DasCoordinateSystem fromString(String rawString) {
-    	String[] spl = rawString.split(",");
-    	DasCoordinateSystem dcs = new DasCoordinateSystem();
-    	if ( spl.length == 2 ) {
-    		dcs.setName(spl[0]);	   
-    		dcs.setCategory(spl[1]);
-    	} 
-    	if ( spl.length == 3 ) {
-    		dcs.setName(spl[0]);
-    		dcs.setCategory(spl[1]);
-    		dcs.setOrganismName(spl[2]);
-    	}
-    	return dcs;
-    }
+	public void setCategory(String c) {
+		category = c;
+	}
 
+	/**
+	 * returns the type of the coordinate system. e.g if it is a Chromosomal,
+	 * Protein Sequence, Protein Structure, etc.
+	 * 
+	 * @return the category
+	 */
+	public String getCategory() {
+		return category;
+	}
+
+	public void setOrganismName(String t) {
+		organism_name = t;
+	}
+
+	public String getOrganismName() {
+		return organism_name;
+	}
+
+	public void setNCBITaxId(int id) {
+		ncbi_tax_id = id;
+	}
+
+	public int getNCBITaxId() {
+		return ncbi_tax_id;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		if (version == null)
+			version = "";
+		this.version = version;
+	}
+
+	public String toString() {
+		String nam = name;
+		if (!version.equals(""))
+			nam += "_" + version;
+
+		if (organism_name.equals(""))
+			return nam + "," + category;
+		else
+			return nam + "," + category + "," + organism_name;
+	}
+
+	public static DasCoordinateSystem fromString(String rawString) {
+		String[] spl = rawString.split(",");
+		DasCoordinateSystem dcs = new DasCoordinateSystem();
+		if (spl.length == 2) {
+			dcs.setName(spl[0]);
+			dcs.setCategory(spl[1]);
+		}
+		if (spl.length == 3) {
+			dcs.setName(spl[0]);
+			dcs.setCategory(spl[1]);
+			dcs.setOrganismName(spl[2]);
+		}
+		return dcs;
+	}
+
+	
+	public String getAuthority() {
+		return getName();
+	}
+
+	public void setAuthority(String authority) {
+		this.name = authority;
+	}
 
 }
