@@ -26,40 +26,58 @@ package org.biojava.dasobert.dasregistry ;
 
 //import org.biojava.services.das.*;
 //xml stuff
-import org.xml.sax.*;
-import javax.xml.parsers.*;
-import java.util.ArrayList                    ;
-import java.util.Iterator;
-import java.util.Map                          ;
-import java.util.List                         ;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.io.BufferedReader;
-import java.io.InputStream                    ;
-import java.io.InputStreamReader;
 
-import java.net.URL                           ;
-
-
-//for validation add dependency on SPICE... :-/
-import java.net.HttpURLConnection;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.biojava.bio.Annotation;
-import org.biojava.bio.structure.io.DASStructureClient;
-import org.biojava.bio.program.das.dasalignment.DASAlignmentClient;
 import org.biojava.bio.program.das.dasalignment.Alignment;
+import org.biojava.bio.program.das.dasalignment.DASAlignmentClient;
 import org.biojava.bio.program.das.dasalignment.DASException;
-import org.biojava.bio.structure.Structure;
 import org.biojava.bio.structure.Chain;
-import org.biojava.dasobert.das.*;
+import org.biojava.bio.structure.Structure;
+import org.biojava.bio.structure.io.DASStructureClient;
+import org.biojava.dasobert.das.Capabilities;
+import org.biojava.dasobert.das.DAS_DNA_Handler;
+import org.biojava.dasobert.das.DAS_DSN_Handler;
+import org.biojava.dasobert.das.DAS_Entry_Points_Handler;
+import org.biojava.dasobert.das.DAS_Feature_Handler;
+import org.biojava.dasobert.das.DAS_Sequence_Handler;
+import org.biojava.dasobert.das.DAS_StylesheetRetrieve;
+import org.biojava.dasobert.das.DAS_Types_Handler;
+import org.biojava.dasobert.das.InteractionDasSource;
+import org.biojava.dasobert.das.InteractionParameters;
+import org.biojava.dasobert.das.InteractionThread;
+import org.biojava.dasobert.das.validation.RelaxNGValidatorJing;
+import org.biojava.dasobert.das.validation.RelaxNGValidatorMSV;
+import org.biojava.dasobert.das2.Das2Source;
+import org.biojava.dasobert.das2.DasSourceConverter;
+import org.biojava.dasobert.das2.io.DASRegistryCoordinatesReaderXML;
+import org.biojava.dasobert.das2.io.DasSourceReaderImpl;
+
 import org.biojava.ontology.OntoTools;
 import org.biojava.ontology.Ontology;
 import org.biojava.ontology.OntologyException;
 import org.biojava.ontology.OntologyFactory;
 import org.biojava.ontology.Term;
 import org.biojava.ontology.io.OboParser;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.XMLReader;
 
 import de.mpg.mpiinf.ag3.dasmi.model.Interaction;
 
@@ -68,12 +86,14 @@ import de.mpg.mpiinf.ag3.dasmi.model.Interaction;
 public class Das1Validator {
 
 	//private final static String DATASOURCE_NAME = "jdbc/mysql";
-	String validationMessage;
+	public String validationMessage;
 	boolean supportsMD5Checksum;
 	public boolean VALIDATION = false; // DTD validation ..
 
 	public  static final boolean NO_ONTOLOGY_VALIDATION = false;
 	public  static final boolean ONTOLOGY_VALIDATION = true;
+	private static final boolean RELAX_NG=true;//shows relaxng validation
+	private static final boolean RELAX_NG_APPROVAL_NEEDED=false;
 	private static final int MAX_SEQUENCE_LENGTH = 1000;
 	private static final int MAX_NR_FEATURES     = 10;
 	private static final int MAX_NR_FEATURES_ONTOLOGY     = 1000;
@@ -87,7 +107,12 @@ public class Das1Validator {
 
 	private Ontology[] ontologies ;
 	
+	
+	private DasCoordinateSystem[] registryCoorinateSystems=null;
+	public static final String REGISTRY_LOCATION =  "http://www.dasregistry.org/das1/sources";
+	
 	public Das1Validator() {
+		
 		supportsMD5Checksum = false;
 		validationMessage = "" ;
 		
@@ -121,7 +146,7 @@ public class Das1Validator {
 	}
 
 	/** validate the DAS source that is located at the provided url
-	 * 
+	 * method called by AutoValidator by registry
 	 * @param url the URL of the DAS source
 	 * @param coords the coordinate systems that should be supported by it
 	 * @param capabilities the capabilities that should be tested.
@@ -131,6 +156,8 @@ public class Das1Validator {
 	 */ 
 	public String[] validate(String url, DasCoordinateSystem[] coords, 
 			String[] capabilities, boolean verbose, boolean ontologyValidation){
+		System.out.println("calling validate in DAS1Validator with url="+url);
+		verbose=true;
 		validationMessage="";
 		
 		if ( url == null )
@@ -151,10 +178,11 @@ public class Das1Validator {
 		if ( lastChar  != '/')
 			url += "/";
 
-		validateURL(url); 
-
+		boolean valid=validateURL(url);
+		//System.out.println("is url valid : "+valid);
+		
 		if ( verbose)
-			System.out.println(validationMessage);
+			System.out.println("validation message="+validationMessage);
 
 		// test if all specified capabilities really work
 		for ( int c = 0 ; c < capabilities.length ; c++) {
@@ -162,15 +190,33 @@ public class Das1Validator {
 			if ( all_capabilities.contains(capability)) {
 				//System.out.println("testing " + capability);
 
-				if ( capability.equals(Capabilities.SEQUENCE)) {
+				if ( capability.equals(Capabilities.SOURCES)) {
+					boolean sourcesok = true;
+					
+						if ( ! validateSourcesCmd(url) ){
+							sourcesok = false;
+							
+						}
+							
+						if ( verbose)
+							System.out.println(validationMessage);
+					
+					if ( sourcesok) 
+						lst.add(capability);
+				}
+				else if 
+				( capability.equals(Capabilities.SEQUENCE)) {
 					boolean sequenceok = true;
 					for ( int i=0;i< coords.length;i++){                        
 						DasCoordinateSystem ds =coords[i];
 						String testcode = ds.getTestCode();
 
 						// do a DAS sequence retreive
-						if ( ! validateSequence(url,testcode) )
+						if ( ! validateSequence(url,testcode) ){
 							sequenceok = false;
+							
+						}
+							
 						if ( verbose)
 							System.out.println(validationMessage);
 					}
@@ -183,8 +229,9 @@ public class Das1Validator {
 						DasCoordinateSystem ds =coords[i];
 						
 						// don't test for structure if this can't work...
-						if (! ds.getCategory().equals("Protein Structure"))
-							continue;
+						System.out.println("catagory="+ds.getCategory());
+						//if (! ds.getCategory().equals("Protein Structure"))
+							//continue;
 						
 						String testcode = ds.getTestCode();
 						
@@ -195,6 +242,9 @@ public class Das1Validator {
 							System.out.println(validationMessage);
 
 					}    
+					
+					String cmd = url+"structure?model=1&query=";
+					
 					if (structureok)
 						lst.add(capability);
 				}
@@ -245,8 +295,9 @@ public class Das1Validator {
 					if (alignmentok)
 						lst.add(capability);
 				} else if ( capability.equals(Capabilities.TYPES)){
-					if ( validateTypes(url))
+					if ( validateTypes(url, ontologyValidation))
 						lst.add(capability);
+						
 					if ( verbose)
 						System.out.println(validationMessage);
 					//else
@@ -294,12 +345,154 @@ public class Das1Validator {
 
 	}
 
+	/**
+	 * validate the sources cmd of a server
+	 * @param url
+	 * @param testcode
+	 * @return
+	 */
+	private boolean validateSourcesCmd(String url) {
+		//sources is the odd capability as belongs to the server not the source
+		//therefor need to chop DataSourceName off the end of the url
+		System.out.println("sources url at start of validation method "+url);
+		if(url.endsWith("/")){
+			System.out.println("ends with /");
+			url=url.substring(0,url.length()-1);
+			System.out.println("after -1="+url);
+			
+		}
+		//now remove the datasource name at the end of the url
+		String choppedURL=url.substring(0,url.lastIndexOf("/")+1);
+		System.out.println("chopped "+choppedURL);
+		String cmd = choppedURL+"sources";
+		
+		System.out.println("running sources with  cmd="+cmd);
+		if(!relaxNgApproved(RelaxNGValidatorMSV.SOURCES, cmd))return false;
+		
+		//source for programmatically validating sources response
+		
+		//get a list of all sources from the registry either from xml for external programs or from database
+		//for the registry
+		//then test the sources from the external server
+		int numberOfInvalidSources=0;
+		DasSourceReaderImpl reader = new DasSourceReaderImpl();
+		try {
+			URL u = new URL(cmd);
+			DasSource[] sources = reader.readDasSource(u);
+			System.out.println("number of sources being checked="+sources.length);
+			
+			for (int i=0; i< sources.length;i++){
+				Das1Source ds = (Das1Source)sources[i];
+				//System.out.println(ds.toString());
+				boolean isValid=this.checkDAS1Source(ds);
+				
+				if(!isValid){
+					numberOfInvalidSources++;
+				System.out.println(ds);
+				}
+
+				
+			}
+
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		System.out.println("number of invalid sources returned from this sources cmd was "+numberOfInvalidSources);
+		
+		return true;
+	
+	}
+
+	/**
+	 * 
+	 * @param cmdType one of RelaxNGValidatorMSV static strings such as RelaxNGValidatorMSV.SOURCES
+	 * @param cmd url string sometimes with testcode added
+	 * @return boolean true if valid according to relaxng if approval needed from relaxng.
+	 */
+	private boolean relaxNgApproved(String cmdType, String cmd) {
+		if(RELAX_NG){
+			RelaxNGValidatorMSV rng=new RelaxNGValidatorMSV();
+			if(!rng.validateUsingRelaxNG(cmdType, cmd)){
+				
+				validationMessage+=rng.getMessage();
+				System.out.println("getting message in das1 validator"+validationMessage);
+				if(RELAX_NG_APPROVAL_NEEDED)return false;
+				
+			}
+			
+		}
+			return true;
+	}
+
+	/**
+	 * method to check the validity of one source in the response from the sources cmd
+	 * @param ds
+	 * @return
+	 */
+	private boolean checkDAS1Source(Das1Source ds) {
+		//tests to do include what?
+		//relaxng has tested the structure
+		//main check is to check that the coorinate system is in the registry
+		boolean isValid=false;
+		DasCoordinateSystem[] coords=ds.getCoordinateSystem();
+		if(this.registryCoorinateSystems==null){
+			//instantiate a new list if not set
+			this.registryCoorinateSystems=this.getRegistryCoordinateSystems();
+		}
+		for(int j=0; j<coords.length;j++){
+			DasCoordinateSystem cs=coords[j];
+			//System.out.println("coordinate system="+cs);
+			//need to check if split cs then should equal "authority, type";
+			String userCSAuthority=cs.getAuthority();
+			String userCSCategory=cs.getCategory();
+			
+			//System.out.println("user authority="+userCSAuthority+" category="+userCSCategory);
+			//System.out.println("Number of Reg coordinate systems returned="+this.registryCoorinateSystems.length);
+			for(int k=0;k<registryCoorinateSystems.length;k++){
+				DasCoordinateSystem tempCs=registryCoorinateSystems[k];
+				if(tempCs.equals(cs)){
+					//System.out.println("coordinate sytem found in registry");
+					isValid=true;
+				}
+				
+				//System.out.println("authority in reg="+tempCs.getAuthority());
+				
+			}
+		}
+		if(!isValid){
+			System.out.println(ds.getUrl()+ "  is not valid!!!!!!!");
+			
+		}
+		return isValid;
+		
+		
+	}
+	/**
+	 * use this method to get known Coordinate systems from the registry
+	 * using das call to registry by default but the registry itself can change
+	 * this method to use the database directly if needed.
+	 * @return
+	 */
+	private DasCoordinateSystem[] getRegistryCoordinateSystems(){
+	        
+	        DASRegistryCoordinatesReaderXML reader = new DASRegistryCoordinatesReaderXML();
+	        //need to implement a reader for http://www.dasregistry.org/das1/coordinatesystem cmd	        
+	        DasCoordinateSystem coords[] = reader.readRegistryDas1CoorinateSystems();
+	        
+	        return coords;
+	        //DasCoordinateSystem[] registryCoorinateSystems
+	        
+	        
+	    }
+	
+
 	/** make sure the URL matches the DAS spec 
      returns true if URL looks o.k...
      @param url to validate
      @return boolean true if URL looks ok
 	 */
 	public  boolean validateURL(String url) {
+		System.out.println("*********validating url**************");
 		String[] spl = url.split("/");
 
 		//for (int i = 0 ; i < spl.length  ; i++ ) {
@@ -417,11 +610,14 @@ public class Das1Validator {
 	private boolean validateAlignment(String url, String testcode){
 		String cmd = url+"alignment?query=" ;
 		//System.out.println(cmd + " " + testcode);
+		if(!relaxNgApproved(RelaxNGValidatorMSV.ALIGNMENT, cmd))return false;
+		
+		
 		try {
 			
 			
 			DASAlignmentClient dasc= new DASAlignmentClient(cmd);
-			System.out.println("getting alignments for testcode " + testcode);
+			//System.out.println("getting alignments for testcode " + testcode);
 			Alignment[] alignments = dasc.getAlignments(testcode);
 			if ( alignments.length > 0 ) {
 				return true;
@@ -447,6 +643,9 @@ public class Das1Validator {
 	private boolean validateEntry_Points(String url){
 		try {
 			URL u = new URL(url+"entry_points");
+			
+			
+			if(!relaxNgApproved(RelaxNGValidatorMSV.ENTRY_POINTS, url+"entry_points"))return false;
 
 			InputStream dasInStream = open(u); 
 
@@ -503,7 +702,7 @@ public class Das1Validator {
 			
 			URL u = new URL(dsnurl+"dsn");
 			
-			System.out.println(u.toString());
+			//System.out.println(u.toString());
 			
 			// parse dsn ...
 			InputStream dasInStream = open(u); 
@@ -518,7 +717,7 @@ public class Das1Validator {
 			xmlreader.parse(insource);
 			List sources = cont_handle.getDsnSources();
 			
-			System.out.println("got " + sources.size() + " sources listed in DSN");
+			//System.out.println("got " + sources.size() + " sources listed in DSN");
 			if ( sources.size() > 0 )
 				return true;
 			
@@ -538,9 +737,13 @@ public class Das1Validator {
 	
 	
 	
-	private boolean validateTypes(String url){
+	private boolean validateTypes(String url, boolean ontologyValidation){
 		try {
 			URL u = new URL(url+"types");
+			
+			
+			if(!relaxNgApproved(RelaxNGValidatorMSV.TYPES, url+"types"))return false;
+			
 			InputStream dasInStream = open(u); 
 			XMLReader xmlreader = getXMLReader();
 
@@ -549,11 +752,17 @@ public class Das1Validator {
 			xmlreader.setContentHandler(cont_handle);
 			xmlreader.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
 			InputSource insource = new InputSource() ;
+			if (ontologyValidation)
+				cont_handle.setMaxFeatures(MAX_NR_FEATURES_ONTOLOGY);
 			insource.setByteStream(dasInStream);
 			xmlreader.parse(insource);
 			String[] types = cont_handle.getTypes();
 			if ( types.length > 0 ) {
-				return true;
+				if ( ! ontologyValidation)
+					return true;
+				validationMessage  +="<br/>---<br/> contacting " + url + "<br/>";				
+				return validateTypesAgainstOntology(types);
+				
 			} else {
 				validationMessage  +="<br/>---<br/> contacting " + url +"types <br/>";
 				validationMessage += " no types were returned";
@@ -568,14 +777,19 @@ public class Das1Validator {
 
 			Throwable cause = e.getCause();
 			if ( cause != null) 
-				validationMessage += cause.toString();
+				validationMessage +="exception thrown at end of types validation"+ cause.toString();
 			else
-				validationMessage += e.toString();
+				validationMessage +="Could be an empty page returned?? "+ e.toString();
 		}
 		return false;
 	}
 
 	private boolean validateInteraction(String url, String testcode){
+		//System.out.println("called validate interaction method url " +url);
+		//url="http://localhost:8080/dasregistryOID/interactionTestOld.xml";
+		
+		if(!relaxNgApproved(RelaxNGValidatorMSV.INTERACTION, url+"interaction?interactor="+testcode))return false;
+		
 		InteractionDasSource source = new InteractionDasSource();
 		source.setUrl(url);
 		InteractionParameters params = new InteractionParameters();
@@ -584,11 +798,13 @@ public class Das1Validator {
 		
 		params.setDasSource(source);
 		params.setQueries(new String[]{testcode});
-		InteractionThread thread = new InteractionThread(params);
 		
+		InteractionThread thread = new InteractionThread(params);
+		//System.out.println("set up interaction thread");
 		
 		// TODO: how can I do  multiple threads with JUnit??
 		Interaction[] interA = thread.getInteractions(new String[]{testcode,});
+		//System.out.println("interA.length="+interA.length);
 		if ( interA.length > 0)
 			return true;
 		return false;
@@ -598,6 +814,10 @@ public class Das1Validator {
 			String testcode, boolean ontologyValidation){
 		try {
 			URL u = new URL(url+"features?segment="+testcode);
+			
+			
+			if(!relaxNgApproved(RelaxNGValidatorMSV.FEATURE, url+"features?segment="+testcode))return false;
+			//System.out.println("validation message after features and rng call= "+validationMessage);
 			InputStream dasInStream = open(u); 
 			XMLReader xmlreader = getXMLReader();
 
@@ -663,7 +883,7 @@ public class Das1Validator {
 
 		OboParser parser = new OboParser();
 		InputStream inStream = this.getClass().getResourceAsStream("/ontologies/"+fileName);
-		System.out.println("reading ontology: /ontologies/" + fileName);
+		//System.out.println("reading ontology: /ontologies/" + fileName);
 		if (inStream == null){
 			System.err.println("did not find " + fileName );
 		}
@@ -738,11 +958,11 @@ public class Das1Validator {
 		String type         = feature.get("TYPE");
 		String typeID       = feature.get("TYPE_ID");
 		String typeCategory = feature.get("TYPE_CATEGORY");
-		/*System.out.println("type  " + type);
-		System.out.println("method " + feature.get("METHOD"));
-		System.out.println("typeID " + typeID);
-		System.out.println("typeCategory " + typeCategory);
-	*/
+		//System.out.println("type  " + type);
+		//System.out.println("method " + feature.get("METHOD"));
+		//System.out.println("typeID " + typeID);
+		//System.out.println("typeCategory " + typeCategory);
+	
 		if ( typeID == null) {
 			throw new DASException("track does not have the TYPE - id field set");
 		}
@@ -750,23 +970,7 @@ public class Das1Validator {
 			throw new DASException("track does not have the TYPE - category field set");
 		}
 
-		Term t = getTerm(typeID);
-		
-		if ( t == null){
-			throw new DASException ("term " + typeID +" not found in any Ontology");
-		}
-						
-		Annotation anno = t.getAnnotation();
-		try {
-			Boolean obsolete = (Boolean) anno.getProperty("is_obsolete");
-			if ((obsolete != null )&& (obsolete.equals(true))) {
-				throw new DASException("Feature uses an obsolete term: "+ t.getName() + " " + t.getDescription());
-			}
-		} catch (NoSuchElementException e){
-			// the property is_obsolete is not set, 
-			// which means the term is still current
-			// and we proceed as normal
-		}
+		Term t = testTypeIDAgainstOntology(typeID);
 		
 
 		if (! t.getDescription().equals(type)){
@@ -808,6 +1012,27 @@ public class Das1Validator {
 		return true;
 
 	}
+
+	private Term testTypeIDAgainstOntology(String typeID) throws DASException {
+		Term t = getTerm(typeID);
+		
+		if ( t == null){
+			throw new DASException ("term " + typeID +" not found in any Ontology");
+		}
+						
+		Annotation anno = t.getAnnotation();
+		try {
+			Boolean obsolete = (Boolean) anno.getProperty("is_obsolete");
+			if ((obsolete != null )&& (obsolete.equals(true))) {
+				throw new DASException("Feature uses an obsolete term: "+ t.getName() + " " + t.getDescription());
+			}
+		} catch (NoSuchElementException e){
+			// the property is_obsolete is not set, 
+			// which means the term is still current
+			// and we proceed as normal
+		}
+		return t;
+	}
 	
 	private boolean validateFeatureOntology(List<Map<String, String>> featuresList){
 		
@@ -838,11 +1063,54 @@ public class Das1Validator {
 		}
 		return ontologyOK;
 	}
+	
+	/**
+	 * written by jw to add ontology to the types validation
+	 * @param typesList
+	 * @return
+	 */
+  private boolean validateTypesAgainstOntology(String[] typesList){
+		//System.out.println("validating type ontology jw");
+		validationMessage += "got " + typesList.length + " types\n";
+		boolean ontologyOK = true;
+		
+		//start at 1 as 0 is ID
+		for( int i=1; i<typesList.length; i++){
+			
+			validationMessage += "*** validating type " + i +": " + typesList[i] +"\n";
+			try {
+				//validate code here to replace validat tracks in feature equivalent method
+				Term term=testTypeIDAgainstOntology(typesList[i]);
+				if ( term!=null ) {
+					validationMessage +="  track ok!\n";
+				}
+			} catch (DASException ex){
+				//System.out.println(ex.getMessage());
+				//ex.printStackTrace();
+				validationMessage += "   " + ex.getMessage() +"\n";
+				validationMessage += "   This DAS source does NOT comply with the BioSapiens ontology!\n";
+				ontologyOK = false;
+
+			}
+		}
+		return ontologyOK;
+	}
+	
+	
+
+	
 
 	private boolean validateStructure(String url, String testcode) {
 		String cmd = url+"structure?model=1&query=";
-		DASStructureClient dasc= new DASStructureClient(cmd);
+		
+		System.out.println("running structure with  cmd="+cmd);
+		
+			
+			if(!relaxNgApproved(RelaxNGValidatorMSV.STRUCTURE, cmd+testcode))return false;
 
+		DASStructureClient dasc= new DASStructureClient(cmd);
+		
+		
 		try {
 			Structure struc = dasc.getStructureById(testcode);
 			//System.out.println(struc);
@@ -898,6 +1166,7 @@ public class Das1Validator {
 			cmd += ":" + startInt + "," + (startInt+50);
 		
 		//System.out.println(cmd);
+	
 		
 		try {
 			dasUrl = new URL(cmd);
@@ -906,6 +1175,14 @@ public class Das1Validator {
 			e.printStackTrace();
 			return false;
 		}
+		
+		URL schemaLocation=null;
+		
+		
+		
+		if(!relaxNgApproved(RelaxNGValidatorMSV.SEQUENCE, cmd))return false;
+		
+		
 		try {
 			//System.out.println("opening " + dasUrl);
 			InputStream dasInStream =open(dasUrl); 
@@ -1009,8 +1286,6 @@ public class Das1Validator {
 		return inStream;
 	}
 
-
-
-
+	
 
 }
