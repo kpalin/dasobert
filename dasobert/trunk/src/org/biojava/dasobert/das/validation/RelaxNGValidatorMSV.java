@@ -3,7 +3,7 @@ package org.biojava.dasobert.das.validation;
 import java.util.Map;
 
 import org.biojava.dasobert.das.validation.RegistryRelaxNG;
-import org.biojava.services.das.registry.RegistryConfiguration;
+//import org.biojava.services.das.registry.RegistryConfiguration;
 
 /**
  * 
@@ -15,7 +15,7 @@ public class RelaxNGValidatorMSV {
 	
 
 
-	private static String PATH = null;//default also set here
+	private static String PATH = "http://www.dasregistry.org/validation/";//default also set here
 	
 	public static final String INTERACTION = "interaction.rng";
 	public static final String SOURCES = "sources.rng";
@@ -39,11 +39,12 @@ public class RelaxNGValidatorMSV {
 	private RegistryRelaxNG rng;
 	
 	public RelaxNGValidatorMSV(){
-		RegistryConfiguration rconfig = new RegistryConfiguration();
+		//RegistryConfiguration rconfig = new RegistryConfiguration();
 		// rconfig is set by the outside via Spring
-		configuration = rconfig.getConfiguration();
-		PATH=(String)configuration.get("relaxNgBasePath");
-		System.out.println("setting relaxng base path in msv validator="+PATH);
+		//configuration = rconfig.getConfiguration();
+		
+		//PATH=(String)configuration.get("relaxNgBasePath");
+		//System.out.println("setting relaxng base path in msv validator="+PATH);
 		rng = new RegistryRelaxNG();
 	}
 
