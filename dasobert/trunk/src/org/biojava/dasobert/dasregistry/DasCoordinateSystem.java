@@ -76,6 +76,21 @@ public class DasCoordinateSystem {
 			match = false;
 		}
 		// System.out.println(" match: " + match);
+		//added by jw for registry
+		
+		if (!uniqueId.equals(other.getUniqueId())) {
+			// System.out.println("mismatch in name");
+			match = false;
+		}
+		if (!organism_name.equals(other.getOrganismName())) {
+			// System.out.println("mismatch in name");
+			match = false;
+		}
+		
+		organism_name = "";
+		
+		
+		
 
 		return match;
 	}
