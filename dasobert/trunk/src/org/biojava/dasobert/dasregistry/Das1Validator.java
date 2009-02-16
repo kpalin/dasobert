@@ -351,7 +351,7 @@ public class Das1Validator {
 	 * @param testcode
 	 * @return
 	 */
-	private boolean validateSourcesCmd(String url) {
+	public boolean validateSourcesCmd(String url) {
 		//sources is the odd capability as belongs to the server not the source
 		//therefor need to chop DataSourceName off the end of the url
 		System.out.println("sources url at start of validation method "+url);
@@ -811,14 +811,14 @@ public class Das1Validator {
 		return false;
 	}
 
-	private boolean validateFeatures(String url, 
+	public boolean validateFeatures(String url, 
 			String testcode, boolean ontologyValidation){
 		try {
 			URL u = new URL(url+"features?segment="+testcode);
 			
 			
 			if(!relaxNgApproved(RelaxNGValidatorMSV.FEATURE, url+"features?segment="+testcode))return false;
-			//System.out.println("validation message after features and rng call= "+validationMessage);
+			System.out.println("validation message after features and rng call= "+validationMessage);
 			InputStream dasInStream = open(u); 
 			XMLReader xmlreader = getXMLReader();
 
@@ -836,6 +836,7 @@ public class Das1Validator {
 			insource.setByteStream(dasInStream);
 			xmlreader.parse(insource);
 			List<Map<String,String>> features = cont_handle.get_features();
+			System.out.println("features size is="+features.size());
 			
 			if ( cont_handle.isMD5Checksum())
 				supportsMD5Checksum = true;
