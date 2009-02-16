@@ -367,7 +367,21 @@ public class Das1Validator {
 		String cmd = choppedURL+"sources";
 		
 		System.out.println("running sources with  cmd="+cmd);
-		if(!relaxNgApproved(RelaxNGValidatorMSV.SOURCES, cmd))return false;
+		//if(!relaxNgApproved(RelaxNGValidatorMSV.SOURCES, cmd))return false;
+		//hack here until relaxng is needed for all cmds. Want it to validate sources now.
+		//revert method below to above call later.
+		if(RELAX_NG){
+			RelaxNGValidatorMSV rng=new RelaxNGValidatorMSV();
+			if(!rng.validateUsingRelaxNG(RelaxNGValidatorMSV.SOURCES, cmd)){
+				
+				validationMessage+=rng.getMessage();
+				//System.out.println("getting message in das1 validator"+validationMessage);
+				return false;
+				
+			}
+			
+		}
+			//validationMessage+="Passed RelaxNG validation test for sources cmd";
 		
 		//source for programmatically validating sources response
 		
@@ -388,7 +402,7 @@ public class Das1Validator {
 				
 				if(!isValid){
 					numberOfInvalidSources++;
-				System.out.println(ds);
+				validationMessage+=" No coordinate system found in the registry that matches this source "+ds.getNickname()+"\n";
 				}
 
 				
@@ -397,8 +411,8 @@ public class Das1Validator {
 		} catch (Exception e){
 			e.printStackTrace();
 		}
-		System.out.println("number of invalid sources returned from this sources cmd was "+numberOfInvalidSources);
-		
+		validationMessage+="Number of invalid sources returned from this sources cmd was "+numberOfInvalidSources+"\n";
+		if(numberOfInvalidSources!=0)return false;
 		return true;
 	
 	}
@@ -441,7 +455,7 @@ public class Das1Validator {
 		}
 		for(int j=0; j<coords.length;j++){
 			DasCoordinateSystem cs=coords[j];
-			//System.out.println("coordinate system="+cs);
+			System.out.println("coordinate system="+cs);
 			//need to check if split cs then should equal "authority, type";
 			String userCSAuthority=cs.getAuthority();
 			String userCSCategory=cs.getCategory();
@@ -450,6 +464,7 @@ public class Das1Validator {
 			//System.out.println("Number of Reg coordinate systems returned="+this.registryCoorinateSystems.length);
 			for(int k=0;k<registryCoorinateSystems.length;k++){
 				DasCoordinateSystem tempCs=registryCoorinateSystems[k];
+				//System.out.println("uniqueId="+tempCs.uniqueId+"");
 				if(tempCs.equals(cs)){
 					//System.out.println("coordinate sytem found in registry");
 					isValid=true;
@@ -1288,6 +1303,13 @@ public class Das1Validator {
 		return inStream;
 	}
 
-	
+	public static void main(String []args){
+		Das1Validator validator=new Das1Validator();
+		String andy="http://www.ebi.ac.uk/~aj/test/das/sources";
+		String ensembl="http://www.ensembl.org/das/sources";
+		String dasregistry="http://www.dasregistry.org/das1/sources";
+		//validator.validateSourcesCmd("http://www.ensembl.org/das/sources");
+		validator.validateSourcesCmd(andy);
+	}
 
 }
