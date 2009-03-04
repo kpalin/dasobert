@@ -33,9 +33,11 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -108,8 +110,11 @@ public class Das1Validator {
 	private Ontology[] ontologies ;
 	
 	
-	private DasCoordinateSystem[] registryCoorinateSystems=null;
+	private DasCoordinateSystem[] registryCoordinateSystems=null;
+	private Das1Source[] registryDas1Sources=null;
 	public static final String REGISTRY_LOCATION =  "http://www.dasregistry.org/das1/sources";
+	private HashMap sourceUrls=null;
+	private HashMap sourceIds=null;
 	
 	public Das1Validator() {
 		
@@ -354,6 +359,11 @@ public class Das1Validator {
 	public boolean validateSourcesCmd(String url) {
 		//sources is the odd capability as belongs to the server not the source
 		//therefor need to chop DataSourceName off the end of the url
+		
+		//initialize hashes to store unique ids and urls for this source.xml doc to make sure
+		//there are no duplicates
+		sourceUrls=new HashMap();
+		sourceIds=new HashMap();
 		System.out.println("sources url at start of validation method "+url);
 		if(url.endsWith("/")){
 			System.out.println("ends with /");
@@ -375,7 +385,7 @@ public class Das1Validator {
 			if(!rng.validateUsingRelaxNG(RelaxNGValidatorMSV.SOURCES, cmd)){
 				
 				validationMessage+=rng.getMessage();
-				//System.out.println("getting message in das1 validator"+validationMessage);
+				System.out.println("getting message in das1 validator"+validationMessage);
 				return false;
 				
 			}
@@ -402,7 +412,7 @@ public class Das1Validator {
 				
 				if(!isValid){
 					numberOfInvalidSources++;
-				validationMessage+=" No coordinate system found in the registry that matches this source "+ds.getNickname()+"\n";
+				validationMessage+=" No coordinate system found in the registry that matches the one for this source "+ds.getNickname()+"\n";
 				}
 
 				
@@ -445,14 +455,35 @@ public class Das1Validator {
 	 */
 	private boolean checkDAS1Source(Das1Source ds) {
 		//tests to do include what?
-		//relaxng has tested the structure
-		//main check is to check that the coorinate system is in the registry
+		//relaxng has tested the structure and capabilities if being tested by registry code
+		//main check is to check that the coordinate system is in the registry and if uri and id are in the registry or in the same sources doc already
 		boolean isValid=false;
-		DasCoordinateSystem[] coords=ds.getCoordinateSystem();
-		if(this.registryCoorinateSystems==null){
-			//instantiate a new list if not set
-			this.registryCoorinateSystems=this.getRegistryCoordinateSystems();
+		isValid = isCoordinateSystemValid(ds, isValid);
+		
+		//also need to check if uri has been used already in both this sources document and in the registry
+		isValid = isValidUniqueUrlAndId(ds, isValid);
+		
+		//also check the capabilities are of a type that is allowed eg das1:types etc this is done in relaxng validation
+		
+		
+		if(!isValid){
+			System.out.println(ds.getUrl()+ "  is not valid!!!!!!!");
+			
 		}
+		return isValid;
+		
+		
+	}
+
+	private boolean isCoordinateSystemValid(Das1Source ds, boolean isValid) {
+		DasCoordinateSystem[] coords=ds.getCoordinateSystem();
+		if(this.registryCoordinateSystems==null){
+			//instantiate a new list if not set
+			this.registryCoordinateSystems=this.getRegistryCoordinateSystems();
+		}
+		
+		
+		
 		for(int j=0; j<coords.length;j++){
 			DasCoordinateSystem cs=coords[j];
 			System.out.println("coordinate system="+cs);
@@ -462,8 +493,8 @@ public class Das1Validator {
 			
 			//System.out.println("user authority="+userCSAuthority+" category="+userCSCategory);
 			//System.out.println("Number of Reg coordinate systems returned="+this.registryCoorinateSystems.length);
-			for(int k=0;k<registryCoorinateSystems.length;k++){
-				DasCoordinateSystem tempCs=registryCoorinateSystems[k];
+			for(int k=0;k<registryCoordinateSystems.length;k++){
+				DasCoordinateSystem tempCs=registryCoordinateSystems[k];
 				//System.out.println("uniqueId="+tempCs.uniqueId+"");
 				if(tempCs.equals(cs)){
 					//System.out.println("coordinate sytem found in registry");
@@ -474,15 +505,97 @@ public class Das1Validator {
 				//System.out.println("authority in reg="+tempCs.getAuthority());
 				
 			}
-		}
-		if(!isValid){
-			System.out.println(ds.getUrl()+ "  is not valid!!!!!!!");
+			
+			
 			
 		}
 		return isValid;
+	}
+
+	private boolean isValidUniqueUrlAndId(Das1Source ds, boolean isValid) {
+		if(this.registryDas1Sources==null){
+			this.registryDas1Sources=getRegistryDas1Sources();
+		}
 		
+		String url=ds.getUrl();
+		
+		String id=ds.getId();
+		
+		
+		if(sourceUrls.containsKey(url) || sourceIds.containsKey(id)){
+			System.out.println("testing ids and url"+id+"  "+url);
+			validationMessage+="Id or Url already exists in your sources document and are supposed to be unique!! ";
+			return false;
+		}
+		
+		for(int j=0;j<registryDas1Sources.length;j++){
+			Das1Source source=registryDas1Sources[j];
+			
+			if(source.getUrl()==url){
+				validationMessage+= " url already exists somewhere in registry or your sources";
+				isValid=false;//url has exists already so return not valid
+			}
+			if(source.getId()==id){
+				validationMessage+=" id already exists somewhere in registry or your sources";
+				isValid=false;//url has exists already so return not valid
+			}
+		}
+		
+		sourceUrls.put(url, "");
+		sourceIds.put(id, "");
+		return isValid;
+	}
+	
+	
+	private Das1Source[] getRegistryDas1Sources() {
+		System.out.println("runnning get registry sources method");
+		System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
+        "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+        System.setProperty("javax.xml.parsers.SAXParserFactory",
+        "org.apache.xerces.jaxp.SAXParserFactoryImpl");
+        
+		
+		
+		DasSourceReaderImpl reader = new DasSourceReaderImpl();
+        
+        
+        URL url=null;
+		try {
+			url = new URL(REGISTRY_LOCATION);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        DasSource[] sources = reader.readDasSource(url);
+        
+        List das1sources = new ArrayList();
+        for (int i=0;i< sources.length;i++){
+            DasSource ds = sources[i];
+             if ( ds instanceof Das1Source){
+            	 System.out.println("adding das1 source from registry "+ds.getUrl());
+                das1sources.add((Das1Source)ds);
+            } else if ( ds instanceof Das2Source){
+                Das2Source d2s = (Das2Source)ds;
+                if (d2s.hasDas1Capabilities()){
+                    Das1Source d1s=null;
+					try {
+						d1s = DasSourceConverter.toDas1Source(d2s);
+					} catch (DASException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+                    das1sources.add(d1s);
+                }
+                
+            } 
+        }
+        
+        return (Das1Source[])das1sources.toArray(new Das1Source[das1sources.size()]);
 		
 	}
+
 	/**
 	 * use this method to get known Coordinate systems from the registry
 	 * using das call to registry by default but the registry itself can change
@@ -1304,12 +1417,26 @@ public class Das1Validator {
 	}
 
 	public static void main(String []args){
+		
+		Properties props= new Properties(System.getProperties());
+		props.put("http.proxySet", "true");
+		props.put("http.proxyHost", "wwwcache.sanger.ac.uk");
+		props.put("http.proxyPort", "3128");
+		Properties newprops = new Properties(props);
+		System.setProperties(newprops);
+		System.out.println("set Sanger specific properties");
+		
 		Das1Validator validator=new Das1Validator();
 		String andy="http://www.ebi.ac.uk/~aj/test/das/sources";
 		String ensembl="http://www.ensembl.org/das/sources";
 		String dasregistry="http://www.dasregistry.org/das1/sources";
+		String myLocalTest="http://localhost:8080/das/sources";
 		//validator.validateSourcesCmd("http://www.ensembl.org/das/sources");
-		validator.validateSourcesCmd(andy);
+		if(validator.validateSourcesCmd(myLocalTest)){
+			System.out.println("sourcesCmd Was valid "+validator.validationMessage);
+		}else{
+			System.out.println("sourcesCmd was invalid"+validator.validationMessage);
+		}
 	}
 
 }
