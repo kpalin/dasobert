@@ -126,9 +126,11 @@ public class RegistryRelaxNG {
 
 		} catch (SAXParseException spe) {
 			if (Debug.debug)
-				spe.getException().printStackTrace();
-			; // this error is already reported.
+				//spe.getException().printStackTrace();
+			//; // this error is already reported.
+				spe.printStackTrace();
 		} catch (SAXException se) {
+			se.printStackTrace();
 			if (se.getException() != null)
 				throw se.getException();
 			throw se;
