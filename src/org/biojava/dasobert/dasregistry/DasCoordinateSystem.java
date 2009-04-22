@@ -54,13 +54,12 @@ public class DasCoordinateSystem {
 		// other.toString());
 
 		// URI has piority
-		// if ( (! uniqueId.equals("")) && ( uniqueId.equals(
-		// other.getUniqueId())))
-		// return true;
+		if ( !uniqueId.equals(
+		other.getUniqueId()))return false;
 
 		if (ncbi_tax_id != other.getNCBITaxId()) {
-			// System.out.println("mismatch in ncbi tax id " + ncbi_tax_id +
-			// " != " + other.getNCBITaxId());
+			//System.out.println("mismatch in ncbi tax id " + ncbi_tax_id +
+			//" != " + other.getNCBITaxId());
 			match = false;
 		}
 		if (!version.equals(other.getVersion())) {
@@ -68,22 +67,22 @@ public class DasCoordinateSystem {
 			match = false;
 		}
 		if (!category.equals(other.getCategory())) {
-			// System.out.println("mismatch in category");
+			//System.out.println("mismatch in category");
 			match = false;
 		}
 		if (!name.equals(other.getName())) {
-			// System.out.println("mismatch in name");
+			//System.out.println("mismatch in name");
 			match = false;
 		}
-		// System.out.println(" match: " + match);
+		//System.out.println(" match: " + match);
 		//added by jw for registry
 		
 		if (!uniqueId.equals(other.getUniqueId())) {
-			// System.out.println("mismatch in name");
+			//System.out.println("mismatch in name");
 			match = false;
 		}
 		if (!organism_name.equals(other.getOrganismName())) {
-			// System.out.println("mismatch in name");
+			//System.out.println("mismatch in name");
 			match = false;
 		}
 		
