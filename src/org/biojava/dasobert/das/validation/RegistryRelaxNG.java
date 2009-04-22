@@ -2,6 +2,7 @@ package org.biojava.dasobert.das.validation;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
@@ -30,7 +31,24 @@ import com.sun.msv.verifier.Verifier;
 import com.sun.msv.verifier.regexp.REDocumentDeclaration;
 
 /**
- * 
+ * *                    BioJava development code
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  If you do not have a copy,
+ * see:
+ *
+ *      http://www.gnu.org/copyleft/lesser.html
+ *
+ * Copyright for this code is held jointly by the individual
+ * authors.  These should be listed in @author doc comments.
+ *
+ * For more information on the BioJava project and its aims,
+ * or to join the biojava-l mailing list, visit the home page
+ * at:
+ *
+ *      http://www.biojava.org/
+ *
  * @author JWarren
  */
 public class RegistryRelaxNG {
@@ -48,7 +66,7 @@ public class RegistryRelaxNG {
 			ClassNotFoundException, MalformedURLException, IOException,
 			FactoryConfigurationError, ParserConfigurationException, Exception,
 			SAXException {
-		System.out.println("starting relaxng validate method here");
+		System.out.println("starting relaxng validate method here with grammer name="+grammarName);
 		regMessage += " RegistryRelaxNG validation:\n";
 
 		boolean verbose = false;
@@ -115,6 +133,7 @@ public class RegistryRelaxNG {
 		Grammar grammar = null;
 		try {
 			GrammarLoader loader = new GrammarLoader();
+			
 			System.out.println("grammer loader loaded here");
 			// set various parameters
 			loader.setController(new DebugController(warning, false,
@@ -126,7 +145,7 @@ public class RegistryRelaxNG {
 
 		} catch (SAXParseException spe) {
 			if (Debug.debug)
-				//spe.getException().printStackTrace();
+				spe.getException().printStackTrace();
 			//; // this error is already reported.
 				spe.printStackTrace();
 		} catch (SAXException se) {
@@ -337,6 +356,7 @@ public class RegistryRelaxNG {
 		} catch (Exception e) {
 
 			regMessage += "Problem with a Non Specific Exception "+e.getLocalizedMessage();
+			e.printStackTrace();
 			return -1;
 		}
 		return valid;
