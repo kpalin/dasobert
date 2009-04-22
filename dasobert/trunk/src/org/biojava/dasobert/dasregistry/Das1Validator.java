@@ -63,6 +63,7 @@ import org.biojava.dasobert.das.DAS_Types_Handler;
 import org.biojava.dasobert.das.InteractionDasSource;
 import org.biojava.dasobert.das.InteractionParameters;
 import org.biojava.dasobert.das.InteractionThread;
+import org.biojava.dasobert.das.validation.DasRegistryOntologyLookUp;
 import org.biojava.dasobert.das.validation.RelaxNGValidatorJing;
 import org.biojava.dasobert.das.validation.RelaxNGValidatorMSV;
 import org.biojava.dasobert.das2.Das2Source;
@@ -103,11 +104,11 @@ public class Das1Validator {
 	
 	List<String> all_capabilities;
 	
-	private Ontology ontologyBS;
-	private Ontology ontologySO;
-	private Ontology ontologyECO;
+	//private Ontology ontologyBS;
+	//private Ontology ontologySO;
+	//private Ontology ontologyECO;
 
-	private Ontology[] ontologies ;
+	//private Ontology[] ontologies ;
 	
 	
 	private DasCoordinateSystem[] registryCoordinateSystems=null;
@@ -115,6 +116,7 @@ public class Das1Validator {
 	public static final String REGISTRY_LOCATION =  "http://www.dasregistry.org/das1/sources";
 	private HashMap sourceUrls=null;
 	private HashMap sourceIds=null;
+	private DasRegistryOntologyLookUp lookup=new DasRegistryOntologyLookUp();
 	
 	public Das1Validator() {
 		
@@ -997,14 +999,13 @@ public class Das1Validator {
 	
 	
 	private void initOntologies(){
-		try {
-			ontologyBS = readOntology("BioSapiens","the BioSapiens Ontology", "biosapiens.obo");
-			ontologySO = readOntology("SequenceOntology", "the Sequence Ontology" , "so.obo");			
-			ontologies =  new Ontology[]{ontologyBS, ontologySO};
-			ontologyECO = readOntology("ECO", "the Evidence Code Ontology" , "evidence_code.obo");
-		} catch (OntologyException ex) {
-			ex.printStackTrace();
-		}
+		//try {
+			//ontologyBS = readOntology("BioSapiens","the BioSapiens Ontology", "biosapiens.obo");
+			//ontologySO = readOntology("SequenceOntology", "the Sequence Ontology" , "so.obo");			
+			//ontologies =  new Ontology[]{ontologyBS, ontologySO};
+			//ontologyECO = readOntology("ECO", "the Evidence Code Ontology" , "evidence_code.obo");
+		//} catch (OntologyException ex) {
+		//}
 	}
 	
 
@@ -1046,30 +1047,31 @@ public class Das1Validator {
 	}
 	
 
-	private Term getTerm(String typeID) {
+	private SimpleTerm getTerm(String typeID) {
+		System.out.println("Getting term typeID="+typeID);
 		if ( typeID == null){
 			System.err.println("typeID is NULL, no terms in an ontology");
 			return null;
 		}
-		Term t = null;
-
-		if ( ontologies == null) {
-			initOntologies();
-		}
+		SimpleTerm term = null;
+        term=lookup.getTerm(typeID);
+//		if ( ontologies == null) {
+//			initOntologies();
+//		}
 		
-		try {
-			for (Ontology ontology: ontologies){
-				if ( ontology.containsTerm(typeID)) {
-					t = ontology.getTerm(typeID);
-					if (t != null)
-						return t;
-				}
-			}
-		} catch (NoSuchElementException ex){
-			ex.printStackTrace();
-			//System.err.println(ex.getMessage());
-		}
-		return t;
+//		try {
+//			for (Ontology ontology: ontologies){
+//				if ( ontology.containsTerm(typeID)) {
+//					t = ontology.getTerm(typeID);
+//					if (t != null)
+//						return t;
+//				}
+//			}
+//		} catch (NoSuchElementException ex){
+//			ex.printStackTrace();
+//			//System.err.println(ex.getMessage());
+//		}
+		return term;
 	}
 
 	
@@ -1100,29 +1102,30 @@ public class Das1Validator {
 			throw new DASException("track does not have the TYPE - category field set");
 		}
 
-		Term t = testTypeIDAgainstOntology(typeID);
+		SimpleTerm t = testTypeIDAgainstOntology(typeID);
+
+
 		
-
-		if (! t.getDescription().equals(type)){
-			boolean synonymUsed = false;
-			Object[] synonyms = t.getSynonyms();
-			for (Object syno :  synonyms){
-				//System.out.println(syno);
-				if ( syno.equals(type)){
-					synonymUsed = true;
-					break;
-				}
-			}
-			if ( ! synonymUsed) {			
-				throw new DASException("feature type ("+ type + 
-						") does not match Ontology description (" + 
-						t.getDescription()+" for termID: " +
-				typeID+")");
-			}
-		}
-
-		// test evidence code
-
+//		if (! t.getDescription().equals(type)){
+//			boolean synonymUsed = false;
+//			Object[] synonyms = t.getSynonyms();
+//			for (Object syno :  synonyms){
+//				//System.out.println(syno);
+//				if ( syno.equals(type)){
+//					synonymUsed = true;
+//					break;
+//				}
+//			}
+//			if ( ! synonymUsed) {			
+//				throw new DASException("feature type ("+ type + 
+//						") does not match Ontology description (" + 
+//						t.getDescription()+" for termID: " +
+//				typeID+")");
+//			}
+//		}
+//
+//		// test evidence code
+//
 		// parse the ECO id from the typeCategory;
 		Matcher m = ecoPattern.matcher(typeCategory);
 		String eco = null;
@@ -1133,34 +1136,29 @@ public class Das1Validator {
 		if ( eco == null){
 			throw new DASException("could not identify ECO id in " + typeCategory);
 		}
-		if (! ontologyECO.containsTerm(eco)){
+		if (! lookup.exists(eco, "ECO")){
 			throw new DASException("unknown evidence code >" + eco + "<");
 		}
 
 
 
-		return true;
+		return true;//returning true at the moment as failing ontology test currently does not stop source being valid
 
 	}
 
-	private Term testTypeIDAgainstOntology(String typeID) throws DASException {
-		Term t = getTerm(typeID);
+	private SimpleTerm testTypeIDAgainstOntology(String typeID) throws DASException {
+		SimpleTerm t = getTerm(typeID);
+		if(t!=null)t.print();
 		
-		if ( t == null){
+		if ( t==null){
 			throw new DASException ("term " + typeID +" not found in any Ontology");
 		}
-						
-		Annotation anno = t.getAnnotation();
-		try {
-			Boolean obsolete = (Boolean) anno.getProperty("is_obsolete");
-			if ((obsolete != null )&& (obsolete.equals(true))) {
-				throw new DASException("Feature uses an obsolete term: "+ t.getName() + " " + t.getDescription());
-			}
-		} catch (NoSuchElementException e){
-			// the property is_obsolete is not set, 
-			// which means the term is still current
-			// and we proceed as normal
+		
+		if (t.isObsolete()) {
+			System.out.println("term is obsolete");
+			throw new DASException("Feature uses an obsolete term: "+ t.getName() + " " + t.getDescription());
 		}
+
 		return t;
 	}
 	
@@ -1210,7 +1208,7 @@ public class Das1Validator {
 			validationMessage += "*** validating type " + i +": " + typesList[i] +"\n";
 			try {
 				//validate code here to replace validat tracks in feature equivalent method
-				Term term=testTypeIDAgainstOntology(typesList[i]);
+				SimpleTerm term=testTypeIDAgainstOntology(typesList[i]);
 				if ( term!=null ) {
 					validationMessage +="  track ok!\n";
 				}
@@ -1418,13 +1416,13 @@ public class Das1Validator {
 
 	public static void main(String []args){
 		
-		Properties props= new Properties(System.getProperties());
-		props.put("http.proxySet", "true");
-		props.put("http.proxyHost", "wwwcache.sanger.ac.uk");
-		props.put("http.proxyPort", "3128");
-		Properties newprops = new Properties(props);
-		System.setProperties(newprops);
-		System.out.println("set Sanger specific properties");
+//		Properties props= new Properties(System.getProperties());
+//		props.put("http.proxySet", "true");
+//		props.put("http.proxyHost", "wwwcache.sanger.ac.uk");
+//		props.put("http.proxyPort", "3128");
+//		Properties newprops = new Properties(props);
+//		System.setProperties(newprops);
+//		System.out.println("set Sanger specific properties");
 		
 		Das1Validator validator=new Das1Validator();
 		String andy="http://www.ebi.ac.uk/~aj/test/das/sources";
