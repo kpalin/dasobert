@@ -524,9 +524,14 @@ public class Das1Validator {
 		String id=ds.getId();
 		
 		
-		if(sourceUrls.containsKey(url) || sourceIds.containsKey(id)){
-			System.out.println("testing ids and url"+id+"  "+url);
-			validationMessage+="Id or Url already exists in your sources document and are supposed to be unique!! ";
+		if(sourceUrls.containsKey(url)){
+			System.out.println("testing url"+id+"  "+url);
+			validationMessage+="Url already exists in your sources document and are supposed to be unique!! ";
+			return false;
+		}
+		if(sourceIds.containsKey(id)){
+			System.out.println("testing id"+id+"  "+url);
+			validationMessage+="Id already exists in your sources document and are supposed to be unique!! ";
 			return false;
 		}
 		
