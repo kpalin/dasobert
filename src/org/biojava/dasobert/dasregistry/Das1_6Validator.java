@@ -86,7 +86,7 @@ import de.mpg.mpiinf.ag3.dasmi.model.Interaction;
 
 
 
-public class Das1Validator {
+public class Das1_6Validator {
 
 	//private final static String DATASOURCE_NAME = "jdbc/mysql";
 	public String validationMessage;
@@ -96,32 +96,15 @@ public class Das1Validator {
 	public  static final boolean NO_ONTOLOGY_VALIDATION = false;
 	public  static final boolean ONTOLOGY_VALIDATION = true;
 	private static final boolean RELAX_NG=true;//shows relaxng validation
-	
+	private static final boolean RELAX_NG_APPROVAL_NEEDED=false;
 	private static final int MAX_SEQUENCE_LENGTH = 1000;
 	private static final int MAX_NR_FEATURES     = 10;
 	private static final int MAX_NR_FEATURES_ONTOLOGY     = 1000;
 	public  static final boolean VERBOSE = false;
-	private boolean relaxNgApprovalNeeded=false;
+	// shall we put a static variable in for 1.5 and 1.6 specs we can then use consistently...!!!
 	
-	public boolean isRelaxNgApprovalNeeded() {
-		return relaxNgApprovalNeeded;
-	}
-
-	public void setRelaxNgApprovalNeeded(boolean relaxNgApprovalNeeded) {
-		this.relaxNgApprovalNeeded = relaxNgApprovalNeeded;
-	}
-
 	private String relaxNgPath=null;
 	
-
-	public String getRelaxNgPath() {
-		return relaxNgPath;
-	}
-
-	public void setRelaxNgPath(String relaxNgPath) {
-		this.relaxNgPath = relaxNgPath;
-	}
-
 	List<String> all_capabilities;
 	
 	//private Ontology ontologyBS;
@@ -138,7 +121,7 @@ public class Das1Validator {
 	private HashMap sourceIds=null;
 	private DasRegistryOntologyLookUp lookup=new DasRegistryOntologyLookUp();
 	
-	public Das1Validator() {
+	public Das1_6Validator() {
 		
 		supportsMD5Checksum = false;
 		validationMessage = "" ;
@@ -409,7 +392,6 @@ public class Das1Validator {
 			}else{
 				rng=new RelaxNGValidatorMSV();
 			}
-			
 			if(!rng.validateUsingRelaxNG(RelaxNGValidatorMSV.SOURCES, cmd)){
 				
 				validationMessage+=rng.getMessage();
@@ -469,11 +451,13 @@ public class Das1Validator {
 			}else{
 				rng=new RelaxNGValidatorMSV();
 			}
+			
+			
 			if(!rng.validateUsingRelaxNG(cmdType, cmd)){
 				
 				validationMessage+=rng.getMessage();
 				System.out.println("getting message in das1 validator"+validationMessage);
-				if(relaxNgApprovalNeeded)return false;
+				if(RELAX_NG_APPROVAL_NEEDED)return false;
 				
 			}
 			
@@ -1460,7 +1444,7 @@ public class Das1Validator {
 //		System.setProperties(newprops);
 //		System.out.println("set Sanger specific properties");
 		
-		Das1Validator validator=new Das1Validator();
+		Das1_6Validator validator=new Das1_6Validator();
 		String andy="http://www.ebi.ac.uk/~aj/test/das/sources";
 		String ensembl="http://www.ensembl.org/das/sources";
 		String dasregistry="http://www.dasregistry.org/das1/sources";
@@ -1473,5 +1457,10 @@ public class Das1Validator {
 		}
 	}
 
+	public void setRelaxNgPath(String relaxNgPath) {
+		this.relaxNgPath=relaxNgPath;
+		
+	}
+	
 
 }

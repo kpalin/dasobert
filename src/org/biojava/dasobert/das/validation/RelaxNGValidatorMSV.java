@@ -32,9 +32,11 @@ public class RelaxNGValidatorMSV {
 
 
 
-	//private static String PATH = "http://localhost:8080/dasregistryOID/validation/";//default also set here
-	private static String PATH="http://localhost:8080/dasregistryOID/validation1.6E/";
-	//private static String PATH = "http://www.dasregistry.org/validation/";
+	//private static String path = "http://localhost:8080/dasregistryOID/validation/";//default also set here
+	
+
+	//private static String PATH="http://localhost:8080/dasregistryOID/validation1.6E/";
+	private String path = "http://www.dasregistry.org/validation/";
 	public static final String INTERACTION = "interaction.rng";
 	public static final String SOURCES = "sources.rng";
 	public static final String SEQUENCE = "sequence.rng";
@@ -57,21 +59,14 @@ public class RelaxNGValidatorMSV {
 	private RegistryRelaxNG rng;
 	
 	public RelaxNGValidatorMSV(){
-
-		//RegistryConfiguration rconfig = new RegistryConfiguration();
-
-		// rconfig is set by the outside via Spring
-
-		//configuration = rconfig.getConfiguration();
-		//PATH=(String)configuration.get("relaxNgBasePath");
-		
-		System.out.println("setting relaxng base path in msv validator="+PATH);
-
-		//configuration = rconfig.getConfiguration();
-		
-		//PATH=(String)configuration.get("relaxNgBasePath");
-		//System.out.println("setting relaxng base path in msv validator="+PATH);
-
+		rng = new RegistryRelaxNG();
+	}
+	/**
+	 * 
+	 * @param path override the default base path to relaxNg Documents
+	 */
+	public RelaxNGValidatorMSV(String path){
+		this.path=path;
 		rng = new RegistryRelaxNG();
 	}
 
@@ -79,8 +74,8 @@ public class RelaxNGValidatorMSV {
 		boolean isValid = true;
 		
 		
-		
-		if (-1 == rng.validateCatchingExceptions(PATH + cmdType, input)) {
+		System.out.println("running relaxng with path="+path);
+		if (-1 == rng.validateCatchingExceptions(path + cmdType, input)) {
 			isValid = false;
 			this.message += rng.getRegMessage();
 			System.out.println("valmsg in msv=" + rng.getRegMessage());
@@ -95,6 +90,5 @@ public class RelaxNGValidatorMSV {
 		return message;
 	}
 	
-
 
 }

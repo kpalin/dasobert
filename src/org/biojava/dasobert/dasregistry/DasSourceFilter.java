@@ -26,7 +26,7 @@ package org.biojava.dasobert.dasregistry;
 import java.util.ArrayList;
 import java.util.List;
 
-/** a class to filer a set of DAS sources, or to check if
+/** a class to filter a set of DAS sources, or to check if
  *  single DAS sources fulfill certain requirements
  * 
  * 
