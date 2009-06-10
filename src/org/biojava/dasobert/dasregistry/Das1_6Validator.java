@@ -96,7 +96,7 @@ public class Das1_6Validator {
 	public  static final boolean NO_ONTOLOGY_VALIDATION = false;
 	public  static final boolean ONTOLOGY_VALIDATION = true;
 	private static final boolean RELAX_NG=true;//shows relaxng validation
-	private static final boolean RELAX_NG_APPROVAL_NEEDED=false;
+	private static final boolean RELAX_NG_APPROVAL_NEEDED=true;//always approval needed for 1.6 spec
 	private static final int MAX_SEQUENCE_LENGTH = 1000;
 	private static final int MAX_NR_FEATURES     = 10;
 	private static final int MAX_NR_FEATURES_ONTOLOGY     = 1000;
@@ -761,7 +761,7 @@ public class Das1_6Validator {
 	private boolean validateAlignment(String url, String testcode){
 		String cmd = url+"alignment?query=" ;
 		//System.out.println(cmd + " " + testcode);
-		if(!relaxNgApproved(RelaxNGValidatorMSV.ALIGNMENT, cmd))return false;
+		if(!relaxNgApproved(RelaxNGValidatorMSV.ALIGNMENT, cmd+testcode))return false;
 		
 		
 		try {
