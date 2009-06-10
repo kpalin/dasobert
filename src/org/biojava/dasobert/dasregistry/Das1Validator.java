@@ -101,7 +101,7 @@ public class Das1Validator {
 	private static final int MAX_NR_FEATURES     = 10;
 	private static final int MAX_NR_FEATURES_ONTOLOGY     = 1000;
 	public  static final boolean VERBOSE = false;
-	private boolean relaxNgApprovalNeeded=false;
+	private boolean relaxNgApprovalNeeded=true;//needed if via web page, but specifically not needed for autovalidation at the moment
 	
 	public boolean isRelaxNgApprovalNeeded() {
 		return relaxNgApprovalNeeded;
@@ -777,7 +777,7 @@ public class Das1Validator {
 	private boolean validateAlignment(String url, String testcode){
 		String cmd = url+"alignment?query=" ;
 		//System.out.println(cmd + " " + testcode);
-		if(!relaxNgApproved(RelaxNGValidatorMSV.ALIGNMENT, cmd))return false;
+		if(!relaxNgApproved(RelaxNGValidatorMSV.ALIGNMENT, cmd+testcode))return false;
 		
 		
 		try {
