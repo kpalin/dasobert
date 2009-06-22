@@ -67,7 +67,7 @@ public class DasSourceIndexWriterImpl implements DasSourceWriter {
 
 		//xw.attribute("name","uri");
 		//xw.print(uri);
-		writeAdditionalField(xw, "coorinates_uri", uri);
+		writeAdditionalField(xw, "coordinates_uri", uri);
 		
 		
 

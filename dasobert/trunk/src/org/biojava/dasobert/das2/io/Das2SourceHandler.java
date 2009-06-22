@@ -50,6 +50,11 @@ public class Das2SourceHandler extends DefaultHandler{
 	List coordinates;
 	List capabilities;
 	List labels;
+	
+	StringBuffer characterdata;
+	DasCoordinateSystem dcs;
+	
+	
 
 	public static final String LABELPROPERTY = "label";
 
@@ -61,6 +66,7 @@ public class Das2SourceHandler extends DefaultHandler{
 		coordinates   = new ArrayList();
 		capabilities  = new ArrayList();
 		labels        = new ArrayList();
+		characterdata=new StringBuffer();
 	}
 
 	private void startSource (String uri, String name, String qName, Attributes atts){
@@ -93,6 +99,10 @@ public class Das2SourceHandler extends DefaultHandler{
 
 		String test_range = atts.getValue("test_range");
 		dcs.setTestCode(test_range);
+		
+		
+//		String organism=atts.getValue("organism");
+//		dcs.setOrganismName(organism);
 
 		try {
 			String taxidstr = atts.getValue("taxid");
@@ -122,8 +132,9 @@ public class Das2SourceHandler extends DefaultHandler{
 			String email = atts.getValue("email");
 			currentSource.setAdminemail(email);
 		} else if ( qName.equals("COORDINATES")){
-			DasCoordinateSystem dcs = getCoordinateSystem(uri,name,qName,atts);
-			coordinates.add(dcs);
+			dcs= getCoordinateSystem(uri,name,qName,atts);
+			characterdata = new StringBuffer();
+			
 
 		} else if ( qName.equals("CAPABILITY")){
 			Das2Capability cap = getCapability(uri,name,qName,atts);
@@ -188,7 +199,27 @@ public class Das2SourceHandler extends DefaultHandler{
 				sources.add(currentSource);   
 			}
 			currentSource = new Das2SourceImpl();
-		} 		
+		} 
+		if ( qName.equals("COORDINATES")) {
+			String elementContent=characterdata.toString();
+			String []coordinateComponents=elementContent.split(",");
+			if(coordinateComponents.length>2){
+				dcs.setOrganismName(coordinateComponents[2]);
+			}else{
+			dcs.setOrganismName("");
+			}
+			coordinates.add(dcs);
+			
+		}
+	}
+	
+	public void characters (char ch[], int start, int length){
+		
+		for (int i = start; i < start + length; i++) {
+
+			characterdata.append(ch[i]);
+		}
+
 	}
 
 	public DasSource[] getSources(){    

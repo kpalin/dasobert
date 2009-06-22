@@ -48,6 +48,7 @@ public class DASRegistryCoordinatesReaderXML implements DASRegistryCoordinatesRe
 
 	Exception loggedException;
 	private static String PUBLIC_REGISTRY="http://www.dasregistry.org/das1/coordinatesystem";
+	private static String INTERNAL_REGISTRY="http://deskpro20727.dynamic.sanger.ac.uk:8080/dasregistryOID/das1/coordinatesystem";
 	public DASRegistryCoordinatesReaderXML() {
 		super();
 		loggedException = null;
@@ -72,15 +73,24 @@ public class DASRegistryCoordinatesReaderXML implements DASRegistryCoordinatesRe
 	
 	public DasCoordinateSystem[] readRegistryDas1CoordinateSystems(URL url){
 		DasCoordinateSystem[] coords = new DasCoordinateSystem[0];
-
+		System.setProperty("proxySet", "true");
+		System.setProperty("proxyHost", "wwwcache.sanger.ac.uk");
+		System.setProperty("proxyPort", "3128");
+		
+	
+		System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+		System.setProperty("javax.xml.parsers.SAXParserFactory", "org.apache.xerces.jaxp.SAXParserFactoryImpl");
+		InputStream stream=null;
 		try {
-			InputStream stream = HttpConnectionTools.getInputStream(url);
+			System.out.println("getting url for validation"+url);
+			stream = HttpConnectionTools.getInputStream(url);
 
-			coords = readRegistryCoordinates(stream);
+			
 		} catch (Exception e){
 			e.printStackTrace();
 			loggedException = e;
 		}
+		coords = readRegistryCoordinates(stream);
 		return coords;
 	}
 
@@ -122,6 +132,7 @@ public class DASRegistryCoordinatesReaderXML implements DASRegistryCoordinatesRe
 				xmlreader.setFeature("http://xml.org/sax/features/validation", validation);
 			} catch (SAXException e) {
 				//logger.log(Level.FINE,"Cannot set validation " + validation); 
+				e.printStackTrace();
 			}
 
 			try {
