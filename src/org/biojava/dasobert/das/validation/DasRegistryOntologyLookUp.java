@@ -12,16 +12,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
+
 
 import javax.xml.rpc.ServiceException;
 
-import org.apache.axis.AxisFault;
-import org.biojava.dasobert.dasregistry.SimpleTerm;
-import org.biojava.ontology.Term;
 
-import
-uk.ac.ebi.www.ontology_lookup.OntologyQuery.OntologyQuerySoapBindingStub;
+import org.biojava.dasobert.dasregistry.SimpleTerm;
+
+
+
 import uk.ac.ebi.www.ontology_lookup.OntologyQuery.Query;
 import uk.ac.ebi.www.ontology_lookup.OntologyQuery.QueryService;
 import uk.ac.ebi.www.ontology_lookup.OntologyQuery.QueryServiceLocator;

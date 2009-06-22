@@ -50,43 +50,49 @@ public class DasCoordinateSystem {
 
 	public boolean equals(DasCoordinateSystem other) {
 		boolean match = true;
-		// System.out.println("comparing " + this.toString() + " to " +
-		// other.toString());
-
+		//System.out.println("comparing in coordinate system " + this.toString() );
+		//System.out.println("to other toString()="+other.toString());
 		// URI has piority
-		if ( !uniqueId.equals(
-		other.getUniqueId()))return false;
+//		if ( !uniqueId.equalsIgnoreCase(
+//		other.getUniqueId())){
+//			System.out.println("failed on first test unique id in database="+uniqueId+" is not equal to "+other.uniqueId);
+//			return false;
+//		}
 
+		
+		//added by jw for registry
+		if (!organism_name.equalsIgnoreCase(other.getOrganismName())) {
+			//System.out.println("mismatch in name "+organism_name+" other="+other.getOrganismName());
+			match = false;
+			return match;
+		}
 		if (ncbi_tax_id != other.getNCBITaxId()) {
 			//System.out.println("mismatch in ncbi tax id " + ncbi_tax_id +
 			//" != " + other.getNCBITaxId());
 			match = false;
+			return match;
 		}
 		if (!version.equals(other.getVersion())) {
 			// System.out.println("mismatch in version");
 			match = false;
+			return match;
 		}
-		if (!category.equals(other.getCategory())) {
+		if (!category.equalsIgnoreCase(other.getCategory())) {
 			//System.out.println("mismatch in category");
 			match = false;
+			return match;
 		}
-		if (!name.equals(other.getName())) {
+		if (!name.equalsIgnoreCase(other.getName())) {
 			//System.out.println("mismatch in name");
 			match = false;
-		}
-		//System.out.println(" match: " + match);
-		//added by jw for registry
-		
-		if (!uniqueId.equals(other.getUniqueId())) {
-			//System.out.println("mismatch in name");
-			match = false;
-		}
-		if (!organism_name.equals(other.getOrganismName())) {
-			//System.out.println("mismatch in name");
-			match = false;
+			return match;
 		}
 		
-		organism_name = "";
+		
+		if(match){
+		System.out.println(" match: " + match);
+		}
+		//organism_name = "";
 		
 		
 		
@@ -170,7 +176,7 @@ public class DasCoordinateSystem {
 	}
 
 	public void setOrganismName(String t) {
-		organism_name = t;
+		this.organism_name = t;
 	}
 
 	public String getOrganismName() {

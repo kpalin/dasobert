@@ -48,36 +48,26 @@ public class Das1RegistryCoordinatesHandler  extends DefaultHandler{
 
 	
 	List coordinates;
-	
+	DasCoordinateSystem dcs;
+	StringBuffer characterdata=new StringBuffer();
 	//Das2Source currentSource;
 	
 	public  Das1RegistryCoordinatesHandler(){
 		super();
-
-		
-		coordinates   = new ArrayList();
 		
 	}
 
-	private void startSource (String uri, String name, String qName, Attributes atts){
+	private void startCoordinates (String uri, String name, String qName, Attributes atts){
 
-//		String id = atts.getValue("uri");
-//		String title = atts.getValue("title");
-//		String doc_ref = atts.getValue("doc_href");
-//		String description = atts.getValue("description");
-//
-//
-//		currentSource.setId(id);
-//		currentSource.setNickname(title);
-//		currentSource.setHelperurl(doc_ref);
-//		currentSource.setDescription(description);
+
 
 	}
 
 	private DasCoordinateSystem getCoordinateSystem(String uri, String name, String qname, Attributes atts){
 		// e.g. uri="http://das.sanger.ac.uk/dasregistry/coordsys/CS_LOCAL6" 
 		// source="Protein Sequence" authority="UniProt" test_range="P06213" />
-		DasCoordinateSystem dcs = new DasCoordinateSystem();
+		characterdata=new StringBuffer();
+		 dcs = new DasCoordinateSystem();
 		String id = atts.getValue("uri");
 		dcs.setUniqueId(id);
 
@@ -89,6 +79,9 @@ public class Das1RegistryCoordinatesHandler  extends DefaultHandler{
 
 		String test_range = atts.getValue("test_range");
 		dcs.setTestCode(test_range);
+		
+//		String organism=atts.getValue("organism");
+//		dcs.setOrganismName(organism);
 
 		try {
 			String taxidstr = atts.getValue("taxid");
@@ -104,12 +97,20 @@ public class Das1RegistryCoordinatesHandler  extends DefaultHandler{
 	}
 
 	public void startElement (String uri, String name, String qName, Attributes atts){
-		//System.out.println("new element "+qName);
+		System.out.println("new element "+qName);
 
-	
-		if( qName.equals("COORDINATES")){
-			DasCoordinateSystem dcs = getCoordinateSystem(uri,name,qName,atts);
-			coordinates.add(dcs);
+		if (qName.equals("DASCOORDINATESYSTEM")) {
+			//System.out.println("started root elemtent ");
+			
+			
+			
+			
+
+		} else
+		if ( qName.equals("COORDINATES")){
+			//System.out.println("coordinate qname found");
+			dcs = getCoordinateSystem(uri,name,qName,atts);
+			
 
 		}       
 	}
@@ -117,16 +118,30 @@ public class Das1RegistryCoordinatesHandler  extends DefaultHandler{
 	
 
 	public void startDocument(){
-		
+		System.out.println("starting document");
 		coordinates = new ArrayList();
 		
 	}
 
 	public void endElement(String uri, String name, String qName) {
+		//System.out.println("end qname="+qName);
 		if ( qName.equals("DASCOORDINATESYSTEM")) {
-			
+			//System.out.println("ending DASCOORDINATESYSTEM");
 			//currentSource.setCoordinateSystem((DasCoordinateSystem[])coordinates.toArray(new DasCoordinateSystem[coordinates.size()]));
 
+		}
+		if ( qName.equals("COORDINATES")) {
+			System.out.println("ending COORDINATES");
+			String elementContent=characterdata.toString();
+			String []coordinateComponents=elementContent.split(",");
+			if(coordinateComponents.length>2){
+				System.out.println("setting organism="+coordinateComponents[2]);
+				dcs.setOrganismName(coordinateComponents[2]);
+			}else{
+			dcs.setOrganismName("");
+			}
+			coordinates.add(dcs);
+			
 		}
 	}
 
@@ -135,6 +150,15 @@ public class Das1RegistryCoordinatesHandler  extends DefaultHandler{
 		return (DasCoordinateSystem[])coordinates.toArray(new DasCoordinateSystem[coordinates.size()]);
 	}
 
+	
+public void characters (char ch[], int start, int length){
+		
+		for (int i = start; i < start + length; i++) {
+
+			characterdata.append(ch[i]);
+		}
+
+	}
 
 
 }

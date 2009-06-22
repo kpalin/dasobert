@@ -45,6 +45,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.log4j.Logger;
 import org.biojava.bio.Annotation;
 import org.biojava.bio.program.das.dasalignment.Alignment;
 import org.biojava.bio.program.das.dasalignment.DASAlignmentClient;
@@ -89,6 +90,7 @@ import de.mpg.mpiinf.ag3.dasmi.model.Interaction;
 public class Das1Validator {
 
 	//private final static String DATASOURCE_NAME = "jdbc/mysql";
+	public static Logger logger =  Logger.getLogger("org.biojava.services.das.servlets.MirrorRegistry");
 	public String validationMessage;
 	boolean supportsMD5Checksum;
 	public boolean VALIDATION = false; // DTD validation ..
@@ -492,10 +494,10 @@ public class Das1Validator {
 		//main check is to check that the coordinate system is in the registry and if uri and id are in the registry or in the same sources doc already
 		boolean isValid=false;
 		isValid = isCoordinateSystemValid(ds, isValid);
-		
+		logger.debug("coordinate system valid="+isValid);
 		//also need to check if uri has been used already in both this sources document and in the registry
 		isValid = isValidUniqueUrlAndId(ds, isValid);
-		
+		logger.debug("uniqueURL and Ids valid="+isValid);
 		//also check the capabilities are of a type that is allowed eg das1:types etc this is done in relaxng validation
 		
 		
@@ -530,7 +532,7 @@ public class Das1Validator {
 				DasCoordinateSystem tempCs=registryCoordinateSystems[k];
 				//System.out.println("uniqueId="+tempCs.uniqueId+"");
 				if(tempCs.equals(cs)){
-					//System.out.println("coordinate sytem found in registry");
+					logger.debug("--------------coordinate sytem found in registry-----------------");
 					isValid=true;
 					
 				}
@@ -546,9 +548,12 @@ public class Das1Validator {
 	}
 
 	private boolean isValidUniqueUrlAndId(Das1Source ds, boolean isValid) {
-		if(this.registryDas1Sources==null){
-			this.registryDas1Sources=getRegistryDas1Sources();
-		}
+		
+		//this code checks if other data sources in the sources.xml already exist which is no good if they have already been registered
+		//just need to check if they are duplicated in the sources document itself.
+//		if(this.registryDas1Sources==null){
+//			this.registryDas1Sources=getRegistryDas1Sources();
+//		}
 		
 		String url=ds.getUrl();
 		
@@ -556,31 +561,35 @@ public class Das1Validator {
 		
 		
 		if(sourceUrls.containsKey(url)){
-			System.out.println("testing url"+id+"  "+url);
+			System.out.println("testing url "+url);
 			validationMessage+="Url already exists in your sources document and are supposed to be unique!! ";
 			return false;
 		}
 		if(sourceIds.containsKey(id)){
-			System.out.println("testing id"+id+"  "+url);
+			System.out.println("testing id"+id);
 			validationMessage+="Id already exists in your sources document and are supposed to be unique!! ";
 			return false;
 		}
 		
-		for(int j=0;j<registryDas1Sources.length;j++){
-			Das1Source source=registryDas1Sources[j];
-			
-			if(source.getUrl()==url){
-				validationMessage+= " url already exists somewhere in registry or your sources";
-				isValid=false;//url has exists already so return not valid
-			}
-			if(source.getId()==id){
-				validationMessage+=" id already exists somewhere in registry or your sources";
-				isValid=false;//url has exists already so return not valid
-			}
-		}
+		//this code checks if other data sources in the sources.xml already exist which is no good if they have already been registered
+		//just need to check if they are duplicated in the sources document itself - so have had to remove.
+		//maybe put this back in when sources.xml only is used to register new sources.
+//		for(int j=0;j<registryDas1Sources.length;j++){
+//			Das1Source source=registryDas1Sources[j];
+//			
+//			if(source.getUrl()==url){
+//				validationMessage+= " url already exists somewhere in registry or your sources";
+//				isValid=false;//url has exists already so return not valid
+//			}
+//			if(source.getId()==id){
+//				validationMessage+=" id already exists somewhere in registry or your sources";
+//				isValid=false;//url has exists already so return not valid
+//			}
+//		}
 		
 		sourceUrls.put(url, "");
 		sourceIds.put(id, "");
+		//logger.debug("adding id="+id);
 		return isValid;
 	}
 	
@@ -643,7 +652,8 @@ public class Das1Validator {
 	private DasCoordinateSystem[] getRegistryCoordinateSystems(){
 	        
 	        DASRegistryCoordinatesReaderXML reader = new DASRegistryCoordinatesReaderXML();
-	        //need to implement a reader for http://www.dasregistry.org/das1/coordinatesystem cmd	        
+	        //need to implement a reader for http://www.dasregistry.org/das1/coordinatesystem cmd	 
+	        logger.debug("getting registry CoordinateSystems from dasregistry url");
 	        DasCoordinateSystem coords[] = reader.readRegistryDas1CoorinateSystems();
 	        
 	        return coords;
@@ -1452,13 +1462,13 @@ public class Das1Validator {
 
 	public static void main(String []args){
 		
-//		Properties props= new Properties(System.getProperties());
-//		props.put("http.proxySet", "true");
-//		props.put("http.proxyHost", "wwwcache.sanger.ac.uk");
-//		props.put("http.proxyPort", "3128");
-//		Properties newprops = new Properties(props);
-//		System.setProperties(newprops);
-//		System.out.println("set Sanger specific properties");
+		Properties props= new Properties(System.getProperties());
+		props.put("http.proxySet", "true");
+		props.put("http.proxyHost", "wwwcache.sanger.ac.uk");
+		props.put("http.proxyPort", "3128");
+		Properties newprops = new Properties(props);
+		System.setProperties(newprops);
+		System.out.println("set Sanger specific properties");
 		
 		Das1Validator validator=new Das1Validator();
 		String andy="http://www.ebi.ac.uk/~aj/test/das/sources";
@@ -1466,7 +1476,7 @@ public class Das1Validator {
 		String dasregistry="http://www.dasregistry.org/das1/sources";
 		String myLocalTest="http://localhost:8080/das/sources";
 		//validator.validateSourcesCmd("http://www.ensembl.org/das/sources");
-		if(validator.validateSourcesCmd(myLocalTest)){
+		if(validator.validateSourcesCmd(ensembl)){
 			System.out.println("sourcesCmd Was valid "+validator.validationMessage);
 		}else{
 			System.out.println("sourcesCmd was invalid"+validator.validationMessage);

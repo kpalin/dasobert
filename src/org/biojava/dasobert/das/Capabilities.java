@@ -57,4 +57,11 @@ public class Capabilities {
 		
 	} ;
 	
+	public static String [] getCapabilitesInCoreOrder(){
+		String []capabilities={Capabilities.SOURCES, Capabilities.ENTRY_POINTS, Capabilities.TYPES, Capabilities.STYLESHEET, Capabilities.FEATURES,
+				Capabilities.SEQUENCE, Capabilities.ALIGNMENT, Capabilities.STRUCTURE, Capabilities.INTERACTION};
+		return capabilities;
+		}
+	
+	
 }
