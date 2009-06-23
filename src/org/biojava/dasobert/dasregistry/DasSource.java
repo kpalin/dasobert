@@ -122,4 +122,8 @@ public interface DasSource {
      */
     public Map<String,String> getProperties();
 
+	public void setValidCapabilities(String[] validCapabilities);
+	
+	public String[] getValidCapabilities();
+
 }
