@@ -57,6 +57,10 @@ public class Capabilities {
 		
 	} ;
 	
+	/**
+	 * returns a list in the order needed for the display in the listServices.jsp
+	 * @return
+	 */
 	public static String [] getCapabilitesInCoreOrder(){
 		String []capabilities={Capabilities.SOURCES, Capabilities.ENTRY_POINTS, Capabilities.TYPES, Capabilities.STYLESHEET, Capabilities.FEATURES,
 				Capabilities.SEQUENCE, Capabilities.ALIGNMENT, Capabilities.STRUCTURE, Capabilities.INTERACTION};

@@ -55,7 +55,7 @@ public class Das1Source implements DasSource {
 	boolean local;
 	Map<String,String> properties;
 	boolean alertAdmin;
-	private String[] validCapabilities={"valid caps not set yet"};
+	private String[] validCapabilities;
 
 	public static String EMPTY_ID = "UNK:-1" ;
 
@@ -76,6 +76,7 @@ public class Das1Source implements DasSource {
 		helperurl        = "";	
 		local=true;
 		properties = new HashMap<String, String>();
+		validCapabilities= new String[0];
 		
 	}
 
@@ -304,6 +305,10 @@ public class Das1Source implements DasSource {
 		
 	}
 	public String[] getValidCapabilities(){
+		
+//			String []standin={"features"};
+//			return  standin;
+		
 		return validCapabilities;
 	}
 	

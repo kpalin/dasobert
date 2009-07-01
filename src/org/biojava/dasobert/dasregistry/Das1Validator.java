@@ -21,8 +21,7 @@
  *
  */
 
-
-package org.biojava.dasobert.dasregistry ;
+package org.biojava.dasobert.dasregistry;
 
 //import org.biojava.services.das.*;
 //xml stuff
@@ -85,26 +84,28 @@ import org.xml.sax.XMLReader;
 
 import de.mpg.mpiinf.ag3.dasmi.model.Interaction;
 
-
-
 public class Das1Validator {
 
-	//private final static String DATASOURCE_NAME = "jdbc/mysql";
-	public static Logger logger =  Logger.getLogger("org.biojava.services.das.servlets.MirrorRegistry");
+	// private final static String DATASOURCE_NAME = "jdbc/mysql";
+	public static Logger logger = Logger
+			.getLogger("org.biojava.services.das.servlets.MirrorRegistry");
 	public String validationMessage;
 	boolean supportsMD5Checksum;
 	public boolean VALIDATION = false; // DTD validation ..
 
-	public  static final boolean NO_ONTOLOGY_VALIDATION = false;
-	public  static final boolean ONTOLOGY_VALIDATION = true;
-	private static final boolean RELAX_NG=true;//shows relaxng validation
-	
+	public static final boolean NO_ONTOLOGY_VALIDATION = false;
+	public static final boolean ONTOLOGY_VALIDATION = true;
+	private static final boolean RELAX_NG = true;// shows relaxng validation
+
 	private static final int MAX_SEQUENCE_LENGTH = 1000;
-	private static final int MAX_NR_FEATURES     = 10;
-	private static final int MAX_NR_FEATURES_ONTOLOGY     = 1000;
-	public  static final boolean VERBOSE = false;
-	private boolean relaxNgApprovalNeeded=true;//needed if via web page, but specifically not needed for autovalidation at the moment
-	
+	private static final int MAX_NR_FEATURES = 10;
+	private static final int MAX_NR_FEATURES_ONTOLOGY = 1000;
+	public static final boolean VERBOSE = false;
+	private boolean relaxNgApprovalNeeded = true;// needed if via web page, but
+													// specifically not needed
+													// for autovalidation at the
+													// moment
+
 	public boolean isRelaxNgApprovalNeeded() {
 		return relaxNgApprovalNeeded;
 	}
@@ -113,8 +114,7 @@ public class Das1Validator {
 		this.relaxNgApprovalNeeded = relaxNgApprovalNeeded;
 	}
 
-	private String relaxNgPath=null;
-	
+	private String relaxNgPath = null;
 
 	public String getRelaxNgPath() {
 		return relaxNgPath;
@@ -125,632 +125,682 @@ public class Das1Validator {
 	}
 
 	List<String> all_capabilities;
-	
-	//private Ontology ontologyBS;
-	//private Ontology ontologySO;
-	//private Ontology ontologyECO;
 
-	//private Ontology[] ontologies ;
-	
-	
-	private DasCoordinateSystem[] registryCoordinateSystems=null;
-	private Das1Source[] registryDas1Sources=null;
-	public static final String REGISTRY_LOCATION =  "http://www.dasregistry.org/das1/sources";
-	private HashMap sourceUrls=null;
-	private HashMap sourceIds=null;
-	private DasRegistryOntologyLookUp lookup=new DasRegistryOntologyLookUp();
-	
+	// private Ontology ontologyBS;
+	// private Ontology ontologySO;
+	// private Ontology ontologyECO;
+
+	// private Ontology[] ontologies ;
+
+	private DasCoordinateSystem[] registryCoordinateSystems = null;
+	private Das1Source[] registryDas1Sources = null;
+	public static final String REGISTRY_LOCATION = "http://www.dasregistry.org/das1/sources";
+	private HashMap sourceUrls = null;
+	private HashMap sourceIds = null;
+	private DasRegistryOntologyLookUp lookup = new DasRegistryOntologyLookUp();
+
 	public Das1Validator() {
-		
+
 		supportsMD5Checksum = false;
-		validationMessage = "" ;
-		
+		validationMessage = "";
+
 		all_capabilities = new ArrayList<String>();
-		
-		for ( int i = 0 ; i< Capabilities.DAS_CAPABILITIES.length; i++ ) {
+
+		for (int i = 0; i < Capabilities.DAS_CAPABILITIES.length; i++) {
 			all_capabilities.add(Capabilities.DAS_CAPABILITIES[i]);
 		}
 	}
-	
-	public boolean supportsMD5Checksum(){
+
+	public boolean supportsMD5Checksum() {
 		return supportsMD5Checksum;
 	}
 
-	/** return which errors have been produced during validation...
-	 * @return String the validation message  */
-	public String getValidationMessage(){
+	/**
+	 * return which errors have been produced during validation...
+	 * 
+	 * @return String the validation message
+	 */
+	public String getValidationMessage() {
 		return validationMessage;
 	}
 
-
-	/** validate the DAS source that is located at the provided url
+	/**
+	 * validate the DAS source that is located at the provided url
 	 * 
-	 * @param url the URL of the DAS source
-	 * @param coords the coordinate systems that should be supported by it
-	 * @param capabilities the capabilities that should be tested.
+	 * @param url
+	 *            the URL of the DAS source
+	 * @param coords
+	 *            the coordinate systems that should be supported by it
+	 * @param capabilities
+	 *            the capabilities that should be tested.
 	 * @return an array of capabilities that were tested successfully.
-	 */ 
-	public String[] validate(String url, DasCoordinateSystem[] coords, String[] capabilities){
-		return validate(url,coords,capabilities,VERBOSE, NO_ONTOLOGY_VALIDATION);
+	 */
+	public String[] validate(String url, DasCoordinateSystem[] coords,
+			String[] capabilities) {
+		return validate(url, coords, capabilities, VERBOSE,
+				NO_ONTOLOGY_VALIDATION);
 	}
 
-	/** validate the DAS source that is located at the provided url
-	 * method called by AutoValidator by registry
-	 * @param url the URL of the DAS source
-	 * @param coords the coordinate systems that should be supported by it
-	 * @param capabilities the capabilities that should be tested.
-	 * @param verbose flag if the output should be verbose or not
-	 * @param ontologyValidation flag if the ontology should be checked as well
+	/**
+	 * validate the DAS source that is located at the provided url method called
+	 * by AutoValidator by registry
+	 * 
+	 * @param url
+	 *            the URL of the DAS source
+	 * @param coords
+	 *            the coordinate systems that should be supported by it
+	 * @param capabilities
+	 *            the capabilities that should be tested.
+	 * @param verbose
+	 *            flag if the output should be verbose or not
+	 * @param ontologyValidation
+	 *            flag if the ontology should be checked as well
 	 * @return an array of capabilities that were tested successfully.
-	 */ 
-	public String[] validate(String url, DasCoordinateSystem[] coords, 
-			String[] capabilities, boolean verbose, boolean ontologyValidation){
-		System.out.println("calling validate in DAS1Validator with url="+url);
-		verbose=true;
-		validationMessage="";
-		
-		if ( url == null )
-			return new String[0];
-		
-		if ( coords == null )
-			return new String[0];
-		
-		if ( capabilities == null )
-			return new String[0];
-		
-		
-		// a list containing all valid DAS requests ...
-		
-		List<String> lst =new ArrayList<String>();
+	 */
+	public String[] validate(String url, DasCoordinateSystem[] coords,
+			String[] capabilities, boolean verbose, boolean ontologyValidation) {
+		System.out.println("calling validate in DAS1Validator with url=" + url);
+		verbose = true;
+		validationMessage = "";
 
-		char lastChar = url.charAt(url.length()-1);
-		if ( lastChar  != '/')
+		if (url == null)
+			return new String[0];
+
+		if (coords == null)
+			return new String[0];
+
+		if (capabilities == null)
+			return new String[0];
+
+		// a list containing all valid DAS requests ...
+
+		List<String> lst = new ArrayList<String>();
+
+		char lastChar = url.charAt(url.length() - 1);
+		if (lastChar != '/')
 			url += "/";
 
-		boolean valid=validateURL(url);
-		//System.out.println("is url valid : "+valid);
-		
-		if ( verbose)
-			System.out.println("validation message="+validationMessage);
+		boolean valid = validateURL(url);
+		// System.out.println("is url valid : "+valid);
+
+		if (verbose)
+			System.out.println("validation message=" + validationMessage);
 
 		// test if all specified capabilities really work
-		for ( int c = 0 ; c < capabilities.length ; c++) {
+		for (int c = 0; c < capabilities.length; c++) {
 			String capability = capabilities[c];
-			if ( all_capabilities.contains(capability)) {
-				//System.out.println("testing " + capability);
+			if (all_capabilities.contains(capability)) {
+				// System.out.println("testing " + capability);
 
-				if ( capability.equals(Capabilities.SOURCES)) {
+				if (capability.equals(Capabilities.SOURCES)) {
 					boolean sourcesok = true;
-					
-						if ( ! validateSourcesCmd(url) ){
-							sourcesok = false;
-							
-						}
-							
-						if ( verbose)
-							System.out.println(validationMessage);
-					
-					if ( sourcesok) 
+
+					if (!validateSourcesCmd(url)) {
+						sourcesok = false;
+
+					}
+
+					if (verbose)
+						System.out.println(validationMessage);
+
+					if (sourcesok){
 						lst.add(capability);
-				}
-				else if 
-				( capability.equals(Capabilities.SEQUENCE)) {
+					}
+				} else if (capability.equals(Capabilities.SEQUENCE)) {
 					boolean sequenceok = true;
-					for ( int i=0;i< coords.length;i++){                        
-						DasCoordinateSystem ds =coords[i];
+					for (int i = 0; i < coords.length; i++) {
+						DasCoordinateSystem ds = coords[i];
 						String testcode = ds.getTestCode();
 
 						// do a DAS sequence retreive
-						if ( ! validateSequence(url,testcode) ){
+						if (!validateSequence(url, testcode)) {
 							sequenceok = false;
-							
+
 						}
-							
-						if ( verbose)
+
+						if (verbose)
 							System.out.println(validationMessage);
 					}
-					if ( sequenceok) 
+					if (sequenceok){
 						lst.add(capability);
-				}
-				else if ( capability.equals(Capabilities.STRUCTURE)) {
+					}
+				} else if (capability.equals(Capabilities.STRUCTURE)) {
 					boolean structureok = true;
-					for ( int i=0;i< coords.length;i++){                        
-						DasCoordinateSystem ds =coords[i];
-						
+					for (int i = 0; i < coords.length; i++) {
+						DasCoordinateSystem ds = coords[i];
+
 						// don't test for structure if this can't work...
-						System.out.println("catagory="+ds.getCategory());
-						//if (! ds.getCategory().equals("Protein Structure"))
-							//continue;
-						
-						String testcode = ds.getTestCode();
-						
+						System.out.println("catagory=" + ds.getCategory());
+						// if (! ds.getCategory().equals("Protein Structure"))
+						// continue;
 
-						if (! validateStructure(url,testcode)) 
+						String testcode = ds.getTestCode();
+
+						if (!validateStructure(url, testcode))
+							{
 							structureok = false;
-						if ( verbose)
+							}
+						if (verbose)
 							System.out.println(validationMessage);
-
-					}    
-					
-					String cmd = url+"structure?model=1&query=";
-					
-					if (structureok)
-						lst.add(capability);
-				}
-				else if ( capability.equals(Capabilities.FEATURES)){
-					boolean featureok = true;
-					for ( int i=0;i< coords.length;i++){                        
-						DasCoordinateSystem ds =coords[i];
-						String testcode = ds.getTestCode();
-
-
-						if (! validateFeatures(url,testcode, ontologyValidation))
-							featureok = false;
-						if ( verbose)
-							System.out.println(validationMessage);
-					} 
-					if ( featureok) 
-						lst.add(capability);
-				} else if ( capability.equals(Capabilities.INTERACTION)){
-					boolean interactionok = true;
-					for ( int i=0;i< coords.length;i++){                        
-						DasCoordinateSystem ds =coords[i];
-						String testcode = ds.getTestCode();
-						
-						if ( verbose ){
-							System.out.println(" validating interaction ");
-							System.out.println(url + " " + testcode );
-						}
-						if (! validateInteraction(url, testcode))
-							interactionok = false;
-						if ( verbose)
-							System.out.println(validationMessage);
-					} 
-					if ( interactionok) 
-						lst.add(capability);
-				}
-				else if ( capability.equals(Capabilities.ALIGNMENT)){
-					boolean alignmentok = true;
-					for ( int i=0;i< coords.length;i++){                        
-						DasCoordinateSystem ds =coords[i];
-						String testcode = ds.getTestCode();
-
-
-						if (! validateAlignment(url,testcode))
-							alignmentok = false;
-						if ( verbose)
-							System.out.println(validationMessage);
-					}    
-					if (alignmentok)
-						lst.add(capability);
-				} else if ( capability.equals(Capabilities.TYPES)){
-					if ( validateTypes(url, ontologyValidation))
-						lst.add(capability);
-						
-					if ( verbose)
-						System.out.println(validationMessage);
-					//else
-						//    error =true ;
-
-				} else if ( capability.equals(Capabilities.ENTRY_POINTS)) {
-					if ( validateEntry_Points(url))
-						lst.add(capability);
-					if ( verbose)
-						System.out.println(validationMessage);
-					//else 
-						//    error = true;
-				} else if ( capability.equals(Capabilities.STYLESHEET)) {
-					if ( validateStylesheet(url))
-						lst.add(capability);
-					if ( verbose)
-						System.out.println(validationMessage);
-					//} else 
-						//    error = true;
-				} else if ( capability.equals(Capabilities.DNA)){
-					boolean dnaok = true;
-					for ( int i=0;i< coords.length;i++){                        
-						DasCoordinateSystem ds =coords[i];
-						String testcode = ds.getTestCode();                        
-
-						if ( ! validateDNA(url,testcode))
-							dnaok = false;
 
 					}
-					if (dnaok) 
-						lst.add(capability);                        
-				}
-				else {
-					validationMessage += "<br/>---<br/> test of capability " + capability + " not implemented,yet.";
+
+					String cmd = url + "structure?model=1&query=";
+
+					if (structureok){
+						lst.add(capability);
+					}
+				} else if (capability.equals(Capabilities.FEATURES)) {
+					boolean featureok = true;
+					for (int i = 0; i < coords.length; i++) {
+						DasCoordinateSystem ds = coords[i];
+						String testcode = ds.getTestCode();
+
+						if (!validateFeatures(url, testcode, ontologyValidation)) {
+							featureok = false;
+							logger.debug("features not ok! in validate");
+						}
+						if (verbose)
+							System.out.println(validationMessage);
+					}
+					if (featureok) {
+						lst.add(capability);
+						logger.debug("adding features as a validated capability");
+					}
+				} else if (capability.equals(Capabilities.INTERACTION)) {
+					boolean interactionok = true;
+					for (int i = 0; i < coords.length; i++) {
+						DasCoordinateSystem ds = coords[i];
+						String testcode = ds.getTestCode();
+
+						if (verbose) {
+							System.out.println(" validating interaction ");
+							System.out.println(url + " " + testcode);
+						}
+						if (!validateInteraction(url, testcode))
+							interactionok = false;
+						if (verbose)
+							System.out.println(validationMessage);
+					}
+					if (interactionok){
+						lst.add(capability);
+					}
+				} else if (capability.equals(Capabilities.ALIGNMENT)) {
+					boolean alignmentok = true;
+					for (int i = 0; i < coords.length; i++) {
+						DasCoordinateSystem ds = coords[i];
+						String testcode = ds.getTestCode();
+
+						if (!validateAlignment(url, testcode))
+							alignmentok = false;
+						if (verbose)
+							System.out.println(validationMessage);
+					}
+					if (alignmentok){
+						lst.add(capability);
+					}
+					
+				} else if (capability.equals(Capabilities.TYPES)) {
+					if (validateTypes(url, ontologyValidation)){
+						lst.add(capability);
+					}
+					if (verbose)
+						System.out.println(validationMessage);
+					// else
+					// error =true ;
+
+				} else if (capability.equals(Capabilities.ENTRY_POINTS)) {
+					if (validateEntry_Points(url)){
+						lst.add(capability);
+					}
+					if (verbose)
+						System.out.println(validationMessage);
+					// else
+					// error = true;
+				} else if (capability.equals(Capabilities.STYLESHEET)) {
+					if (validateStylesheet(url)){
+						lst.add(capability);
+					}
+					if (verbose)
+						System.out.println(validationMessage);
+					// } else
+					// error = true;
+				} else if (capability.equals(Capabilities.DNA)) {
+					boolean dnaok = true;
+					for (int i = 0; i < coords.length; i++) {
+						DasCoordinateSystem ds = coords[i];
+						String testcode = ds.getTestCode();
+
+						if (!validateDNA(url, testcode)){
+							dnaok = false;
+						}
+
+					}
+					if (dnaok){
+						lst.add(capability);
+					}
+				} else {
+					validationMessage += "<br/>---<br/> test of capability "
+							+ capability + " not implemented,yet.";
 					lst.add(capability);
 				}
 			}
 		}
 
-		//if ( error) {
-		//    System.out.println("DasValidator: "+ validationMessage);
-		//}
-		//this.validationMessage = validationMessage;
-		return (String[])lst.toArray(new String[lst.size()]);
+		// if ( error) {
+		// System.out.println("DasValidator: "+ validationMessage);
+		// }
+		// this.validationMessage = validationMessage;
+		return (String[]) lst.toArray(new String[lst.size()]);
 
 	}
 
 	/**
 	 * validate the sources cmd of a server
+	 * 
 	 * @param url
 	 * @param testcode
 	 * @return
 	 */
 	public boolean validateSourcesCmd(String url) {
-		//sources is the odd capability as belongs to the server not the source
-		//therefor need to chop DataSourceName off the end of the url
-		
-		//initialize hashes to store unique ids and urls for this source.xml doc to make sure
-		//there are no duplicates
-		sourceUrls=new HashMap();
-		sourceIds=new HashMap();
-		System.out.println("sources url at start of validation method "+url);
-		if(url.endsWith("/")){
-			System.out.println("ends with /");
-			url=url.substring(0,url.length()-1);
-			System.out.println("after -1="+url);
-			
+		// sources is the odd capability as belongs to the server not the source
+		// therefor need to chop DataSourceName off the end of the url
+
+		// initialize hashes to store unique ids and urls for this source.xml
+		// doc to make sure
+		// there are no duplicates
+		sourceUrls = new HashMap();
+		sourceIds = new HashMap();
+		System.out.println("sources url at start of validation method " + url);
+		if (url.endsWith("/")) {
+			// System.out.println("ends with /");
+			url = url.substring(0, url.length() - 1);
+			// System.out.println("after -1="+url);
+
 		}
-		//now remove the datasource name at the end of the url
-		String choppedURL=url.substring(0,url.lastIndexOf("/")+1);
-		System.out.println("chopped "+choppedURL);
-		String cmd = choppedURL+"sources";
-		
-		System.out.println("running sources with  cmd="+cmd);
-		//if(!relaxNgApproved(RelaxNGValidatorMSV.SOURCES, cmd))return false;
-		//hack here until relaxng is needed for all cmds. Want it to validate sources now.
-		//revert method below to above call later.
-		if(RELAX_NG){
-			RelaxNGValidatorMSV rng=null;
-			if(relaxNgPath!=null){
-				rng=new RelaxNGValidatorMSV(relaxNgPath);
-			}else{
-				rng=new RelaxNGValidatorMSV();
+		// now remove the datasource name at the end of the url
+		String choppedURL = url.substring(0, url.lastIndexOf("/") + 1);
+		// System.out.println("chopped "+choppedURL);
+		String cmd = choppedURL + "sources";
+
+		// System.out.println("running sources with  cmd="+cmd);
+		// if(!relaxNgApproved(RelaxNGValidatorMSV.SOURCES, cmd))return false;
+		// hack here until relaxng is needed for all cmds. Want it to validate
+		// sources now.
+		// revert method below to above call later.
+		if (RELAX_NG) {
+			RelaxNGValidatorMSV rng = null;
+			if (relaxNgPath != null) {
+				rng = new RelaxNGValidatorMSV(relaxNgPath);
+			} else {
+				rng = new RelaxNGValidatorMSV();
 			}
-			
-			if(!rng.validateUsingRelaxNG(RelaxNGValidatorMSV.SOURCES, cmd)){
-				
-				validationMessage+=rng.getMessage();
-				System.out.println("getting message in das1 validator"+validationMessage);
+
+			if (!rng.validateUsingRelaxNG(RelaxNGValidatorMSV.SOURCES, cmd)) {
+
+				validationMessage += rng.getMessage();
+				System.out.println("getting message in das1 validator"
+						+ validationMessage);
 				return false;
-				
+
 			}
-			
+
 		}
-			//validationMessage+="Passed RelaxNG validation test for sources cmd";
-		
-		//source for programmatically validating sources response
-		
-		//get a list of all sources from the registry either from xml for external programs or from database
-		//for the registry
-		//then test the sources from the external server
-		int numberOfInvalidSources=0;
+		// validationMessage+="Passed RelaxNG validation test for sources cmd";
+
+		// source for programmatically validating sources response
+
+		// get a list of all sources from the registry either from xml for
+		// external programs or from database
+		// for the registry
+		// then test the sources from the external server
+		int numberOfInvalidSources = 0;
 		DasSourceReaderImpl reader = new DasSourceReaderImpl();
 		try {
 			URL u = new URL(cmd);
 			DasSource[] sources = reader.readDasSource(u);
-			System.out.println("number of sources being checked="+sources.length);
-			
-			for (int i=0; i< sources.length;i++){
-				Das1Source ds = (Das1Source)sources[i];
-				//System.out.println(ds.toString());
-				boolean isValid=this.checkDAS1Source(ds);
-				
-				if(!isValid){
+			System.out.println("number of sources being checked="
+					+ sources.length);
+
+			for (int i = 0; i < sources.length; i++) {
+				Das1Source ds = (Das1Source) sources[i];
+				// System.out.println(ds.toString());
+				boolean isValid = this.checkDAS1Source(ds);
+
+				if (!isValid) {
 					numberOfInvalidSources++;
-				validationMessage+=" No coordinate system found in the registry that matches the one for this source "+ds.getNickname()+"\n";
+					validationMessage += " No coordinate system found in the registry that matches the one for this source "
+							+ ds.getNickname() + "\n";
 				}
 
-				
 			}
 
-		} catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		validationMessage+="Number of invalid sources returned from this sources cmd was "+numberOfInvalidSources+"\n";
-		if(numberOfInvalidSources!=0)return false;
+		validationMessage += "Number of invalid sources returned from this sources cmd was "
+				+ numberOfInvalidSources + "\n";
+		if (numberOfInvalidSources != 0)
+			return false;
 		return true;
-	
+
 	}
 
 	/**
 	 * 
-	 * @param cmdType one of RelaxNGValidatorMSV static strings such as RelaxNGValidatorMSV.SOURCES
-	 * @param cmd url string sometimes with testcode added
-	 * @return boolean true if valid according to relaxng if approval needed from relaxng.
+	 * @param cmdType
+	 *            one of RelaxNGValidatorMSV static strings such as
+	 *            RelaxNGValidatorMSV.SOURCES
+	 * @param cmd
+	 *            url string sometimes with testcode added
+	 * @return boolean true if valid according to relaxng if approval needed
+	 *         from relaxng.
 	 */
 	private boolean relaxNgApproved(String cmdType, String cmd) {
-		if(RELAX_NG){
-			RelaxNGValidatorMSV rng=null;
-			if(relaxNgPath!=null){
-				rng=new RelaxNGValidatorMSV(relaxNgPath);
-			}else{
-				rng=new RelaxNGValidatorMSV();
+		if (RELAX_NG) {
+			RelaxNGValidatorMSV rng = null;
+			if (relaxNgPath != null) {
+				rng = new RelaxNGValidatorMSV(relaxNgPath);
+			} else {
+				rng = new RelaxNGValidatorMSV();
 			}
-			if(!rng.validateUsingRelaxNG(cmdType, cmd)){
-				
-				validationMessage+=rng.getMessage();
-				System.out.println("getting message in das1 validator"+validationMessage);
-				if(relaxNgApprovalNeeded)return false;
-				
+			if (!rng.validateUsingRelaxNG(cmdType, cmd)) {
+
+				validationMessage += rng.getMessage();
+				System.out.println("getting message in das1 validator"
+						+ validationMessage);
+				if (relaxNgApprovalNeeded)
+					return false;
+
 			}
-			
+
 		}
-			return true;
+		return true;
 	}
 
 	/**
-	 * method to check the validity of one source in the response from the sources cmd
+	 * method to check the validity of one source in the response from the
+	 * sources cmd
+	 * 
 	 * @param ds
 	 * @return
 	 */
 	private boolean checkDAS1Source(Das1Source ds) {
-		//tests to do include what?
-		//relaxng has tested the structure and capabilities if being tested by registry code
-		//main check is to check that the coordinate system is in the registry and if uri and id are in the registry or in the same sources doc already
-		boolean isValid=false;
+		// tests to do include what?
+		// relaxng has tested the structure and capabilities if being tested by
+		// registry code
+		// main check is to check that the coordinate system is in the registry
+		// and if uri and id are in the registry or in the same sources doc
+		// already
+		boolean isValid = false;
 		isValid = isCoordinateSystemValid(ds, isValid);
-		logger.debug("coordinate system valid="+isValid);
-		//also need to check if uri has been used already in both this sources document and in the registry
+		logger.debug("coordinate system valid=" + isValid);
+		// also need to check if uri has been used already in both this sources
+		// document and in the registry
 		isValid = isValidUniqueUrlAndId(ds, isValid);
-		logger.debug("uniqueURL and Ids valid="+isValid);
-		//also check the capabilities are of a type that is allowed eg das1:types etc this is done in relaxng validation
-		
-		
-		if(!isValid){
-			System.out.println(ds.getUrl()+ "  is not valid!!!!!!!");
-			
+		logger.debug("uniqueURL and Ids valid=" + isValid);
+		// also check the capabilities are of a type that is allowed eg
+		// das1:types etc this is done in relaxng validation
+
+		if (!isValid) {
+			System.out.println(ds.getUrl() + "  is not valid!!!!!!!");
+
 		}
 		return isValid;
-		
-		
+
 	}
 
 	private boolean isCoordinateSystemValid(Das1Source ds, boolean isValid) {
-		DasCoordinateSystem[] coords=ds.getCoordinateSystem();
-		if(this.registryCoordinateSystems==null){
-			//instantiate a new list if not set
-			this.registryCoordinateSystems=this.getRegistryCoordinateSystems();
+		DasCoordinateSystem[] coords = ds.getCoordinateSystem();
+		if (this.registryCoordinateSystems == null) {
+			// instantiate a new list if not set
+			this.registryCoordinateSystems = this
+					.getRegistryCoordinateSystems();
 		}
-		
-		
-		
-		for(int j=0; j<coords.length;j++){
-			DasCoordinateSystem cs=coords[j];
-			System.out.println("coordinate system="+cs);
-			//need to check if split cs then should equal "authority, type";
-			String userCSAuthority=cs.getAuthority();
-			String userCSCategory=cs.getCategory();
-			
-			//System.out.println("user authority="+userCSAuthority+" category="+userCSCategory);
-			//System.out.println("Number of Reg coordinate systems returned="+this.registryCoorinateSystems.length);
-			for(int k=0;k<registryCoordinateSystems.length;k++){
-				DasCoordinateSystem tempCs=registryCoordinateSystems[k];
-				//System.out.println("uniqueId="+tempCs.uniqueId+"");
-				if(tempCs.equals(cs)){
-					logger.debug("--------------coordinate sytem found in registry-----------------");
-					isValid=true;
-					
+
+		for (int j = 0; j < coords.length; j++) {
+			DasCoordinateSystem cs = coords[j];
+			System.out.println("coordinate system=" + cs);
+			// need to check if split cs then should equal "authority, type";
+			String userCSAuthority = cs.getAuthority();
+			String userCSCategory = cs.getCategory();
+
+			// System.out.println("user authority="+userCSAuthority+" category="+userCSCategory);
+			// System.out.println("Number of Reg coordinate systems returned="+this.registryCoorinateSystems.length);
+			for (int k = 0; k < registryCoordinateSystems.length; k++) {
+				DasCoordinateSystem tempCs = registryCoordinateSystems[k];
+				// System.out.println("uniqueId="+tempCs.uniqueId+"");
+				if (tempCs.equals(cs)) {
+					logger
+							.debug("--------------coordinate sytem found in registry-----------------");
+					isValid = true;
+
 				}
-				
-				//System.out.println("authority in reg="+tempCs.getAuthority());
-				
+
+				// System.out.println("authority in reg="+tempCs.getAuthority());
+
 			}
-			
-			
-			
+
 		}
 		return isValid;
 	}
 
 	private boolean isValidUniqueUrlAndId(Das1Source ds, boolean isValid) {
-		
-		//this code checks if other data sources in the sources.xml already exist which is no good if they have already been registered
-		//just need to check if they are duplicated in the sources document itself.
-//		if(this.registryDas1Sources==null){
-//			this.registryDas1Sources=getRegistryDas1Sources();
-//		}
-		
-		String url=ds.getUrl();
-		
-		String id=ds.getId();
-		
-		
-		if(sourceUrls.containsKey(url)){
-			System.out.println("testing url "+url);
-			validationMessage+="Url already exists in your sources document and are supposed to be unique!! ";
+
+		// this code checks if other data sources in the sources.xml already
+		// exist which is no good if they have already been registered
+		// just need to check if they are duplicated in the sources document
+		// itself.
+		// if(this.registryDas1Sources==null){
+		// this.registryDas1Sources=getRegistryDas1Sources();
+		// }
+
+		String url = ds.getUrl();
+
+		String id = ds.getId();
+
+		if (sourceUrls.containsKey(url)) {
+			System.out.println("testing url " + url);
+			validationMessage += "Url already exists in your sources document and are supposed to be unique!! ";
 			return false;
 		}
-		if(sourceIds.containsKey(id)){
-			System.out.println("testing id"+id);
-			validationMessage+="Id already exists in your sources document and are supposed to be unique!! ";
+		if (sourceIds.containsKey(id)) {
+			System.out.println("testing id" + id);
+			validationMessage += "Id already exists in your sources document and are supposed to be unique!! ";
 			return false;
 		}
-		
-		//this code checks if other data sources in the sources.xml already exist which is no good if they have already been registered
-		//just need to check if they are duplicated in the sources document itself - so have had to remove.
-		//maybe put this back in when sources.xml only is used to register new sources.
-//		for(int j=0;j<registryDas1Sources.length;j++){
-//			Das1Source source=registryDas1Sources[j];
-//			
-//			if(source.getUrl()==url){
-//				validationMessage+= " url already exists somewhere in registry or your sources";
-//				isValid=false;//url has exists already so return not valid
-//			}
-//			if(source.getId()==id){
-//				validationMessage+=" id already exists somewhere in registry or your sources";
-//				isValid=false;//url has exists already so return not valid
-//			}
-//		}
-		
+
+		// this code checks if other data sources in the sources.xml already
+		// exist which is no good if they have already been registered
+		// just need to check if they are duplicated in the sources document
+		// itself - so have had to remove.
+		// maybe put this back in when sources.xml only is used to register new
+		// sources.
+		// for(int j=0;j<registryDas1Sources.length;j++){
+		// Das1Source source=registryDas1Sources[j];
+		//			
+		// if(source.getUrl()==url){
+		// validationMessage+=
+		// " url already exists somewhere in registry or your sources";
+		// isValid=false;//url has exists already so return not valid
+		// }
+		// if(source.getId()==id){
+		// validationMessage+=" id already exists somewhere in registry or your sources";
+		// isValid=false;//url has exists already so return not valid
+		// }
+		// }
+
 		sourceUrls.put(url, "");
 		sourceIds.put(id, "");
-		//logger.debug("adding id="+id);
+		// logger.debug("adding id="+id);
 		return isValid;
 	}
-	
-	
+
 	private Das1Source[] getRegistryDas1Sources() {
 		System.out.println("runnning get registry sources method");
 		System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
-        "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
-        System.setProperty("javax.xml.parsers.SAXParserFactory",
-        "org.apache.xerces.jaxp.SAXParserFactoryImpl");
-        
-		
-		
+				"org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+		System.setProperty("javax.xml.parsers.SAXParserFactory",
+				"org.apache.xerces.jaxp.SAXParserFactoryImpl");
+
 		DasSourceReaderImpl reader = new DasSourceReaderImpl();
-        
-        
-        URL url=null;
+
+		URL url = null;
 		try {
 			url = new URL(REGISTRY_LOCATION);
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        
-        DasSource[] sources = reader.readDasSource(url);
-        
-        List das1sources = new ArrayList();
-        for (int i=0;i< sources.length;i++){
-            DasSource ds = sources[i];
-             if ( ds instanceof Das1Source){
-            	 System.out.println("adding das1 source from registry "+ds.getUrl());
-                das1sources.add((Das1Source)ds);
-            } else if ( ds instanceof Das2Source){
-                Das2Source d2s = (Das2Source)ds;
-                if (d2s.hasDas1Capabilities()){
-                    Das1Source d1s=null;
+
+		DasSource[] sources = reader.readDasSource(url);
+
+		List das1sources = new ArrayList();
+		for (int i = 0; i < sources.length; i++) {
+			DasSource ds = sources[i];
+			if (ds instanceof Das1Source) {
+				System.out.println("adding das1 source from registry "
+						+ ds.getUrl());
+				das1sources.add((Das1Source) ds);
+			} else if (ds instanceof Das2Source) {
+				Das2Source d2s = (Das2Source) ds;
+				if (d2s.hasDas1Capabilities()) {
+					Das1Source d1s = null;
 					try {
 						d1s = DasSourceConverter.toDas1Source(d2s);
 					} catch (DASException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
-                    das1sources.add(d1s);
-                }
-                
-            } 
-        }
-        
-        return (Das1Source[])das1sources.toArray(new Das1Source[das1sources.size()]);
-		
+
+					das1sources.add(d1s);
+				}
+
+			}
+		}
+
+		return (Das1Source[]) das1sources.toArray(new Das1Source[das1sources
+				.size()]);
+
 	}
 
 	/**
-	 * use this method to get known Coordinate systems from the registry
-	 * using das call to registry by default but the registry itself can change
-	 * this method to use the database directly if needed.
+	 * use this method to get known Coordinate systems from the registry using
+	 * das call to registry by default but the registry itself can change this
+	 * method to use the database directly if needed.
+	 * 
 	 * @return
 	 */
-	private DasCoordinateSystem[] getRegistryCoordinateSystems(){
-	        
-	        DASRegistryCoordinatesReaderXML reader = new DASRegistryCoordinatesReaderXML();
-	        //need to implement a reader for http://www.dasregistry.org/das1/coordinatesystem cmd	 
-	        logger.debug("getting registry CoordinateSystems from dasregistry url");
-	        DasCoordinateSystem coords[] = reader.readRegistryDas1CoorinateSystems();
-	        
-	        return coords;
-	        //DasCoordinateSystem[] registryCoorinateSystems
-	        
-	        
-	    }
-	
+	private DasCoordinateSystem[] getRegistryCoordinateSystems() {
 
-	/** make sure the URL matches the DAS spec 
-     returns true if URL looks o.k...
-     @param url to validate
-     @return boolean true if URL looks ok
+		DASRegistryCoordinatesReaderXML reader = new DASRegistryCoordinatesReaderXML();
+		// need to implement a reader for
+		// http://www.dasregistry.org/das1/coordinatesystem cmd
+		logger.debug("getting registry CoordinateSystems from dasregistry url");
+		DasCoordinateSystem coords[] = reader
+				.readRegistryDas1CoorinateSystems();
+
+		return coords;
+		// DasCoordinateSystem[] registryCoorinateSystems
+
+	}
+
+	/**
+	 * make sure the URL matches the DAS spec returns true if URL looks o.k...
+	 * 
+	 * @param url
+	 *            to validate
+	 * @return boolean true if URL looks ok
 	 */
-	public  boolean validateURL(String url) {
+	public boolean validateURL(String url) {
 		System.out.println("*********validating url**************");
 		String[] spl = url.split("/");
 
-		//for (int i = 0 ; i < spl.length  ; i++ ) {
-		//    System.out.println("spl["+i+"]:"+spl[i]);
-		//}
+		// for (int i = 0 ; i < spl.length ; i++ ) {
+		// System.out.println("spl["+i+"]:"+spl[i]);
+		// }
 
-		if (spl == null ) {
-			validationMessage +="---<br/> URL is not well formed" ;
+		if (spl == null) {
+			validationMessage += "---<br/> URL is not well formed";
 			return false;
 		}
 
-		if ( spl.length <= 4) {
-			validationMessage +="---<br/> URL is not well formed <br/>" +
-			"should be http[s]://site.specific.prefix/das/dassourcename/";
-			return false; 
-		} 
+		if (spl.length <= 4) {
+			validationMessage += "---<br/> URL is not well formed <br/>"
+					+ "should be http[s]://site.specific.prefix/das/dassourcename/";
+			return false;
+		}
 
-		//System.out.println("split 0 : " + spl[0]); 
-		if ( ! (spl[0].equals("http:"))) {
-			if ( ! ( spl[0].equals("https:"))){
-				validationMessage +="---<br/> URL is not well formed (does not start with http:// or https://)" ;
+		// System.out.println("split 0 : " + spl[0]);
+		if (!(spl[0].equals("http:"))) {
+			if (!(spl[0].equals("https:"))) {
+				validationMessage += "---<br/> URL is not well formed (does not start with http:// or https://)";
 				return false;
 			}
 
 		}
 
-		String dastxt = spl[spl.length-2] ;
-		//System.out.println("should be >das< " + dastxt);
-		if ( ! dastxt.equals("das")) {
-			String suggestion = spl[0] + "//" ;
-			String wrong      = spl[0] + "//" ;
-			for (int i = 2 ; i < spl.length -2 ; i++ ) {
-				suggestion += spl[i] + "/" ;
-				wrong += spl[i] + "/" ;
+		String dastxt = spl[spl.length - 2];
+		// System.out.println("should be >das< " + dastxt);
+		if (!dastxt.equals("das")) {
+			String suggestion = spl[0] + "//";
+			String wrong = spl[0] + "//";
+			for (int i = 2; i < spl.length - 2; i++) {
+				suggestion += spl[i] + "/";
+				wrong += spl[i] + "/";
 			}
-			suggestion +="<b>das</b>/"+spl[spl.length-1];
-			wrong +="<b>" + spl[spl.length-2] + "</b>/"+spl[spl.length-1];
-			validationMessage +="--<br/> the URL does not match the DAS spec. it should be <br/>"+
-			" http[s]://site.specific.prefix/das/dassourcename/ <br/>" +
-			" found >" + dastxt +" < instead of >das< <br/>" +
-			" suggested url: " + suggestion + "<br/>"+
-			" instead of: " + wrong ;
+			suggestion += "<b>das</b>/" + spl[spl.length - 1];
+			wrong += "<b>" + spl[spl.length - 2] + "</b>/"
+					+ spl[spl.length - 1];
+			validationMessage += "--<br/> the URL does not match the DAS spec. it should be <br/>"
+					+ " http[s]://site.specific.prefix/das/dassourcename/ <br/>"
+					+ " found >"
+					+ dastxt
+					+ " < instead of >das< <br/>"
+					+ " suggested url: "
+					+ suggestion
+					+ "<br/>"
+					+ " instead of: " + wrong;
 			return false;
 		}
 		return true;
 
 	}
 
-	private boolean validateDNA(String url, String testcode){
-		try { 	    
-			String cmd = url+"dna?segment="+testcode;
+	private boolean validateDNA(String url, String testcode) {
+		try {
+			String cmd = url + "dna?segment=" + testcode;
 			URL strurl = new URL(cmd);
-			InputStream dasInStream = open(strurl); 
+			InputStream dasInStream = open(strurl);
 
 			XMLReader xmlreader = getXMLReader();
 
-			DAS_DNA_Handler cont_handle = new DAS_DNA_Handler() ;
+			DAS_DNA_Handler cont_handle = new DAS_DNA_Handler();
 
 			xmlreader.setContentHandler(cont_handle);
 			xmlreader.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
-			InputSource insource = new InputSource() ;
+			InputSource insource = new InputSource();
 
 			insource.setByteStream(dasInStream);
 			xmlreader.parse(insource);
 			String sequence = cont_handle.get_sequence();
-			if ( sequence.length() > 0 ) {
+			if (sequence.length() > 0) {
 				return true;
 			} else {
-				validationMessage  +="<br/>---<br/> contacting " + cmd + "<br/>";
+				validationMessage += "<br/>---<br/> contacting " + cmd
+						+ "<br/>";
 				validationMessage += " no sequence was returned";
 
 				return false;
 			}
 
-
-		} catch ( Exception e) {
-			//e.printStackTrace();
-			validationMessage += "<br/>---<br/> contacting " + url + "dna?segment="+testcode + "<br/>";
+		} catch (Exception e) {
+			// e.printStackTrace();
+			validationMessage += "<br/>---<br/> contacting " + url
+					+ "dna?segment=" + testcode + "<br/>";
 
 			Throwable cause = e.getCause();
-			if ( cause != null) 
+			if (cause != null)
 				validationMessage += cause.toString();
 			else
 				validationMessage += e.toString();
@@ -762,21 +812,23 @@ public class Das1Validator {
 	private boolean validateStylesheet(String url) {
 		try {
 			DAS_StylesheetRetrieve dsr = new DAS_StylesheetRetrieve();
-			URL styleurl = new URL(url+"stylesheet");
+			URL styleurl = new URL(url + "stylesheet");
 
 			Map[] stylesheet = dsr.retrieve(styleurl);
-			if (( stylesheet != null ) && ( stylesheet.length > 0)) 
+			if ((stylesheet != null) && (stylesheet.length > 0))
 				return true;
 			else {
-				validationMessage  +="<br/>---<br/> contacting " + url + "stylesheet<br/>";
+				validationMessage += "<br/>---<br/> contacting " + url
+						+ "stylesheet<br/>";
 				validationMessage += " no stylesheet was returned";
 				return false;
 			}
 		} catch (Exception e) {
-			validationMessage += "<br/>---<br/> contacting " + url+"stylesheet <br/>";
+			validationMessage += "<br/>---<br/> contacting " + url
+					+ "stylesheet <br/>";
 
 			Throwable cause = e.getCause();
-			if ( cause != null) 
+			if (cause != null)
 				validationMessage += cause.toString();
 			else
 				validationMessage += e.toString();
@@ -784,32 +836,33 @@ public class Das1Validator {
 		return false;
 	}
 
-	private boolean validateAlignment(String url, String testcode){
-		String cmd = url+"alignment?query=" ;
-		//System.out.println(cmd + " " + testcode);
-		if(!relaxNgApproved(RelaxNGValidatorMSV.ALIGNMENT, cmd+testcode))return false;
-		
-		
+	private boolean validateAlignment(String url, String testcode) {
+		String cmd = url + "alignment?query=";
+		// System.out.println(cmd + " " + testcode);
+		if (!relaxNgApproved(RelaxNGValidatorMSV.ALIGNMENT, cmd + testcode))
+			return false;
+
 		try {
-			
-			
-			DASAlignmentClient dasc= new DASAlignmentClient(cmd);
-			//System.out.println("getting alignments for testcode " + testcode);
+
+			DASAlignmentClient dasc = new DASAlignmentClient(cmd);
+			// System.out.println("getting alignments for testcode " +
+			// testcode);
 			Alignment[] alignments = dasc.getAlignments(testcode);
-			if ( alignments.length > 0 ) {
+			if (alignments.length > 0) {
 				return true;
-			}
-			else {
-				validationMessage  +="<br/>---<br/> contacting " + cmd +testcode + "<br/>";
+			} else {
+				validationMessage += "<br/>---<br/> contacting " + cmd
+						+ testcode + "<br/>";
 				validationMessage += " no Alignments were returned";
 				return false;
 			}
 
 		} catch (Exception e) {
-			validationMessage += "<br/>---<br/> contacting " + cmd +testcode + "<br/>";
+			validationMessage += "<br/>---<br/> contacting " + cmd + testcode
+					+ "<br/>";
 
 			Throwable cause = e.getCause();
-			if ( cause != null) 
+			if (cause != null)
 				validationMessage += cause.toString();
 			else
 				validationMessage += e.toString();
@@ -817,41 +870,43 @@ public class Das1Validator {
 		return false;
 	}
 
-	private boolean validateEntry_Points(String url){
+	private boolean validateEntry_Points(String url) {
 		try {
-			URL u = new URL(url+"entry_points");
-			
-			
-			if(!relaxNgApproved(RelaxNGValidatorMSV.ENTRY_POINTS, url+"entry_points"))return false;
+			URL u = new URL(url + "entry_points");
 
-			InputStream dasInStream = open(u); 
+			if (!relaxNgApproved(RelaxNGValidatorMSV.ENTRY_POINTS, url
+					+ "entry_points"))
+				return false;
+
+			InputStream dasInStream = open(u);
 
 			XMLReader xmlreader = getXMLReader();
 
-			DAS_Entry_Points_Handler cont_handle = new DAS_Entry_Points_Handler() ;
+			DAS_Entry_Points_Handler cont_handle = new DAS_Entry_Points_Handler();
 
 			xmlreader.setContentHandler(cont_handle);
 			xmlreader.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
-			InputSource insource = new InputSource() ;
+			InputSource insource = new InputSource();
 			insource.setByteStream(dasInStream);
 			xmlreader.parse(insource);
 			String version = cont_handle.getVersion();
-			if ( version != null ) {
+			if (version != null) {
 				return true;
 			} else {
-				validationMessage  +="<br/>---<br/> contacting " + url +"entry_points <br/>";
+				validationMessage += "<br/>---<br/> contacting " + url
+						+ "entry_points <br/>";
 				validationMessage += " no version was returned";
 
 				return false;
 			}
 
-
-		} catch ( Exception e) {
-			//e.printStackTrace();
-			validationMessage += "<br/>---<br/> contacting " + url+ "entry_points <br/>";
+		} catch (Exception e) {
+			// e.printStackTrace();
+			validationMessage += "<br/>---<br/> contacting " + url
+					+ "entry_points <br/>";
 
 			Throwable cause = e.getCause();
-			if ( cause != null) 
+			if (cause != null)
 				validationMessage += cause.toString();
 			else
 				validationMessage += e.toString();
@@ -859,228 +914,243 @@ public class Das1Validator {
 		return false;
 	}
 
-	
-	/** validate the DSN command for a DAS source.
+	/**
+	 * validate the DSN command for a DAS source.
 	 * 
-	 * @param url the full url of a source, including the name of the das source
-	 * @return flag if the DSN  response is o.k.
+	 * @param url
+	 *            the full url of a source, including the name of the das source
+	 * @return flag if the DSN response is o.k.
 	 */
-	public boolean validateDSN(String url){
+	public boolean validateDSN(String url) {
 		try {
-			
+
 			String[] spl = url.split("/");
-			
+
 			String dsnurl = "";
-			
-			for (int i=0 ; i< spl.length -1;i++){
-				dsnurl+=spl[i]+"/";
+
+			for (int i = 0; i < spl.length - 1; i++) {
+				dsnurl += spl[i] + "/";
 			}
-			
-			
-			URL u = new URL(dsnurl+"dsn");
-			
-			//System.out.println(u.toString());
-			
+
+			URL u = new URL(dsnurl + "dsn");
+
+			// System.out.println(u.toString());
+
 			// parse dsn ...
-			InputStream dasInStream = open(u); 
+			InputStream dasInStream = open(u);
 			XMLReader xmlreader = getXMLReader();
 
-			DAS_DSN_Handler cont_handle = new DAS_DSN_Handler() ;
+			DAS_DSN_Handler cont_handle = new DAS_DSN_Handler();
 
 			xmlreader.setContentHandler(cont_handle);
 			xmlreader.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
-			InputSource insource = new InputSource() ;
+			InputSource insource = new InputSource();
 			insource.setByteStream(dasInStream);
 			xmlreader.parse(insource);
 			List sources = cont_handle.getDsnSources();
-			
-			//System.out.println("got " + sources.size() + " sources listed in DSN");
-			if ( sources.size() > 0 )
+
+			// System.out.println("got " + sources.size() +
+			// " sources listed in DSN");
+			if (sources.size() > 0)
 				return true;
-			
-		} catch ( Exception e) {
-			//e.printStackTrace();
-			validationMessage += "<br/>---<br/> contacting " + url+ "types <br/>";
+
+		} catch (Exception e) {
+			// e.printStackTrace();
+			validationMessage += "<br/>---<br/> contacting " + url
+					+ "types <br/>";
 
 			Throwable cause = e.getCause();
-			if ( cause != null) 
+			if (cause != null)
 				validationMessage += cause.toString();
 			else
 				validationMessage += e.toString();
 		}
 		return false;
-		
+
 	}
-	
-	
-	
-	private boolean validateTypes(String url, boolean ontologyValidation){
+
+	private boolean validateTypes(String url, boolean ontologyValidation) {
 		try {
-			URL u = new URL(url+"types");
-			
-			
-			if(!relaxNgApproved(RelaxNGValidatorMSV.TYPES, url+"types"))return false;
-			
-			InputStream dasInStream = open(u); 
+			URL u = new URL(url + "types");
+
+			if (!relaxNgApproved(RelaxNGValidatorMSV.TYPES, url + "types"))
+				return false;
+
+			InputStream dasInStream = open(u);
 			XMLReader xmlreader = getXMLReader();
 
-			DAS_Types_Handler cont_handle = new DAS_Types_Handler() ;
+			DAS_Types_Handler cont_handle = new DAS_Types_Handler();
 
 			xmlreader.setContentHandler(cont_handle);
 			xmlreader.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
-			InputSource insource = new InputSource() ;
+			InputSource insource = new InputSource();
 			if (ontologyValidation)
 				cont_handle.setMaxFeatures(MAX_NR_FEATURES_ONTOLOGY);
 			insource.setByteStream(dasInStream);
 			xmlreader.parse(insource);
 			String[] types = cont_handle.getTypes();
-			if ( types.length > 0 ) {
-				if ( ! ontologyValidation)
+			if (types.length > 0) {
+				if (!ontologyValidation)
 					return true;
-				validationMessage  +="<br/>---<br/> contacting " + url + "<br/>";				
+				validationMessage += "<br/>---<br/> contacting " + url
+						+ "<br/>";
 				return validateTypesAgainstOntology(types);
-				
+
 			} else {
-				validationMessage  +="<br/>---<br/> contacting " + url +"types <br/>";
+				validationMessage += "<br/>---<br/> contacting " + url
+						+ "types <br/>";
 				validationMessage += " no types were returned";
 
 				return false;
 			}
 
-
-		} catch ( Exception e) {
-			//e.printStackTrace();
-			validationMessage += "<br/>---<br/> contacting " + url+ "types <br/>";
+		} catch (Exception e) {
+			// e.printStackTrace();
+			validationMessage += "<br/>---<br/> contacting " + url
+					+ "types <br/>";
 
 			Throwable cause = e.getCause();
-			if ( cause != null) 
-				validationMessage +="exception thrown at end of types validation"+ cause.toString();
+			if (cause != null)
+				validationMessage += "exception thrown at end of types validation"
+						+ cause.toString();
 			else
-				validationMessage +="Could be an empty page returned?? "+ e.toString();
+				validationMessage += "Could be an empty page returned?? "
+						+ e.toString();
 		}
 		return false;
 	}
 
-	private boolean validateInteraction(String url, String testcode){
-		//System.out.println("called validate interaction method url " +url);
-		//url="http://localhost:8080/dasregistryOID/interactionTestOld.xml";
-		
-		if(!relaxNgApproved(RelaxNGValidatorMSV.INTERACTION, url+"interaction?interactor="+testcode))return false;
-		
+	private boolean validateInteraction(String url, String testcode) {
+		// System.out.println("called validate interaction method url " +url);
+		// url="http://localhost:8080/dasregistryOID/interactionTestOld.xml";
+
+		if (!relaxNgApproved(RelaxNGValidatorMSV.INTERACTION, url
+				+ "interaction?interactor=" + testcode))
+			return false;
+
 		InteractionDasSource source = new InteractionDasSource();
 		source.setUrl(url);
 		InteractionParameters params = new InteractionParameters();
-		
-		
-		
+
 		params.setDasSource(source);
-		params.setQueries(new String[]{testcode});
-		
+		params.setQueries(new String[] { testcode });
+
 		InteractionThread thread = new InteractionThread(params);
-		//System.out.println("set up interaction thread");
-		
-		// TODO: how can I do  multiple threads with JUnit??
-		Interaction[] interA = thread.getInteractions(new String[]{testcode,});
-		//System.out.println("interA.length="+interA.length);
-		if ( interA.length > 0)
+		// System.out.println("set up interaction thread");
+
+		// TODO: how can I do multiple threads with JUnit??
+		Interaction[] interA = thread
+				.getInteractions(new String[] { testcode, });
+		// System.out.println("interA.length="+interA.length);
+		if (interA.length > 0)
 			return true;
 		return false;
 	}
 
-	public boolean validateFeatures(String url, 
-			String testcode, boolean ontologyValidation){
+	public boolean validateFeatures(String url, String testcode,
+			boolean ontologyValidation) {
 		try {
-			URL u = new URL(url+"features?segment="+testcode);
-			
-			
-			if(!relaxNgApproved(RelaxNGValidatorMSV.FEATURE, url+"features?segment="+testcode))return false;
-			System.out.println("validation message after features and rng call= "+validationMessage);
-			InputStream dasInStream = open(u); 
+			URL u = new URL(url + "features?segment=" + testcode);
+
+			if (!relaxNgApproved(RelaxNGValidatorMSV.FEATURE, url
+					+ "features?segment=" + testcode))
+				return false;
+			System.out
+					.println("validation message after features and rng call= "
+							+ validationMessage);
+			InputStream dasInStream = open(u);
 			XMLReader xmlreader = getXMLReader();
 
-			DAS_Feature_Handler cont_handle = new DAS_Feature_Handler() ;
+			DAS_Feature_Handler cont_handle = new DAS_Feature_Handler();
 
-			// make sure we do not load the features of a whole chromosome, in case a user specified those...
+			// make sure we do not load the features of a whole chromosome, in
+			// case a user specified those...
 			cont_handle.setMaxFeatures(MAX_NR_FEATURES);
-			
+
 			if (ontologyValidation)
 				cont_handle.setMaxFeatures(MAX_NR_FEATURES_ONTOLOGY);
 			cont_handle.setDASCommand(url.toString());
 			xmlreader.setContentHandler(cont_handle);
 			xmlreader.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
-			InputSource insource = new InputSource() ;
+			InputSource insource = new InputSource();
 			insource.setByteStream(dasInStream);
 			xmlreader.parse(insource);
-			List<Map<String,String>> features = cont_handle.get_features();
-			System.out.println("features size is="+features.size());
-			
-			if ( cont_handle.isMD5Checksum())
+			List<Map<String, String>> features = cont_handle.get_features();
+			System.out.println("features size is=" + features.size());
+
+			if (cont_handle.isMD5Checksum())
 				supportsMD5Checksum = true;
-			
-			if ( features.size() > 0 ) {
-				if ( ! ontologyValidation)
+
+			if (features.size() > 0) {
+				if (!ontologyValidation)
 					return true;
-				validationMessage  +="<br/>---<br/> contacting " + url+"features?segment="+testcode + "<br/>";				
+				validationMessage += "<br/>---<br/> contacting " + url
+						+ "features?segment=" + testcode + "<br/>";
 				return validateFeatureOntology(features);
-				
+
 			} else {
-				validationMessage  +="<br/>---<br/> contacting " + url+"features?segment="+testcode + "<br/>";
+				validationMessage += "<br/>---<br/> contacting " + url
+						+ "features?segment=" + testcode + "<br/>";
 				validationMessage += " no features were returned";
 
 				return false;
 			}
 
-		} catch ( Exception e) {
-			//e.printStackTrace();
-			validationMessage += "<br/>---<br/> contacting " + url+"features?segment="+testcode + "<br/>";
+		} catch (Exception e) {
+			// e.printStackTrace();
+			validationMessage += "<br/>---<br/> contacting " + url
+					+ "features?segment=" + testcode + "<br/>";
 
 			Throwable cause = e.getCause();
-			if ( cause != null) 
+			if (cause != null)
 				validationMessage += cause.toString();
 			else
 				validationMessage += e.toString();
 		}
 		return false;
 	}
-	
-	
-	private void initOntologies(){
-		//try {
-			//ontologyBS = readOntology("BioSapiens","the BioSapiens Ontology", "biosapiens.obo");
-			//ontologySO = readOntology("SequenceOntology", "the Sequence Ontology" , "so.obo");			
-			//ontologies =  new Ontology[]{ontologyBS, ontologySO};
-			//ontologyECO = readOntology("ECO", "the Evidence Code Ontology" , "evidence_code.obo");
-		//} catch (OntologyException ex) {
-		//}
+
+	private void initOntologies() {
+		// try {
+		// ontologyBS = readOntology("BioSapiens","the BioSapiens Ontology",
+		// "biosapiens.obo");
+		// ontologySO = readOntology("SequenceOntology", "the Sequence Ontology"
+		// , "so.obo");
+		// ontologies = new Ontology[]{ontologyBS, ontologySO};
+		// ontologyECO = readOntology("ECO", "the Evidence Code Ontology" ,
+		// "evidence_code.obo");
+		// } catch (OntologyException ex) {
+		// }
 	}
-	
 
-	private Ontology readOntology(String ontoName, String ontoDesc, String fileName) throws OntologyException{
-
+	private Ontology readOntology(String ontoName, String ontoDesc,
+			String fileName) throws OntologyException {
 
 		OboParser parser = new OboParser();
-		InputStream inStream = this.getClass().getResourceAsStream("/ontologies/"+fileName);
-		//System.out.println("reading ontology: /ontologies/" + fileName);
-		if (inStream == null){
-			System.err.println("did not find " + fileName );
+		InputStream inStream = this.getClass().getResourceAsStream(
+				"/ontologies/" + fileName);
+		// System.out.println("reading ontology: /ontologies/" + fileName);
+		if (inStream == null) {
+			System.err.println("did not find " + fileName);
 		}
-		
-		BufferedReader oboFile = new BufferedReader ( new InputStreamReader ( inStream ) );
-		
+
+		BufferedReader oboFile = new BufferedReader(new InputStreamReader(
+				inStream));
+
 		try {
-			Ontology ontology = parser.parseOBO(oboFile, ontoName, ontoDesc );
+			Ontology ontology = parser.parseOBO(oboFile, ontoName, ontoDesc);
 
-			//System.out.println("finished parsing: " + ontology);
-			//Set keys = ontology.getTerms();
-			//Iterator<Term> iter = keys.iterator();
-			//while (iter.hasNext()){
-			//	Term term = iter.next();				
-			//	System.out.println(term + " " + term.getDescription());
+			// System.out.println("finished parsing: " + ontology);
+			// Set keys = ontology.getTerms();
+			// Iterator<Term> iter = keys.iterator();
+			// while (iter.hasNext()){
+			// Term term = iter.next();
+			// System.out.println(term + " " + term.getDescription());
 
-			//}
+			// }
 			return ontology;
 
-		} catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -1091,145 +1161,151 @@ public class Das1Validator {
 		return ontology;
 
 	}
-	
 
 	private SimpleTerm getTerm(String typeID) {
-		System.out.println("Getting term typeID="+typeID);
-		if ( typeID == null){
+		System.out.println("Getting term typeID=" + typeID);
+		if (typeID == null) {
 			System.err.println("typeID is NULL, no terms in an ontology");
 			return null;
 		}
 		SimpleTerm term = null;
-        term=lookup.getTerm(typeID);
-//		if ( ontologies == null) {
-//			initOntologies();
-//		}
-		
-//		try {
-//			for (Ontology ontology: ontologies){
-//				if ( ontology.containsTerm(typeID)) {
-//					t = ontology.getTerm(typeID);
-//					if (t != null)
-//						return t;
-//				}
-//			}
-//		} catch (NoSuchElementException ex){
-//			ex.printStackTrace();
-//			//System.err.println(ex.getMessage());
-//		}
+		term = lookup.getTerm(typeID);
+		// if ( ontologies == null) {
+		// initOntologies();
+		// }
+
+		// try {
+		// for (Ontology ontology: ontologies){
+		// if ( ontology.containsTerm(typeID)) {
+		// t = ontology.getTerm(typeID);
+		// if (t != null)
+		// return t;
+		// }
+		// }
+		// } catch (NoSuchElementException ex){
+		// ex.printStackTrace();
+		// //System.err.println(ex.getMessage());
+		// }
 		return term;
 	}
 
-	
-	
-	/**validates a track for consistency with the BioSapiens annotation
-	 * @param feature 
+	/**
+	 * validates a track for consistency with the BioSapiens annotation
+	 * 
+	 * @param feature
 	 * 
 	 * @return true if the track validates
-	 * @throws DASException 
+	 * @throws DASException
 	 */
-	public boolean  validateTrack(Map<String,String> feature) throws DASException{
+	public boolean validateTrack(Map<String, String> feature)
+			throws DASException {
 
 		Pattern ecoPattern = Pattern.compile("(ECO:[0-9]+)");
-		
+
 		// validate type:
-		String type         = feature.get("TYPE");
-		String typeID       = feature.get("TYPE_ID");
+		String type = feature.get("TYPE");
+		String typeID = feature.get("TYPE_ID");
 		String typeCategory = feature.get("TYPE_CATEGORY");
-		//System.out.println("type  " + type);
-		//System.out.println("method " + feature.get("METHOD"));
-		//System.out.println("typeID " + typeID);
-		//System.out.println("typeCategory " + typeCategory);
-	
-		if ( typeID == null) {
-			throw new DASException("track does not have the TYPE - id field set");
+		// System.out.println("type  " + type);
+		// System.out.println("method " + feature.get("METHOD"));
+		// System.out.println("typeID " + typeID);
+		// System.out.println("typeCategory " + typeCategory);
+
+		if (typeID == null) {
+			throw new DASException(
+					"track does not have the TYPE - id field set");
 		}
-		if ( typeCategory == null) {
-			throw new DASException("track does not have the TYPE - category field set");
+		if (typeCategory == null) {
+			throw new DASException(
+					"track does not have the TYPE - category field set");
 		}
 
 		SimpleTerm t = testTypeIDAgainstOntology(typeID);
 
-
-		
-//		if (! t.getDescription().equals(type)){
-//			boolean synonymUsed = false;
-//			Object[] synonyms = t.getSynonyms();
-//			for (Object syno :  synonyms){
-//				//System.out.println(syno);
-//				if ( syno.equals(type)){
-//					synonymUsed = true;
-//					break;
-//				}
-//			}
-//			if ( ! synonymUsed) {			
-//				throw new DASException("feature type ("+ type + 
-//						") does not match Ontology description (" + 
-//						t.getDescription()+" for termID: " +
-//				typeID+")");
-//			}
-//		}
-//
-//		// test evidence code
-//
+		// if (! t.getDescription().equals(type)){
+		// boolean synonymUsed = false;
+		// Object[] synonyms = t.getSynonyms();
+		// for (Object syno : synonyms){
+		// //System.out.println(syno);
+		// if ( syno.equals(type)){
+		// synonymUsed = true;
+		// break;
+		// }
+		// }
+		// if ( ! synonymUsed) {
+		// throw new DASException("feature type ("+ type +
+		// ") does not match Ontology description (" +
+		// t.getDescription()+" for termID: " +
+		// typeID+")");
+		// }
+		// }
+		//
+		// // test evidence code
+		//
 		// parse the ECO id from the typeCategory;
 		Matcher m = ecoPattern.matcher(typeCategory);
 		String eco = null;
-		if ( m.find() ) {
+		if (m.find()) {
 			eco = m.group(0);
 		}
 
-		if ( eco == null){
-			throw new DASException("could not identify ECO id in " + typeCategory);
+		if (eco == null) {
+			throw new DASException("could not identify ECO id in "
+					+ typeCategory);
 		}
-		if (! lookup.exists(eco, "ECO")){
+		if (!lookup.exists(eco, "ECO")) {
 			throw new DASException("unknown evidence code >" + eco + "<");
 		}
 
-
-
-		return true;//returning true at the moment as failing ontology test currently does not stop source being valid
+		return true;// returning true at the moment as failing ontology test
+					// currently does not stop source being valid
 
 	}
 
-	private SimpleTerm testTypeIDAgainstOntology(String typeID) throws DASException {
+	private SimpleTerm testTypeIDAgainstOntology(String typeID)
+			throws DASException {
 		SimpleTerm t = getTerm(typeID);
-		if(t!=null)t.print();
-		
-		if ( t==null){
-			throw new DASException ("term " + typeID +" not found in any Ontology");
+		if (t != null)
+			t.print();
+
+		if (t == null) {
+			throw new DASException("term " + typeID
+					+ " not found in any Ontology");
 		}
-		
+
 		if (t.isObsolete()) {
 			System.out.println("term is obsolete");
-			throw new DASException("Feature uses an obsolete term: "+ t.getName() + " " + t.getDescription());
+			throw new DASException("Feature uses an obsolete term: "
+					+ t.getName() + " " + t.getDescription());
 		}
 
 		return t;
 	}
-	
-	private boolean validateFeatureOntology(List<Map<String, String>> featuresList){
-		
+
+	private boolean validateFeatureOntology(
+			List<Map<String, String>> featuresList) {
+
 		validationMessage += "got " + featuresList.size() + " features\n";
 		boolean ontologyOK = true;
 		int i = 0;
-		for( Map<String,String>feature : featuresList){
+		for (Map<String, String> feature : featuresList) {
 			i++;
-			validationMessage += "*** validating track " + i +": " + feature.get("TYPE") +"\n";
+			validationMessage += "*** validating track " + i + ": "
+					+ feature.get("TYPE") + "\n";
 			try {
-				
-				if (( feature.get("START").equals(feature.get("END"))) &&
-						(feature.get("START").equals("0"))){
-					validationMessage +="  Non-positional features are currently not supported, yet.\n";
+
+				if ((feature.get("START").equals(feature.get("END")))
+						&& (feature.get("START").equals("0"))) {
+					validationMessage += "  Non-positional features are currently not supported, yet.\n";
 					continue;
 				}
-				if ( validateTrack(feature)) {
-					validationMessage +="  track ok!\n";
+				if (validateTrack(feature)) {
+					validationMessage += "  track ok!\n";
 				}
-			} catch (DASException ex){
-				//System.out.println(ex.getMessage());
-				//ex.printStackTrace();
-				validationMessage += "   " + ex.getMessage() +"\n";
+			} catch (DASException ex) {
+				// System.out.println(ex.getMessage());
+				// ex.printStackTrace();
+				validationMessage += "   " + ex.getMessage() + "\n";
 				validationMessage += "   This DAS source does NOT comply with the BioSapiens ontology!\n";
 				ontologyOK = false;
 
@@ -1237,31 +1313,34 @@ public class Das1Validator {
 		}
 		return ontologyOK;
 	}
-	
+
 	/**
 	 * written by jw to add ontology to the types validation
+	 * 
 	 * @param typesList
 	 * @return
 	 */
-  private boolean validateTypesAgainstOntology(String[] typesList){
-		//System.out.println("validating type ontology jw");
+	private boolean validateTypesAgainstOntology(String[] typesList) {
+		// System.out.println("validating type ontology jw");
 		validationMessage += "got " + typesList.length + " types\n";
 		boolean ontologyOK = true;
-		
-		//start at 1 as 0 is ID
-		for( int i=1; i<typesList.length; i++){
-			
-			validationMessage += "*** validating type " + i +": " + typesList[i] +"\n";
+
+		// start at 1 as 0 is ID
+		for (int i = 1; i < typesList.length; i++) {
+
+			validationMessage += "*** validating type " + i + ": "
+					+ typesList[i] + "\n";
 			try {
-				//validate code here to replace validat tracks in feature equivalent method
-				SimpleTerm term=testTypeIDAgainstOntology(typesList[i]);
-				if ( term!=null ) {
-					validationMessage +="  track ok!\n";
+				// validate code here to replace validat tracks in feature
+				// equivalent method
+				SimpleTerm term = testTypeIDAgainstOntology(typesList[i]);
+				if (term != null) {
+					validationMessage += "  track ok!\n";
 				}
-			} catch (DASException ex){
-				//System.out.println(ex.getMessage());
-				//ex.printStackTrace();
-				validationMessage += "   " + ex.getMessage() +"\n";
+			} catch (DASException ex) {
+				// System.out.println(ex.getMessage());
+				// ex.printStackTrace();
+				validationMessage += "   " + ex.getMessage() + "\n";
 				validationMessage += "   This DAS source does NOT comply with the BioSapiens ontology!\n";
 				ontologyOK = false;
 
@@ -1269,185 +1348,183 @@ public class Das1Validator {
 		}
 		return ontologyOK;
 	}
-	
-	
-
-	
 
 	private boolean validateStructure(String url, String testcode) {
-		String cmd = url+"structure?model=1&query=";
-		
-		System.out.println("running structure with  cmd="+cmd);
-		
-			
-			if(!relaxNgApproved(RelaxNGValidatorMSV.STRUCTURE, cmd+testcode))return false;
+		String cmd = url + "structure?model=1&query=";
 
-		DASStructureClient dasc= new DASStructureClient(cmd);
-		
-		
+		System.out.println("running structure with  cmd=" + cmd);
+
+		if (!relaxNgApproved(RelaxNGValidatorMSV.STRUCTURE, cmd + testcode))
+			return false;
+
+		DASStructureClient dasc = new DASStructureClient(cmd);
+
 		try {
 			Structure struc = dasc.getStructureById(testcode);
-			//System.out.println(struc);
+			// System.out.println(struc);
 			Chain c = struc.getChain(0);
-			if ( c.getAtomLength() > 0 ) {
+			if (c.getAtomLength() > 0) {
 				return true;
 			} else {
-				validationMessage += "<br/>---<br/>contacting " + cmd + testcode+"<br/>";
+				validationMessage += "<br/>---<br/>contacting " + cmd
+						+ testcode + "<br/>";
 				validationMessage += " no structure found";
 				return false;
 			}
 		} catch (Exception e) {
-			validationMessage += "<br/>---<br/>contacting " + cmd + testcode+"<br/>";
+			validationMessage += "<br/>---<br/>contacting " + cmd + testcode
+					+ "<br/>";
 
 			Throwable cause = e.getCause();
-			if ( cause != null) 
+			if (cause != null)
 				validationMessage += cause.toString();
 			else
 				validationMessage += e.toString();
-			//e.printStackTrace();	    
+			// e.printStackTrace();
 		}
 		return false;
 	}
+
 	private boolean validateSequence(String url, String testcode) {
 		URL dasUrl;
-		
-		// try to parse the test region from the testcode - if it looks like a chromosomal one 
+
+		// try to parse the test region from the testcode - if it looks like a
+		// chromosomal one
 		// make sure only 50 bp are being read!
 		String reference = "";
 		String start = "";
-		
+
 		String[] spl = testcode.split(":");
-		if (spl.length <2) {
+		if (spl.length < 2) {
 			reference = testcode;
-		} else if ( spl.length ==2) {
+		} else if (spl.length == 2) {
 			reference = spl[0];
 			String coordsspl = spl[1];
 			String[] splc = coordsspl.split(",");
-			if ( splc.length == 2 ) {
+			if (splc.length == 2) {
 				start = splc[0];
-				
+
 			}
 		}
-		
-		
-		int startInt = -9999 ; 
-		try { 
+
+		int startInt = -9999;
+		try {
 			startInt = Integer.parseInt(start);
-		} catch (NumberFormatException ex){}
-		
-		String cmd = url+"sequence?segment="+reference;
-		if ( startInt != -9999)
-			cmd += ":" + startInt + "," + (startInt+50);
-		
-		//System.out.println(cmd);
-	
-		
+		} catch (NumberFormatException ex) {
+		}
+
+		String cmd = url + "sequence?segment=" + reference;
+		if (startInt != -9999)
+			cmd += ":" + startInt + "," + (startInt + 50);
+
+		// System.out.println(cmd);
+
 		try {
 			dasUrl = new URL(cmd);
 
-		} catch ( Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
-		
-		URL schemaLocation=null;
-		
-		
-		
-		if(!relaxNgApproved(RelaxNGValidatorMSV.SEQUENCE, cmd))return false;
-		
-		
+
+		URL schemaLocation = null;
+
+		if (!relaxNgApproved(RelaxNGValidatorMSV.SEQUENCE, cmd))
+			return false;
+
 		try {
-			//System.out.println("opening " + dasUrl);
-			InputStream dasInStream =open(dasUrl); 
-			SAXParserFactory spfactory =
-				SAXParserFactory.newInstance();
+			// System.out.println("opening " + dasUrl);
+			InputStream dasInStream = open(dasUrl);
+			SAXParserFactory spfactory = SAXParserFactory.newInstance();
 			spfactory.setValidating(true);
 
-			SAXParser saxParser = null ;
+			SAXParser saxParser = null;
 
-			try{
-				saxParser =
-					spfactory.newSAXParser();
+			try {
+				saxParser = spfactory.newSAXParser();
 			} catch (ParserConfigurationException e) {
 				e.printStackTrace();
 			}
 			XMLReader xmlreader = saxParser.getXMLReader();
 
 			try {
-				xmlreader.setFeature("http://xml.org/sax/features/validation", VALIDATION);
+				xmlreader.setFeature("http://xml.org/sax/features/validation",
+						VALIDATION);
 			} catch (SAXException e) {
 				e.printStackTrace();
 			}
 			try {
-				xmlreader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd",VALIDATION);
-			} catch (SAXNotRecognizedException e){
+				xmlreader
+						.setFeature(
+								"http://apache.org/xml/features/nonvalidating/load-external-dtd",
+								VALIDATION);
+			} catch (SAXNotRecognizedException e) {
 				e.printStackTrace();
 			}
 
-			DAS_Sequence_Handler cont_handle = new DAS_Sequence_Handler() ;
+			DAS_Sequence_Handler cont_handle = new DAS_Sequence_Handler();
 			cont_handle.setMaxLength(MAX_SEQUENCE_LENGTH);
 			xmlreader.setContentHandler(cont_handle);
 			xmlreader.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
-			InputSource insource = new InputSource() ;
+			InputSource insource = new InputSource();
 			insource.setByteStream(dasInStream);
 			xmlreader.parse(insource);
 			String sequence = cont_handle.get_sequence();
-			//System.out.println("done parsing sequence ...");
-			if ( ( sequence==null) || (sequence.equals(""))) {
-				validationMessage += "---<br/>contacting " + cmd +"<br/>";
+			// System.out.println("done parsing sequence ...");
+			if ((sequence == null) || (sequence.equals(""))) {
+				validationMessage += "---<br/>contacting " + cmd + "<br/>";
 				validationMessage += "no sequence found";
 				return false;
-			} 
-			return true; 
+			}
+			return true;
 		} catch (Exception e) {
-			validationMessage += "---<br/>contacting " + cmd +"<br/>";
+			validationMessage += "---<br/>contacting " + cmd + "<br/>";
 
 			Throwable cause = e.getCause();
-			if ( cause != null) 
+			if (cause != null)
 				validationMessage += cause.toString();
 			else
 				validationMessage += e.toString();
-			//e.printStackTrace();
+			// e.printStackTrace();
 		}
 		return false;
 	}
 
-	private XMLReader getXMLReader() throws SAXException{
-		SAXParserFactory spfactory =
-			SAXParserFactory.newInstance();
+	private XMLReader getXMLReader() throws SAXException {
+		SAXParserFactory spfactory = SAXParserFactory.newInstance();
 
-		spfactory.setValidating(false) ;
-		SAXParser saxParser = null ;
+		spfactory.setValidating(false);
+		SAXParser saxParser = null;
 
-		try{
-			saxParser =
-				spfactory.newSAXParser();
+		try {
+			saxParser = spfactory.newSAXParser();
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
-		} 
+		}
 
 		XMLReader xmlreader = saxParser.getXMLReader();
 		boolean validation = VALIDATION;
-		//XMLReader xmlreader = XMLReaderFactory.createXMLReader();
+		// XMLReader xmlreader = XMLReaderFactory.createXMLReader();
 		try {
-			xmlreader.setFeature("http://xml.org/sax/features/validation", validation);
+			xmlreader.setFeature("http://xml.org/sax/features/validation",
+					validation);
 		} catch (SAXException e) {
 			e.printStackTrace();
 		}
 
 		try {
-			xmlreader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd",validation);
-		} catch (SAXNotRecognizedException e){	
-			e.printStackTrace();		
+			xmlreader
+					.setFeature(
+							"http://apache.org/xml/features/nonvalidating/load-external-dtd",
+							validation);
+		} catch (SAXNotRecognizedException e) {
+			e.printStackTrace();
 		}
 		return xmlreader;
 
 	}
 
-
-
-	private InputStream open(URL url) throws Exception{
+	private InputStream open(URL url) throws Exception {
 
 		// TODO Auto-generated method stub
 
@@ -1455,33 +1532,34 @@ public class Das1Validator {
 
 		HttpURLConnection huc = null;
 		huc = (HttpURLConnection) url.openConnection();
-		//String contentEncoding = huc.getContentEncoding();
-		inStream = huc.getInputStream();	
+		// String contentEncoding = huc.getContentEncoding();
+		inStream = huc.getInputStream();
 		return inStream;
 	}
 
-	public static void main(String []args){
-		
-		Properties props= new Properties(System.getProperties());
+	public static void main(String[] args) {
+
+		Properties props = new Properties(System.getProperties());
 		props.put("http.proxySet", "true");
 		props.put("http.proxyHost", "wwwcache.sanger.ac.uk");
 		props.put("http.proxyPort", "3128");
 		Properties newprops = new Properties(props);
 		System.setProperties(newprops);
 		System.out.println("set Sanger specific properties");
-		
-		Das1Validator validator=new Das1Validator();
-		String andy="http://www.ebi.ac.uk/~aj/test/das/sources";
-		String ensembl="http://www.ensembl.org/das/sources";
-		String dasregistry="http://www.dasregistry.org/das1/sources";
-		String myLocalTest="http://localhost:8080/das/sources";
-		//validator.validateSourcesCmd("http://www.ensembl.org/das/sources");
-		if(validator.validateSourcesCmd(ensembl)){
-			System.out.println("sourcesCmd Was valid "+validator.validationMessage);
-		}else{
-			System.out.println("sourcesCmd was invalid"+validator.validationMessage);
+
+		Das1Validator validator = new Das1Validator();
+		String andy = "http://www.ebi.ac.uk/~aj/test/das/sources";
+		String ensembl = "http://www.ensembl.org/das/sources";
+		String dasregistry = "http://www.dasregistry.org/das1/sources";
+		String myLocalTest = "http://localhost:8080/das/sources";
+		// validator.validateSourcesCmd("http://www.ensembl.org/das/sources");
+		if (validator.validateSourcesCmd(ensembl)) {
+			System.out.println("sourcesCmd Was valid "
+					+ validator.validationMessage);
+		} else {
+			System.out.println("sourcesCmd was invalid"
+					+ validator.validationMessage);
 		}
 	}
-
 
 }
