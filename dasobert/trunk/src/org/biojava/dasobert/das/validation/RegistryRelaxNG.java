@@ -121,7 +121,7 @@ public class RegistryRelaxNG {
 			} catch (Exception e) {
 				;
 			}
-		System.out.println("set intitial arguments by here!!");
+		//System.out.println("set intitial arguments by here!!");
 
 		// parse schema
 		// --------------------
@@ -134,7 +134,7 @@ public class RegistryRelaxNG {
 		try {
 			GrammarLoader loader = new GrammarLoader();
 			
-			System.out.println("grammer loader loaded here");
+			//System.out.println("grammer loader loaded here");
 			// set various parameters
 			loader.setController(new DebugController(warning, false,
 					entityResolver));
@@ -165,7 +165,7 @@ public class RegistryRelaxNG {
 					- stime))
 					+ "\n";
 
-		System.out.println("set time here");
+		
 
 		// validate documents
 		// --------------------
@@ -176,23 +176,23 @@ public class RegistryRelaxNG {
 		verifier = new SimpleVerifier(new REDocumentDeclaration(grammar));
 
 		boolean allValid = true;
-		System.out
-				.println("starting to actually validate documents here before for loop");
+		//System.out
+				//.println("starting to actually validate documents here before for loop");
 
 		regMessage += localize(MSG_VALIDATING, instName) + "\n";
 
 		boolean result = false;
-		System.out.println("just before setting up xml reader");
+		//System.out.println("just before setting up xml reader");
 		try {
 			XMLReader reader = factory.newSAXParser().getXMLReader();
 			if (entityResolver != null)
 				reader.setEntityResolver(entityResolver);
 			reader.setErrorHandler(new RegReportErrorHandler());
-			System.out.println("set handler");
+			//System.out.println("set handler");
 
 			result = verifier.verify(reader, Util.getInputSource(instName),
 					usePanicMode);
-			System.out.println("result is here, result=" + result);
+			//System.out.println("result is here, result=" + result);
 		} catch (com.sun.msv.verifier.ValidationUnrecoverableException vv) {
 			vv.printStackTrace();
 			regMessage += localize(MSG_BAILOUT) + "\n";
@@ -207,7 +207,7 @@ public class RegistryRelaxNG {
 						+ e.getException().getLocalizedMessage();
 		}
 		regMessage += reh.getMessage();
-		System.out.println("localising some messages here");
+		//System.out.println("localising some messages here");
 		if (result)
 			regMessage += localize(MSG_VALID) + "\n";
 		else {
@@ -263,7 +263,7 @@ public class RegistryRelaxNG {
 
 		public boolean verify(XMLReader p, InputSource instance,
 				boolean panicMode) throws Exception {
-			System.out.println("verifying using SimpleVerifier ");
+			//System.out.println("verifying using SimpleVerifier ");
 			reh = new RegReportErrorHandler();
 			Verifier v = new Verifier(docDecl, reh);
 			v.setPanicMode(panicMode);
