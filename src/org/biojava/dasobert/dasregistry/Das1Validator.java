@@ -411,7 +411,7 @@ public class Das1Validator {
 		// there are no duplicates
 		sourceUrls = new HashMap();
 		sourceIds = new HashMap();
-		System.out.println("sources url at start of validation method " + url);
+		//System.out.println("sources url at start of validation method " + url);
 		if (url.endsWith("/")) {
 			// System.out.println("ends with /");
 			url = url.substring(0, url.length() - 1);
@@ -439,8 +439,8 @@ public class Das1Validator {
 			if (!rng.validateUsingRelaxNG(RelaxNGValidatorMSV.SOURCES, cmd)) {
 
 				validationMessage += rng.getMessage();
-				System.out.println("getting message in das1 validator"
-						+ validationMessage);
+				//System.out.println("getting message in das1 validator"
+					//	+ validationMessage);
 				return false;
 
 			}
@@ -478,8 +478,8 @@ public class Das1Validator {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		validationMessage += "Number of invalid sources returned from this sources cmd was "
-				+ numberOfInvalidSources + "\n";
+		//validationMessage += "Number of invalid sources returned from this sources cmd was "
+				//+ numberOfInvalidSources + "\n";
 		if (numberOfInvalidSources != 0)
 			return false;
 		return true;

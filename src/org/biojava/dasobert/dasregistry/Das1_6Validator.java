@@ -369,19 +369,19 @@ public class Das1_6Validator {
 		//there are no duplicates
 		sourceUrls=new HashMap();
 		sourceIds=new HashMap();
-		System.out.println("sources url at start of validation method "+url);
+		//System.out.println("sources url at start of validation method "+url);
 		if(url.endsWith("/")){
 			System.out.println("ends with /");
 			url=url.substring(0,url.length()-1);
-			System.out.println("after -1="+url);
+			//System.out.println("after -1="+url);
 			
 		}
 		//now remove the datasource name at the end of the url
 		String choppedURL=url.substring(0,url.lastIndexOf("/")+1);
-		System.out.println("chopped "+choppedURL);
+		//System.out.println("chopped "+choppedURL);
 		String cmd = choppedURL+"sources";
 		
-		System.out.println("running sources with  cmd="+cmd);
+		//System.out.println("running sources with  cmd="+cmd);
 		//if(!relaxNgApproved(RelaxNGValidatorMSV.SOURCES, cmd))return false;
 		//hack here until relaxng is needed for all cmds. Want it to validate sources now.
 		//revert method below to above call later.
@@ -395,7 +395,7 @@ public class Das1_6Validator {
 			if(!rng.validateUsingRelaxNG(RelaxNGValidatorMSV.SOURCES, cmd)){
 				
 				validationMessage+=rng.getMessage();
-				System.out.println("getting message in das1 validator"+validationMessage);
+				//System.out.println("getting message in das1 validator"+validationMessage);
 				return false;
 				
 			}
@@ -413,7 +413,7 @@ public class Das1_6Validator {
 		try {
 			URL u = new URL(cmd);
 			DasSource[] sources = reader.readDasSource(u);
-			System.out.println("number of sources being checked="+sources.length);
+			//System.out.println("number of sources being checked="+sources.length);
 			
 			for (int i=0; i< sources.length;i++){
 				Das1Source ds = (Das1Source)sources[i];
@@ -431,7 +431,7 @@ public class Das1_6Validator {
 		} catch (Exception e){
 			e.printStackTrace();
 		}
-		validationMessage+="Number of invalid sources returned from this sources cmd was "+numberOfInvalidSources+"\n";
+		//validationMessage+="Number of invalid sources returned from this sources cmd was "+numberOfInvalidSources+"\n";
 		if(numberOfInvalidSources!=0)return false;
 		return true;
 	
