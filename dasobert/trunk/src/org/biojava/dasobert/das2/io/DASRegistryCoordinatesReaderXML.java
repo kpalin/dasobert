@@ -23,11 +23,7 @@
  */
 package org.biojava.dasobert.das2.io;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import javax.xml.parsers.ParserConfigurationException;
@@ -36,7 +32,6 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.biojava.dasobert.dasregistry.DasCoordinateSystem;
 import org.biojava.dasobert.dasregistry.DasSource;
-import org.biojava.dasobert.util.DasobertDefaults;
 import org.biojava.dasobert.util.HttpConnectionTools;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -94,7 +89,7 @@ public class DASRegistryCoordinatesReaderXML implements DASRegistryCoordinatesRe
 		return coords;
 	}
 
-	/** read a DAS2 sources response and return a list of DAS sources.
+	/** read a DAS2 coordinates response and return a list of coordinate systems.
 	 * 
 	 */
 	public DasCoordinateSystem[] readRegistryCoordinates(InputStream stream)  {
@@ -119,11 +114,7 @@ public class DASRegistryCoordinatesReaderXML implements DASRegistryCoordinatesRe
 
 			String vali = System.getProperty("XMLVALIDATION");
 
-			boolean validation = false ;
-			if ( vali != null )
-				if ( vali.equals("true") ) 
-					validation = true ;
-
+			boolean validation = vali != null && vali.equals("true") ? true : false;
 
 			XMLReader xmlreader = saxParser.getXMLReader();
 
