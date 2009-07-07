@@ -20,7 +20,7 @@ Build file for the Dasobert DAS client library
                property="java14">
     </available>
 
-    <property name="classpath" value="jars/biojava.jar;jars/xerces.jar;jars/isorelax.jar;jars/msv.jar;jars/relaxngDatatype.jar;jars/isorelax-jaxp-bridge1.0.jar;jars/xercesImpl.jar;jars/xmlParserApi.jar;jars/xsdlib.jar;jars/axis.jar;jars/jaxrpc.jar;jars/wsdl4j.jar;jars/webserviceutils.jar" />
+    <property name="classpath" value="jars/biojava.jar;jars/xerces.jar;jars/isorelax.jar;jars/msv.jar;jars/relaxngDatatype.jar;jars/isorelax-jaxp-bridge1.0.jar;jars/xercesImpl.jar;jars/xmlParserApi.jar;jars/xsdlib.jar;jars/axis.jar;jars/jaxrpc.jar;jars/wsdl4j.jar;jars/webserviceutils.jar;jars/log4j-1.2.15.jar" />
 
    <!-- check for DasobertBioJava library -->
     <available classpath="${classpath}" 
