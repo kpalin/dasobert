@@ -1285,22 +1285,22 @@ public class Das1Validator {
 	private boolean validateFeatureOntology(
 			List<Map<String, String>> featuresList) {
 
-		validationMessage += "got " + featuresList.size() + " features\n";
+		//validationMessage += "got " + featuresList.size() + " features\n";
 		boolean ontologyOK = true;
 		int i = 0;
 		for (Map<String, String> feature : featuresList) {
 			i++;
-			validationMessage += "*** validating track " + i + ": "
-					+ feature.get("TYPE") + "\n";
+			//validationMessage += "*** validating track " + i + ": "
+					//+ feature.get("TYPE") + "\n";
 			try {
 
 				if ((feature.get("START").equals(feature.get("END")))
 						&& (feature.get("START").equals("0"))) {
-					validationMessage += "  Non-positional features are currently not supported, yet.\n";
+					//validationMessage += "  Non-positional features are currently not supported, yet.\n";
 					continue;
 				}
 				if (validateTrack(feature)) {
-					validationMessage += "  track ok!\n";
+					//validationMessage += "  track ok!\n";
 				}
 			} catch (DASException ex) {
 				// System.out.println(ex.getMessage());
@@ -1322,20 +1322,20 @@ public class Das1Validator {
 	 */
 	private boolean validateTypesAgainstOntology(String[] typesList) {
 		// System.out.println("validating type ontology jw");
-		validationMessage += "got " + typesList.length + " types\n";
+		//validationMessage += "got " + typesList.length + " types\n";
 		boolean ontologyOK = true;
 
 		// start at 1 as 0 is ID
 		for (int i = 1; i < typesList.length; i++) {
 
-			validationMessage += "*** validating type " + i + ": "
-					+ typesList[i] + "\n";
+			//validationMessage += "*** validating type " + i + ": "
+					//+ typesList[i] + "\n";
 			try {
 				// validate code here to replace validat tracks in feature
 				// equivalent method
 				SimpleTerm term = testTypeIDAgainstOntology(typesList[i]);
 				if (term != null) {
-					validationMessage += "  track ok!\n";
+					//validationMessage += "  track ok!\n";
 				}
 			} catch (DASException ex) {
 				// System.out.println(ex.getMessage());
