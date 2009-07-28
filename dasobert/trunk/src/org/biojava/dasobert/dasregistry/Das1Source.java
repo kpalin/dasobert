@@ -76,7 +76,7 @@ public class Das1Source implements DasSource {
 		helperurl        = "";	
 		local=true;
 		properties = new HashMap<String, String>();
-		validCapabilities= new String[0];
+		
 		
 	}
 
