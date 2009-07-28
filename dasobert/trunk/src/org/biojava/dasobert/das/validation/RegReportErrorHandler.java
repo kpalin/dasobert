@@ -73,8 +73,8 @@ public class RegReportErrorHandler implements ErrorHandler {
 				+ spe.getLineNumber()
 				+ " column number:"
 				+ spe.getColumnNumber()
-				+ " system id:"
-				+ spe.getSystemId()
+//				+ " system id:"
+//				+ spe.getSystemId()
 				+ " "
 				+ RegReportErrorHandler.stringToHTMLString(spe
 						.getLocalizedMessage()) + "\n";
