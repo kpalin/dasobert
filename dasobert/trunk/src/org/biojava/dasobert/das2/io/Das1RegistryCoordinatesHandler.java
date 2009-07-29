@@ -97,7 +97,7 @@ public class Das1RegistryCoordinatesHandler  extends DefaultHandler{
 	}
 
 	public void startElement (String uri, String name, String qName, Attributes atts){
-		System.out.println("new element "+qName);
+		//System.out.println("new element "+qName);
 
 		if (qName.equals("DASCOORDINATESYSTEM")) {
 			//System.out.println("started root elemtent ");
