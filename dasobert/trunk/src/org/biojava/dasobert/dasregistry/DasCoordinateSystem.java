@@ -62,28 +62,28 @@ public class DasCoordinateSystem {
 		
 		//added by jw for registry
 		if (!organism_name.equalsIgnoreCase(other.getOrganismName())) {
-			//System.out.println("mismatch in name "+organism_name+" other="+other.getOrganismName());
+			System.out.println("mismatch in name |"+organism_name+"| other=|"+other.getOrganismName()+"|");
 			match = false;
 			return match;
 		}
 		if (ncbi_tax_id != other.getNCBITaxId()) {
-			//System.out.println("mismatch in ncbi tax id " + ncbi_tax_id +
-			//" != " + other.getNCBITaxId());
+			System.out.println("mismatch in ncbi tax id " + ncbi_tax_id +
+			" != " + other.getNCBITaxId());
 			match = false;
 			return match;
 		}
 		if (!version.equals(other.getVersion())) {
-			// System.out.println("mismatch in version");
+			System.out.println("mismatch in version");
 			match = false;
 			return match;
 		}
 		if (!category.equalsIgnoreCase(other.getCategory())) {
-			//System.out.println("mismatch in category");
+			System.out.println("mismatch in category");
 			match = false;
 			return match;
 		}
 		if (!name.equalsIgnoreCase(other.getName())) {
-			//System.out.println("mismatch in name");
+			System.out.println("mismatch in name");
 			match = false;
 			return match;
 		}
@@ -128,11 +128,11 @@ public class DasCoordinateSystem {
 	public void setTestCode(String testCode) {
 		if (testCode == null)
 			testCode = "";
-		this.testCode = testCode;
+		this.testCode = testCode.trim();
 	}
 
 	public void setUniqueId(String id) {
-		uniqueId = id;
+		uniqueId = id.trim();
 	}
 
 	public String getUniqueId() {
@@ -147,7 +147,7 @@ public class DasCoordinateSystem {
 	 *            the name
 	 */
 	public void setName(String n) {
-		name = n;
+		name = n.trim();
 	}
 
 	/**
@@ -162,7 +162,7 @@ public class DasCoordinateSystem {
 	}
 
 	public void setCategory(String c) {
-		category = c;
+		category = c.trim();
 	}
 
 	/**
@@ -176,7 +176,7 @@ public class DasCoordinateSystem {
 	}
 
 	public void setOrganismName(String t) {
-		this.organism_name = t;
+		this.organism_name = t.trim();
 	}
 
 	public String getOrganismName() {
@@ -198,7 +198,7 @@ public class DasCoordinateSystem {
 	public void setVersion(String version) {
 		if (version == null)
 			version = "";
-		this.version = version;
+		this.version = version.trim();
 	}
 
 	public String toString() {
@@ -233,7 +233,7 @@ public class DasCoordinateSystem {
 	}
 
 	public void setAuthority(String authority) {
-		this.name = authority;
+		this.name = authority.trim();
 	}
 
 }
