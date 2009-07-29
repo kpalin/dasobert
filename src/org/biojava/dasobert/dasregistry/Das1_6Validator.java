@@ -1168,7 +1168,7 @@ public class Das1_6Validator {
 
 	private SimpleTerm testTypeIDAgainstOntology(String typeID) throws DASException {
 		SimpleTerm t = getTerm(typeID);
-		if(t!=null)t.print();
+		if(t!=null)System.out.println(t);
 		
 		if ( t==null){
 			throw new DASException ("term " + typeID +" not found in any Ontology");
