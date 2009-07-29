@@ -1265,8 +1265,7 @@ public class Das1Validator {
 	private SimpleTerm testTypeIDAgainstOntology(String typeID)
 			throws DASException {
 		SimpleTerm t = getTerm(typeID);
-		if (t != null)
-			t.print();
+		if (t != null)System.out.println(t);
 
 		if (t == null) {
 			throw new DASException("term " + typeID
@@ -1306,7 +1305,7 @@ public class Das1Validator {
 				// System.out.println(ex.getMessage());
 				// ex.printStackTrace();
 				validationMessage += "   " + ex.getMessage() + "\n";
-				validationMessage += "   This DAS source does NOT comply with the BioSapiens ontology!\n";
+				validationMessage += "   This DAS source does NOT comply with these SO, ECO, BS ontologies!\n";
 				ontologyOK = false;
 
 			}
@@ -1341,7 +1340,7 @@ public class Das1Validator {
 				// System.out.println(ex.getMessage());
 				// ex.printStackTrace();
 				validationMessage += "   " + ex.getMessage() + "\n";
-				validationMessage += "   This DAS source does NOT comply with the BioSapiens ontology!\n";
+				validationMessage += "   This DAS source does NOT comply with these SO, ECO, BS ontologies!\n";
 				ontologyOK = false;
 
 			}
