@@ -464,14 +464,14 @@ public class Das1Validator {
 
 			for (int i = 0; i < sources.length; i++) {
 				Das1Source ds = (Das1Source) sources[i];
-				// System.out.println(ds.toString());
-				boolean isValid = this.checkDAS1Source(ds);
+				 System.out.println("source before checking validation"+ds.getUrl());
+				boolean isValid = this.checkDAS1SourceInSourcesXML(ds);
 
-				if (!isValid) {
-					numberOfInvalidSources++;
-					validationMessage += " No coordinate system found in the registry that matches the one for this source "
-							+ ds.getNickname() + "\n";
-				}
+//				if (!isValid) {
+//					numberOfInvalidSources++;
+//					validationMessage += " No coordinate system found in the registry that matches the one for this source "
+//							+ ds.getNickname() + "\n";
+//				}
 
 			}
 
@@ -525,7 +525,7 @@ public class Das1Validator {
 	 * @param ds
 	 * @return
 	 */
-	private boolean checkDAS1Source(Das1Source ds) {
+	private boolean checkDAS1SourceInSourcesXML(Das1Source ds) {
 		// tests to do include what?
 		// relaxng has tested the structure and capabilities if being tested by
 		// registry code
@@ -534,18 +534,14 @@ public class Das1Validator {
 		// already
 		boolean isValid = false;
 		isValid = isCoordinateSystemValid(ds, isValid);
-		logger.debug("coordinate system valid=" + isValid);
+		//logger.debug("coordinate system valid=" + isValid);
 		// also need to check if uri has been used already in both this sources
 		// document and in the registry
 		isValid = isValidUniqueUrlAndId(ds, isValid);
-		logger.debug("uniqueURL and Ids valid=" + isValid);
+		//logger.debug("uniqueURL and Ids valid=" + isValid);
 		// also check the capabilities are of a type that is allowed eg
 		// das1:types etc this is done in relaxng validation
 
-		if (!isValid) {
-			System.out.println(ds.getUrl() + "  is not valid!!!!!!!");
-
-		}
 		return isValid;
 
 	}
@@ -560,7 +556,7 @@ public class Das1Validator {
 
 		for (int j = 0; j < coords.length; j++) {
 			DasCoordinateSystem cs = coords[j];
-			System.out.println("coordinate system=" + cs);
+			//System.out.println("coordinate system=" + cs);
 			// need to check if split cs then should equal "authority, type";
 			String userCSAuthority = cs.getAuthority();
 			String userCSCategory = cs.getCategory();
@@ -571,8 +567,8 @@ public class Das1Validator {
 				DasCoordinateSystem tempCs = registryCoordinateSystems[k];
 				// System.out.println("uniqueId="+tempCs.uniqueId+"");
 				if (tempCs.equals(cs)) {
-					logger
-							.debug("--------------coordinate sytem found in registry-----------------");
+					//logger
+						//	.debug("--------------coordinate sytem found in registry-----------------");
 					isValid = true;
 
 				}
@@ -580,7 +576,7 @@ public class Das1Validator {
 				// System.out.println("authority in reg="+tempCs.getAuthority());
 
 			}
-
+			if(!isValid)validationMessage+=cs.toString()+ " not found";
 		}
 		return isValid;
 	}
@@ -600,13 +596,12 @@ public class Das1Validator {
 		String id = ds.getId();
 
 		if (sourceUrls.containsKey(url)) {
-			System.out.println("testing url " + url);
-			validationMessage += "Url already exists in your sources document and are supposed to be unique!! ";
+			validationMessage += "Url "+url+" already exists in your sources document and are supposed to be unique!! ";
 			return false;
 		}
 		if (sourceIds.containsKey(id)) {
 			System.out.println("testing id" + id);
-			validationMessage += "Id already exists in your sources document and are supposed to be unique!! ";
+			validationMessage += "Id "+id+" already exists in your sources document and are supposed to be unique!! ";
 			return false;
 		}
 
@@ -629,7 +624,7 @@ public class Das1Validator {
 		// isValid=false;//url has exists already so return not valid
 		// }
 		// }
-
+		System.out.println("adding url to hash="+url+" for source id="+ds.getId());
 		sourceUrls.put(url, "");
 		sourceIds.put(id, "");
 		// logger.debug("adding id="+id);

@@ -503,7 +503,7 @@ public class Das1_6Validator {
 		
 		for(int j=0; j<coords.length;j++){
 			DasCoordinateSystem cs=coords[j];
-			System.out.println("coordinate system="+cs);
+			//System.out.println("coordinate system="+cs);
 			//need to check if split cs then should equal "authority, type";
 			String userCSAuthority=cs.getAuthority();
 			String userCSCategory=cs.getCategory();

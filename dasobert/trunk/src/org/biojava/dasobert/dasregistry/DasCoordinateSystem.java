@@ -62,36 +62,36 @@ public class DasCoordinateSystem {
 		
 		//added by jw for registry
 		if (!organism_name.equals(other.getOrganismName())) {
-			System.out.println("mismatch in name |"+organism_name+"| other=|"+other.getOrganismName()+"|");
+			//System.out.println("mismatch in name |"+organism_name+"| other=|"+other.getOrganismName()+"|");
 			match = false;
 			return match;
 		}
 		if (ncbi_tax_id != other.getNCBITaxId()) {
-			System.out.println("mismatch in ncbi tax id " + ncbi_tax_id +
-			" != " + other.getNCBITaxId());
+			//System.out.println("mismatch in ncbi tax id " + ncbi_tax_id +
+			//" != " + other.getNCBITaxId());
 			match = false;
 			return match;
 		}
 		if (!version.equals(other.getVersion())) {
-			System.out.println("mismatch in version");
+			//System.out.println("mismatch in version");
 			match = false;
 			return match;
 		}
 		if (!category.equals(other.getCategory())) {
-			System.out.println("mismatch in category");
+			//System.out.println("mismatch in category");
 			match = false;
 			return match;
 		}
 		if (!name.equals(other.getName())) {
-			System.out.println("mismatch in name");
+			//System.out.println("mismatch in name");
 			match = false;
 			return match;
 		}
 		
 		
-		if(match){
-		System.out.println(" match: " + match);
-		}
+		//if(match){
+		//System.out.println(" match: " + match);
+		//}
 		//organism_name = "";
 		
 		

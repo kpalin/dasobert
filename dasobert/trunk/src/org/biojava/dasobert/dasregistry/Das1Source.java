@@ -61,7 +61,7 @@ public class Das1Source implements DasSource {
 
 	public Das1Source () {
 		id               = EMPTY_ID;
-		url              = "";
+		url              = "empty";
 		adminemail       = "" ;
 		description      = "" ;
 		//String empty     = "" ;
@@ -166,7 +166,7 @@ public class Das1Source implements DasSource {
 
 		h = 31 * h + ( null == nickname ? 0 : nickname.hashCode());
 		h = 31 * h + ( null == url ? 0 : url.hashCode());
-
+System.out.println("hashcode="+h);
 		return h;
 	}
 
