@@ -131,11 +131,11 @@ public class Das1RegistryCoordinatesHandler  extends DefaultHandler{
 
 		}
 		if ( qName.equals("COORDINATES")) {
-			System.out.println("ending COORDINATES");
+			//System.out.println("ending COORDINATES");
 			String elementContent=characterdata.toString();
 			String []coordinateComponents=elementContent.split(",");
 			if(coordinateComponents.length>2){
-				System.out.println("setting organism="+coordinateComponents[2]);
+				//System.out.println("setting organism="+coordinateComponents[2]);
 				dcs.setOrganismName(coordinateComponents[2]);
 			}else{
 			dcs.setOrganismName("");
