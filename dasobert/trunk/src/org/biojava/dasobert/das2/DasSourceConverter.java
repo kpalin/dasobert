@@ -71,8 +71,16 @@ public class DasSourceConverter {
 
             String query_uri = cap.getQueryUri();
             
+            if(query_uri.endsWith("sources")||query_uri.endsWith("sources/")){
+            	//don't update the url note if we only have sources stated as a capability we are in trouble as this gets chopped later with validation!!??
+            	
+            }else{
             String url = query_uri.substring(0,(query_uri.length() - c.length() + DASPREFIXLENGTH));
+            System.out.println("setting url in converter="+url);
             ds.setUrl(url);
+            }
+           
+            
         }
         ds.setCapabilities(das1capabilitites);
         
