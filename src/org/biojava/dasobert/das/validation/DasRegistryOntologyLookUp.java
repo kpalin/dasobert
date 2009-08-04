@@ -36,7 +36,7 @@ public class DasRegistryOntologyLookUp {
 
 	private Query query = null;
 	private String fieldSep="\t";
-	String ontologies[]={"BS","ECO", "GO"};
+	String ontologies[]={"BS","ECO", "GO","SO","MOD"};
 	
 	Map ontologyBS=null;//maps for storing ontology information if decide to make a cache of the webservice
 	Map ontologyECO=null;
@@ -47,7 +47,7 @@ public class DasRegistryOntologyLookUp {
 	public static void main(String args[]) {
 		DasRegistryOntologyLookUp lookup = new DasRegistryOntologyLookUp();
 		//"SO:0001077"
-		boolean isValid=lookup.exists("blah", "BS");
+		boolean isValid=lookup.exists("SO:0001077", "SO");
 		if(isValid){
 			System.out.println("true");
 		}else{
