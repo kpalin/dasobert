@@ -36,7 +36,8 @@ public class DasRegistryOntologyLookUp {
 
 	private Query query = null;
 	private String fieldSep="\t";
-	String ontologies[]={"BS","ECO", "GO","SO","MOD"};
+	//String ontologies[]={"BS","ECO", "GO","SO","MOD"};
+	Map <String,String>ontologies;
 	
 	Map ontologyBS=null;//maps for storing ontology information if decide to make a cache of the webservice
 	Map ontologyECO=null;
@@ -47,6 +48,8 @@ public class DasRegistryOntologyLookUp {
 	public static void main(String args[]) {
 		DasRegistryOntologyLookUp lookup = new DasRegistryOntologyLookUp();
 		//"SO:0001077"
+		
+		
 		boolean isValid=lookup.exists("SO:0001077", "SO");
 		if(isValid){
 			System.out.println("true");
@@ -81,6 +84,13 @@ public class DasRegistryOntologyLookUp {
 		try {
 			query = locator.getOntologyQuery();
 		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			ontologies=query.getOntologyNames();
+			System.out.println(ontologies);
+		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -156,16 +166,18 @@ public class DasRegistryOntologyLookUp {
 	
 	public boolean exists(String termId){
 		boolean inOntology=false;
-		for(int i=0; i<ontologies.length; i++){
-		if(this.exists(termId, ontologies[i]))return true;	
+
+		
+		for(String key:ontologies.keySet()){
+		if(this.exists(termId, key))return true;	
 		}
 		return inOntology;
 	}
 	
 	public boolean isObselete(String termId){
-		for(int i=0; i<ontologies.length; i++){
+		for(String key:ontologies.keySet()){
 		try {
-			if(query.isObsolete(termId,ontologies[i]))return true;
+			if(query.isObsolete(termId,key))return true;
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -215,10 +227,16 @@ from file
 	
 	public SimpleTerm getTerm(String id){
 		SimpleTerm term=null;
-		for(int i=0; i<ontologies.length; i++){
-			term=this.getTerm(id,ontologies[i]);
+		String prefixArray[]=id.split(":");
+		String prefix=prefixArray[0];
+		//for(String key:ontologies.keySet()){
+		if(ontologies.containsKey(prefix)){
+			term=this.getTerm(id,prefix);
 			if(term!=null)return term;
+		}else{
+			return null;
 		}
+		//}
 		return term;
 	}
 	

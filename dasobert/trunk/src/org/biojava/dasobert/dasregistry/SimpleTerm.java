@@ -79,9 +79,10 @@ public class SimpleTerm {
 	public String toString() {
 		String string="";
 		string+="id:" + id + " name:" + name + " description:"+ description + " isObselete:" + isObsolete+"\n";
+		if (xrefs.entrySet().size()>0) {
 		Set<Map.Entry<String, String>> xrefValues = xrefs.entrySet();
 		Iterator<Map.Entry<String,String>> xrefIterator=xrefValues.iterator();
-		if (xrefs != null) {
+		
 			Map.Entry<String, String>xref=xrefIterator.next();
 			String key=xref.getKey();
 			String value=xref.getValue();
