@@ -26,6 +26,7 @@ package org.biojava.dasobert.dasregistry;
 //import org.biojava.services.das.*;
 //xml stuff
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -965,14 +966,33 @@ public class Das1Validator {
 	}
 
 	private boolean validateTypes(String url, boolean ontologyValidation) {
-		try {
-			URL u = new URL(url + "types");
+		
+			String urlString=url+"types";
+			URL u=null;
+			try {
+				u = new URL(url + "types");
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
-			if (!relaxNgApproved(RelaxNGValidatorMSV.TYPES, url + "types"))
+			if (!relaxNgApproved(RelaxNGValidatorMSV.TYPES, urlString))
 				return false;
 
-			InputStream dasInStream = open(u);
-			XMLReader xmlreader = getXMLReader();
+			InputStream dasInStream=null;
+			try {
+				dasInStream = open(u);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			XMLReader xmlreader=null;
+			try {
+				xmlreader = getXMLReader();
+			} catch (SAXException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 			DAS_Types_Handler cont_handle = new DAS_Types_Handler();
 
@@ -982,37 +1002,28 @@ public class Das1Validator {
 			if (ontologyValidation)
 				cont_handle.setMaxFeatures(MAX_NR_FEATURES_ONTOLOGY);
 			insource.setByteStream(dasInStream);
-			xmlreader.parse(insource);
+			try {
+				xmlreader.parse(insource);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SAXException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			String[] types = cont_handle.getTypes();
 			if (types.length > 0) {
 				if (!ontologyValidation)
 					return true;
-				validationMessage += "<br/>---<br/> contacting " + url
-						+ "<br/>";
+				
 				return validateTypesAgainstOntology(types);
 
 			} else {
-				validationMessage += "<br/>---<br/> contacting " + url
-						+ "types <br/>";
+				validationMessage += "<br/>---<br/> contacting " + urlString+ "<br/>";
 				validationMessage += " no types were returned";
 
 				return false;
 			}
-
-		} catch (Exception e) {
-			// e.printStackTrace();
-			validationMessage += "<br/>---<br/> contacting " + url
-					+ "types <br/>";
-
-			Throwable cause = e.getCause();
-			if (cause != null)
-				validationMessage += "exception thrown at end of types validation"
-						+ cause.toString();
-			else
-				validationMessage += "Could be an empty page returned?? "
-						+ e.toString();
-		}
-		return false;
 	}
 
 	private boolean validateInteraction(String url, String testcode) {
@@ -1079,8 +1090,7 @@ public class Das1Validator {
 			if (features.size() > 0) {
 				if (!ontologyValidation)
 					return true;
-				validationMessage += "<br/>---<br/> contacting " + url
-						+ "features?segment=" + testcode + "<br/>";
+				
 				return validateFeatureOntology(features);
 
 			} else {
@@ -1194,11 +1204,11 @@ public class Das1Validator {
 	 */
 	public boolean validateTrack(Map<String, String> feature)
 			throws DASException {
-
+System.out.println("validating track");
 		Pattern ecoPattern = Pattern.compile("(ECO:[0-9]+)");
 
 		// validate type:
-		String type = feature.get("TYPE");
+		//String type = feature.get("TYPE");
 		String typeID = feature.get("TYPE_ID");
 		String typeCategory = feature.get("TYPE_CATEGORY");
 		// System.out.println("type  " + type);
@@ -1214,9 +1224,12 @@ public class Das1Validator {
 			throw new DASException(
 					"track does not have the TYPE - category field set");
 		}
-
+		System.out.println("validating track and found typeID"+typeID+" typeCatagory="+typeCategory);
 		SimpleTerm t = testTypeIDAgainstOntology(typeID);
-
+		if(t==null){
+			System.out.println("no term found for typeid so ontology is invalid");
+			return false;
+		}
 		// if (! t.getDescription().equals(type)){
 		// boolean synonymUsed = false;
 		// Object[] synonyms = t.getSynonyms();
@@ -1248,6 +1261,7 @@ public class Das1Validator {
 			throw new DASException("could not identify ECO id in "
 					+ typeCategory);
 		}
+		System.out.println("checking ECO:"+eco);
 		if (!lookup.exists(eco, "ECO")) {
 			throw new DASException("unknown evidence code >" + eco + "<");
 		}
@@ -1328,8 +1342,9 @@ public class Das1Validator {
 				// validate code here to replace validat tracks in feature
 				// equivalent method
 				SimpleTerm term = testTypeIDAgainstOntology(typesList[i]);
-				if (term != null) {
-					//validationMessage += "  track ok!\n";
+				if (term == null) {
+					validationMessage += "  track ontology "+typesList[i]+" not found in ontology!\n";
+					return false;
 				}
 			} catch (DASException ex) {
 				// System.out.println(ex.getMessage());
