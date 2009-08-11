@@ -22,6 +22,7 @@ public class Das1ValidatorTest extends TestCase {
 		Das1Validator validator=new Das1Validator();
 		assertTrue(validator.validateSourcesCmd("http://www.ensembl.org/das/sources"));
 		System.out.println(validator.getValidationMessage());
+		
 	}
 
 }
