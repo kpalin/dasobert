@@ -101,8 +101,10 @@ public abstract class DasSourceComparator
     };
     public static final Comparator BY_CAPABILITIES = new DasSourceComparator("capabilities") {
         protected Comparable getField(DasSource ds) {
-            String[] caps = ds.getCapabilities();
-            return caps.length == 0 ? "" : caps[0];
+            String[] caps = ds.getValidCapabilities();
+            //System.out.println("return="+caps.length);
+            
+            return caps==null ? 0 :caps.length;
         }
     };
     public static final Comparator BY_COORDINATE_SYSTEM = new DasSourceComparator("coordinateSystem") {
