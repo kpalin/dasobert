@@ -98,9 +98,9 @@ public class Das1Validator {
 	public static final boolean ONTOLOGY_VALIDATION = true;
 	private static final boolean RELAX_NG = true;// shows relaxng validation
 
-	private static final int MAX_SEQUENCE_LENGTH = 1000;
-	private static final int MAX_NR_FEATURES = 10;
-	private static final int MAX_NR_FEATURES_ONTOLOGY = 1000;
+	protected static final int MAX_SEQUENCE_LENGTH = 1000;
+	protected static final int MAX_NR_FEATURES = 10;
+	protected static final int MAX_NR_FEATURES_ONTOLOGY = 1000;
 	public static final boolean VERBOSE = false;
 	private boolean relaxNgApprovalNeeded = true;// needed if via web page, but
 													// specifically not needed
@@ -115,7 +115,7 @@ public class Das1Validator {
 		this.relaxNgApprovalNeeded = relaxNgApprovalNeeded;
 	}
 
-	private String relaxNgPath = null;
+	protected String relaxNgPath = null;
 
 	public String getRelaxNgPath() {
 		return relaxNgPath;
@@ -138,7 +138,7 @@ public class Das1Validator {
 	public static final String REGISTRY_LOCATION = "http://www.dasregistry.org/das1/sources";
 	private HashMap sourceUrls = null;
 	private HashMap sourceIds = null;
-	private DasRegistryOntologyLookUp lookup = new DasRegistryOntologyLookUp();
+	protected DasRegistryOntologyLookUp lookup = new DasRegistryOntologyLookUp();
 
 	public Das1Validator() {
 
@@ -497,7 +497,7 @@ public class Das1Validator {
 	 * @return boolean true if valid according to relaxng if approval needed
 	 *         from relaxng.
 	 */
-	private boolean relaxNgApproved(String cmdType, String cmd) {
+	protected boolean relaxNgApproved(String cmdType, String cmd) {
 		if (RELAX_NG) {
 			RelaxNGValidatorMSV rng = null;
 			if (relaxNgPath != null) {
@@ -805,7 +805,7 @@ public class Das1Validator {
 
 	}
 
-	private boolean validateStylesheet(String url) {
+	protected boolean validateStylesheet(String url) {
 		try {
 			DAS_StylesheetRetrieve dsr = new DAS_StylesheetRetrieve();
 			URL styleurl = new URL(url + "stylesheet");
@@ -832,7 +832,7 @@ public class Das1Validator {
 		return false;
 	}
 
-	private boolean validateAlignment(String url, String testcode) {
+	protected boolean validateAlignment(String url, String testcode) {
 		String cmd = url + "alignment?query=";
 		// System.out.println(cmd + " " + testcode);
 		if (!relaxNgApproved(RelaxNGValidatorMSV.ALIGNMENT, cmd + testcode))
@@ -866,7 +866,7 @@ public class Das1Validator {
 		return false;
 	}
 
-	private boolean validateEntry_Points(String url) {
+	protected boolean validateEntry_Points(String url) {
 		try {
 			URL u = new URL(url + "entry_points");
 
@@ -965,7 +965,7 @@ public class Das1Validator {
 
 	}
 
-	private boolean validateTypes(String url, boolean ontologyValidation) {
+	public boolean validateTypes(String url, boolean ontologyValidation) {
 		
 			String urlString=url+"types";
 			URL u=null;
@@ -1026,7 +1026,7 @@ public class Das1Validator {
 			}
 	}
 
-	private boolean validateInteraction(String url, String testcode) {
+	protected boolean validateInteraction(String url, String testcode) {
 		// System.out.println("called validate interaction method url " +url);
 		// url="http://localhost:8080/dasregistryOID/interactionTestOld.xml";
 
@@ -1271,7 +1271,7 @@ System.out.println("validating track");
 
 	}
 
-	private SimpleTerm testTypeIDAgainstOntology(String typeID)
+	protected SimpleTerm testTypeIDAgainstOntology(String typeID)
 			throws DASException {
 		SimpleTerm t = getTerm(typeID);
 		if (t != null)System.out.println(t);
@@ -1290,7 +1290,7 @@ System.out.println("validating track");
 		return t;
 	}
 
-	private boolean validateFeatureOntology(
+	protected boolean validateFeatureOntology(
 			List<Map<String, String>> featuresList) {
 
 		//validationMessage += "got " + featuresList.size() + " features\n";
@@ -1358,7 +1358,7 @@ System.out.println("validating track");
 		return ontologyOK;
 	}
 
-	private boolean validateStructure(String url, String testcode) {
+	protected boolean validateStructure(String url, String testcode) {
 		String cmd = url + "structure?model=1&query=";
 
 		System.out.println("running structure with  cmd=" + cmd);
@@ -1394,7 +1394,7 @@ System.out.println("validating track");
 		return false;
 	}
 
-	private boolean validateSequence(String url, String testcode) {
+	public boolean validateSequence(String url, String testcode) {
 		URL dasUrl;
 
 		// try to parse the test region from the testcode - if it looks like a
@@ -1499,7 +1499,7 @@ System.out.println("validating track");
 		return false;
 	}
 
-	private XMLReader getXMLReader() throws SAXException {
+	protected XMLReader getXMLReader() throws SAXException {
 		SAXParserFactory spfactory = SAXParserFactory.newInstance();
 
 		spfactory.setValidating(false);
@@ -1533,7 +1533,7 @@ System.out.println("validating track");
 
 	}
 
-	private InputStream open(URL url) throws Exception {
+	protected InputStream open(URL url) throws Exception {
 
 		// TODO Auto-generated method stub
 
