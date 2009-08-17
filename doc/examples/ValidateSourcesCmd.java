@@ -57,7 +57,7 @@ public class ValidateSourcesCmd {
 				System.out.println("*** validating " + source.getNickname() + " " + source.getUrl());
 				String[] testCaps = source.getCapabilities();
 				
-				if (! source.hasCapability(Capabilities.INTERACTION))
+				if (! source.hasCapability(Capabilities.INTERACTION.toString()))
 					continue;
 				
 				String[] okCaps = validator.validate(source.getUrl(), source.getCoordinateSystem(),testCaps);
