@@ -147,8 +147,8 @@ public class Das1Validator {
 
 		all_capabilities = new ArrayList<String>();
 
-		for (int i = 0; i < Capabilities.DAS_CAPABILITIES.length; i++) {
-			all_capabilities.add(Capabilities.DAS_CAPABILITIES[i]);
+		for ( Capabilities cap:Capabilities.values()) {
+			all_capabilities.add(cap.toString());
 		}
 	}
 
@@ -366,20 +366,6 @@ public class Das1Validator {
 						System.out.println(validationMessage);
 					// } else
 					// error = true;
-				} else if (capability.equals(Capabilities.DNA)) {
-					boolean dnaok = true;
-					for (int i = 0; i < coords.length; i++) {
-						DasCoordinateSystem ds = coords[i];
-						String testcode = ds.getTestCode();
-
-						if (!validateDNA(url, testcode)){
-							dnaok = false;
-						}
-
-					}
-					if (dnaok){
-						lst.add(capability);
-					}
 				} else {
 					validationMessage += "<br/>---<br/> test of capability "
 							+ capability + " not implemented,yet.";

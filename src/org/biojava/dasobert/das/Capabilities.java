@@ -1,71 +1,98 @@
-/*
- *                  BioJava development code
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  If you do not have a copy,
- * see:
- *
- *      http://www.gnu.org/copyleft/lesser.html
- *
- * Copyright for this code is held jointly by the individual
- * authors.  These should be listed in @author doc comments.
- *
- * For more information on the BioJava project and its aims,
- * or to join the biojava-l mailing list, visit the home page
- * at:
- *
- *      http://www.biojava.org/
- * 
- * Created on Oct 13, 2006
- * 
- */
-
 package org.biojava.dasobert.das;
 
-/** provides some static variables for the DAS1 capabilities
- * 
- * @author Andreas Prlic
- *
- */
-public class Capabilities {
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
-	public static final String ENTRY_POINTS = "entry_points";
-	public static final String FEATURES     = "features";
-	public static final String STYLESHEET   = "stylesheet";
-	public static final String SEQUENCE     = "sequence";
-	public static final String ALIGNMENT    = "alignment";
-	public static final String STRUCTURE    = "structure";
-	public static final String TYPES        = "types";
-	public static final String DNA	        = "dna";
-	public static final String INTERACTION  = "interaction";
-	public static final String SOURCES		= "sources";
+public enum Capabilities {
+
+	SEQUENCE("sequence"), STRUCTURE("structure"), ALIGNMENT("alignment"), TYPES(
+			"types"), FEATURES("features"), ENTRY_POINTS("entry_points"), STYLESHEET("stylesheet"), INTERACTION("interaction"), SOURCES(
+			"sources");
+
+	private static final Map<String, Capabilities> nameToValueMap =
+        new HashMap<String, Capabilities>();
+	private static final ArrayList <Capabilities> capabilitiesInCoreOrder=new ArrayList<Capabilities>();
+	private static final ArrayList <String> capabilitiesStringsInCoreOrder=new ArrayList<String>();
+
+    static {
+        for (Capabilities value : EnumSet.allOf(Capabilities.class)) {
+            nameToValueMap.put(value.toString(), value);
+        }
+    }
+    static{
+    	capabilitiesInCoreOrder.add(SOURCES);
+    	capabilitiesInCoreOrder.add(STYLESHEET);
+    	capabilitiesInCoreOrder.add(FEATURES);
+    	capabilitiesInCoreOrder.add(TYPES);
+    	capabilitiesInCoreOrder.add(SEQUENCE);
+				capabilitiesInCoreOrder.add(ENTRY_POINTS);
+				capabilitiesInCoreOrder.add(ALIGNMENT);
+				capabilitiesInCoreOrder.add(STRUCTURE);
+				capabilitiesInCoreOrder.add(INTERACTION);
+    }
+	static{
+		for(Capabilities cap:EnumSet.allOf(Capabilities.class)){
+			capabilitiesStringsInCoreOrder.add(cap.toString());
+		}
+	}
+	private String name;
 	
-	// this is also the order of the fields in the DasSourceManager capabilities sql...
-	// DO NOT CHANGE!
-	public final static String[] DAS_CAPABILITIES = { 
-		SEQUENCE,
-		STRUCTURE,
-		ALIGNMENT,
-		TYPES,
-		FEATURES,
-		ENTRY_POINTS,
-		DNA,
-		STYLESHEET,
-		INTERACTION,
-		SOURCES
-		
-	} ;
+
+	Capabilities(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return this.name;
+	}
+
+
 	
 	/**
-	 * returns a list in the order needed for the display in the listServices.jsp
+	 * return a subset of the capabilities as not all capabilities are DAS
+	 * commands
+	 * 
 	 * @return
 	 */
-	public static String [] getCapabilitesInCoreOrder(){
-		String []capabilities={Capabilities.SOURCES,Capabilities.STYLESHEET, Capabilities.FEATURES,Capabilities.TYPES,
-				Capabilities.SEQUENCE,Capabilities.ENTRY_POINTS, Capabilities.ALIGNMENT, Capabilities.STRUCTURE, Capabilities.INTERACTION};
-		return capabilities;
+	public static String[] getCommandStrings() {
+
+		return new String[] { SEQUENCE.toString(), STRUCTURE.toString(),
+				ALIGNMENT.toString(), TYPES.toString(), FEATURES.toString(),
+				ENTRY_POINTS.toString(), STYLESHEET.toString(),
+				INTERACTION.toString(), SOURCES.toString() };
+
+	}
+
+	public static String[] getCapabilityStrings() {
+		ArrayList caps = new ArrayList();
+		for (Capabilities cap : Capabilities.values()) {
+			caps.add(cap.toString());
 		}
+		return (String[]) caps.toArray();
+
+	}
+
+	public static boolean exists(String capability) {
+		nameToValueMap.containsKey(capability);
+		return false;
+	}
+
+	public String toString() {
+		return name;
+	}
 	
-	
+	public static ArrayList<String> getCapabilityStringsInCoreOrder(){
+		return capabilitiesStringsInCoreOrder;
+	}
+	public static ArrayList<Capabilities> getCapabilitiesInCoreOrder(){
+		return capabilitiesInCoreOrder;
+	}
+
+	public static void main(String[] args) {
+		for (Capabilities cap : Capabilities.values()) {
+			System.out.println(cap.toString());
+		}
+	}
 }
