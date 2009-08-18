@@ -7,9 +7,15 @@ import java.util.Map;
 
 public enum Capabilities {
 
-	SEQUENCE("sequence"), STRUCTURE("structure"), ALIGNMENT("alignment"), TYPES(
-			"types"), FEATURES("features"), ENTRY_POINTS("entry_points"), STYLESHEET("stylesheet"), INTERACTION("interaction"), SOURCES(
-			"sources");
+//	SEQUENCE("sequence"), STRUCTURE("structure"), ALIGNMENT("alignment"), TYPES(
+//			"types"), FEATURES("features"), ENTRY_POINTS("entry_points"), STYLESHEET("stylesheet"), INTERACTION("interaction"), SOURCES(
+//			"sources"),
+//			ERROR_SEGMENT("error_segment"),UNKNOWN_SEGMENT("unknown_segment"),UNKNOWN_FEATURE("unknown_feature"), FEATURE_BY_ID("feature_by_id");
+
+	
+	
+	SOURCES("sources"),STYLESHEET("stylesheet"),FEATURES("features"),TYPES(	"types"),SEQUENCE("sequence"),  ENTRY_POINTS("entry_points"),ALIGNMENT("alignment"),  STRUCTURE("structure"),   INTERACTION("interaction"), 
+		ERROR_SEGMENT("error_segment"),UNKNOWN_SEGMENT("unknown_segment"),UNKNOWN_FEATURE("unknown_feature"), FEATURE_BY_ID("feature_by_id");
 
 	private static final Map<String, Capabilities> nameToValueMap =
         new HashMap<String, Capabilities>();
@@ -70,12 +76,12 @@ public enum Capabilities {
 		for (Capabilities cap : Capabilities.values()) {
 			caps.add(cap.toString());
 		}
-		return (String[]) caps.toArray();
+		return (String[]) caps.toArray(new String[caps.size()]);
 
 	}
 
 	public static boolean exists(String capability) {
-		nameToValueMap.containsKey(capability);
+		if(nameToValueMap.containsKey(capability))return true;
 		return false;
 	}
 
