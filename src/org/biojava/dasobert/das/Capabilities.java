@@ -15,7 +15,7 @@ public enum Capabilities {
 	
 	
 	SOURCES("sources"),STYLESHEET("stylesheet"),FEATURES("features"),TYPES(	"types"),SEQUENCE("sequence"),  ENTRY_POINTS("entry_points"),ALIGNMENT("alignment"),  STRUCTURE("structure"),   INTERACTION("interaction"), 
-		ERROR_SEGMENT("error_segment"),UNKNOWN_SEGMENT("unknown_segment"),UNKNOWN_FEATURE("unknown_feature"), FEATURE_BY_ID("feature_by_id");
+		UNKNOWN_SEGMENT("unknown_segment"),UNKNOWN_FEATURE("unknown_feature"), FEATURE_BY_ID("feature_by_id"),ERROR_SEGMENT("error_segment");
 
 	private static final Map<String, Capabilities> nameToValueMap =
         new HashMap<String, Capabilities>();
@@ -95,10 +95,28 @@ public enum Capabilities {
 	public static ArrayList<Capabilities> getCapabilitiesInCoreOrder(){
 		return capabilitiesInCoreOrder;
 	}
+	
+	public static Capabilities [] capabilitiesFromStrings(String[] strings){
+		ArrayList <Capabilities>caps=new ArrayList<Capabilities>();
+		for(int i=0;i<strings.length;i++){
+			caps.add(nameToValueMap.get(strings[i]));
+		}
+		return caps.toArray(new Capabilities[caps.size()]);
+	}
+	public static String[] capabilitiesAsStrings(Capabilities []capabilitiesAsStrings){
+		ArrayList <String>list=new ArrayList<String>();
+		for(int i=0; i<capabilitiesAsStrings.length;i++){
+			list.add(capabilitiesAsStrings[i].toString());
+		}
+		return list.toArray(new String[list.size()]);
+	}
 
 	public static void main(String[] args) {
 		for (Capabilities cap : Capabilities.values()) {
 			System.out.println(cap.toString());
 		}
+		
+		if(Capabilities.SEQUENCE.equals(Capabilities.SEQUENCE.toString()))System.out.println("is true");
 	}
+
 }

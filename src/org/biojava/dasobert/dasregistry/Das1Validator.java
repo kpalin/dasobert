@@ -125,17 +125,11 @@ public class Das1Validator {
 		this.relaxNgPath = relaxNgPath;
 	}
 
-	List<String> all_capabilities;
-
-	// private Ontology ontologyBS;
-	// private Ontology ontologySO;
-	// private Ontology ontologyECO;
-
-	// private Ontology[] ontologies ;
 
 	private DasCoordinateSystem[] registryCoordinateSystems = null;
 	private Das1Source[] registryDas1Sources = null;
 	public static final String REGISTRY_LOCATION = "http://www.dasregistry.org/das1/sources";
+	private static final String invalidTestCode = "invalidTestCode";//segment or feature that is used to test if the error handling of servers works
 	private HashMap sourceUrls = null;
 	private HashMap sourceIds = null;
 	protected DasRegistryOntologyLookUp lookup = new DasRegistryOntologyLookUp();
@@ -145,11 +139,7 @@ public class Das1Validator {
 		supportsMD5Checksum = false;
 		validationMessage = "";
 
-		all_capabilities = new ArrayList<String>();
-
-		for ( Capabilities cap:Capabilities.values()) {
-			all_capabilities.add(cap.toString());
-		}
+		
 	}
 
 	public boolean supportsMD5Checksum() {
@@ -203,6 +193,7 @@ public class Das1Validator {
 		System.out.println("calling validate in DAS1Validator with url=" + url);
 		verbose = true;
 		validationMessage = "";
+		Capabilities[]caps=Capabilities.capabilitiesFromStrings(capabilities);
 
 		if (url == null)
 			return new String[0];
@@ -215,7 +206,7 @@ public class Das1Validator {
 
 		// a list containing all valid DAS requests ...
 
-		List<String> lst = new ArrayList<String>();
+		List<Capabilities> lst = new ArrayList<Capabilities>();
 
 		char lastChar = url.charAt(url.length() - 1);
 		if (lastChar != '/')
@@ -228,9 +219,9 @@ public class Das1Validator {
 			System.out.println("validation message=" + validationMessage);
 
 		// test if all specified capabilities really work
-		for (int c = 0; c < capabilities.length; c++) {
-			String capability = capabilities[c];
-			if (all_capabilities.contains(capability)) {
+		for (int c = 0; c < caps.length; c++) {
+			Capabilities capability = caps[c];
+			
 				// System.out.println("testing " + capability);
 
 				if (capability.equals(Capabilities.SOURCES)) {
@@ -366,20 +357,46 @@ public class Das1Validator {
 						System.out.println(validationMessage);
 					// } else
 					// error = true;
-				} else {
+				} else if(capability.equals(Capabilities.ERROR_SEGMENT)){
+					if(validateErrorSegment(url)){
+						
+					}
+					
+				}
+				else if(capability.equals(Capabilities.UNKNOWN_SEGMENT)){
+					if(validateUnknownSegment(url)){
+						
+					}
+					
+				}
+				else {
 					validationMessage += "<br/>---<br/> test of capability "
 							+ capability + " not implemented,yet.";
 					lst.add(capability);
 				}
-			}
+			
 		}
 
 		// if ( error) {
 		// System.out.println("DasValidator: "+ validationMessage);
 		// }
 		// this.validationMessage = validationMessage;
-		return (String[]) lst.toArray(new String[lst.size()]);
+		return Capabilities.capabilitiesAsStrings(caps);
 
+	}
+
+	private boolean validateUnknownSegment(String url){
+		//validate with a new relaxng document for unknown segment
+		if (!relaxNgApproved(Capabilities.UNKNOWN_SEGMENT, url
+				+ "features?segment=" + this.invalidTestCode))return false;
+		
+		return true;
+	}
+	private boolean validateErrorSegment(String url) {
+		if (!relaxNgApproved(Capabilities.ERROR_SEGMENT, url
+				+ "features?segment=" + this.invalidTestCode))return false;
+		
+		return true;
 	}
 
 	/**
@@ -423,7 +440,7 @@ public class Das1Validator {
 				rng = new RelaxNGValidatorMSV();
 			}
 
-			if (!rng.validateUsingRelaxNG(RelaxNGValidatorMSV.SOURCES, cmd)) {
+			if (!rng.validateUsingRelaxNG(Capabilities.SOURCES, cmd)) {
 
 				validationMessage += rng.getMessage();
 				//System.out.println("getting message in das1 validator"
@@ -483,7 +500,7 @@ public class Das1Validator {
 	 * @return boolean true if valid according to relaxng if approval needed
 	 *         from relaxng.
 	 */
-	protected boolean relaxNgApproved(String cmdType, String cmd) {
+	protected boolean relaxNgApproved(Capabilities cmdType, String cmd) {
 		if (RELAX_NG) {
 			RelaxNGValidatorMSV rng = null;
 			if (relaxNgPath != null) {
@@ -821,7 +838,7 @@ public class Das1Validator {
 	protected boolean validateAlignment(String url, String testcode) {
 		String cmd = url + "alignment?query=";
 		// System.out.println(cmd + " " + testcode);
-		if (!relaxNgApproved(RelaxNGValidatorMSV.ALIGNMENT, cmd + testcode))
+		if (!relaxNgApproved(Capabilities.ALIGNMENT, cmd + testcode))
 			return false;
 
 		try {
@@ -856,7 +873,7 @@ public class Das1Validator {
 		try {
 			URL u = new URL(url + "entry_points");
 
-			if (!relaxNgApproved(RelaxNGValidatorMSV.ENTRY_POINTS, url
+			if (!relaxNgApproved(Capabilities.ENTRY_POINTS, url
 					+ "entry_points"))
 				return false;
 
@@ -962,7 +979,7 @@ public class Das1Validator {
 				e.printStackTrace();
 			}
 
-			if (!relaxNgApproved(RelaxNGValidatorMSV.TYPES, urlString))
+			if (!relaxNgApproved(Capabilities.TYPES, urlString))
 				return false;
 
 			InputStream dasInStream=null;
@@ -1016,7 +1033,7 @@ public class Das1Validator {
 		// System.out.println("called validate interaction method url " +url);
 		// url="http://localhost:8080/dasregistryOID/interactionTestOld.xml";
 
-		if (!relaxNgApproved(RelaxNGValidatorMSV.INTERACTION, url
+		if (!relaxNgApproved(Capabilities.INTERACTION, url
 				+ "interaction?interactor=" + testcode))
 			return false;
 
@@ -1044,7 +1061,7 @@ public class Das1Validator {
 		try {
 			URL u = new URL(url + "features?segment=" + testcode);
 
-			if (!relaxNgApproved(RelaxNGValidatorMSV.FEATURE, url
+			if (!relaxNgApproved(Capabilities.FEATURES, url
 					+ "features?segment=" + testcode))
 				return false;
 			System.out
@@ -1349,7 +1366,7 @@ System.out.println("validating track");
 
 		System.out.println("running structure with  cmd=" + cmd);
 
-		if (!relaxNgApproved(RelaxNGValidatorMSV.STRUCTURE, cmd + testcode))
+		if (!relaxNgApproved(Capabilities.STRUCTURE, cmd + testcode))
 			return false;
 
 		DASStructureClient dasc = new DASStructureClient(cmd);
@@ -1424,7 +1441,7 @@ System.out.println("validating track");
 
 		URL schemaLocation = null;
 
-		if (!relaxNgApproved(RelaxNGValidatorMSV.SEQUENCE, cmd))
+		if (!relaxNgApproved(Capabilities.SEQUENCE, cmd))
 			return false;
 
 		try {
