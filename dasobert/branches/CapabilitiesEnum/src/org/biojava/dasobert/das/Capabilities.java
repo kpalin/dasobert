@@ -1,6 +1,7 @@
 package org.biojava.dasobert.das;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,34 +16,11 @@ public enum Capabilities {
 	
 	
 	SOURCES("sources"),STYLESHEET("stylesheet"),FEATURES("features"),TYPES(	"types"),SEQUENCE("sequence"),  ENTRY_POINTS("entry_points"),ALIGNMENT("alignment"),  STRUCTURE("structure"),   INTERACTION("interaction"), 
-		UNKNOWN_SEGMENT("unknown_segment"),UNKNOWN_FEATURE("unknown_feature"), FEATURE_BY_ID("feature_by_id"),ERROR_SEGMENT("error_segment");
+		UNKNOWN_SEGMENT("unknown_segment"),UNKNOWN_FEATURE("unknown_feature"), FEATURE_BY_ID("feature_by_id"),ERROR_SEGMENT("error_segment");//NEXT_FEATURE("next_feature");
 
 	private static final Map<String, Capabilities> nameToValueMap =
         new HashMap<String, Capabilities>();
-	private static final ArrayList <Capabilities> capabilitiesInCoreOrder=new ArrayList<Capabilities>();
-	private static final ArrayList <String> capabilitiesStringsInCoreOrder=new ArrayList<String>();
 
-    static {
-        for (Capabilities value : EnumSet.allOf(Capabilities.class)) {
-            nameToValueMap.put(value.toString(), value);
-        }
-    }
-    static{
-    	capabilitiesInCoreOrder.add(SOURCES);
-    	capabilitiesInCoreOrder.add(STYLESHEET);
-    	capabilitiesInCoreOrder.add(FEATURES);
-    	capabilitiesInCoreOrder.add(TYPES);
-    	capabilitiesInCoreOrder.add(SEQUENCE);
-				capabilitiesInCoreOrder.add(ENTRY_POINTS);
-				capabilitiesInCoreOrder.add(ALIGNMENT);
-				capabilitiesInCoreOrder.add(STRUCTURE);
-				capabilitiesInCoreOrder.add(INTERACTION);
-    }
-	static{
-		for(Capabilities cap:EnumSet.allOf(Capabilities.class)){
-			capabilitiesStringsInCoreOrder.add(cap.toString());
-		}
-	}
 	private String name;
 	
 
@@ -89,17 +67,17 @@ public enum Capabilities {
 		return name;
 	}
 	
-	public static ArrayList<String> getCapabilityStringsInCoreOrder(){
-		return capabilitiesStringsInCoreOrder;
-	}
-	public static ArrayList<Capabilities> getCapabilitiesInCoreOrder(){
-		return capabilitiesInCoreOrder;
-	}
+	
 	
 	public static Capabilities [] capabilitiesFromStrings(String[] strings){
 		ArrayList <Capabilities>caps=new ArrayList<Capabilities>();
 		for(int i=0;i<strings.length;i++){
-			caps.add(nameToValueMap.get(strings[i]));
+			if(nameToValueMap.containsKey(strings[i])){
+				caps.add(nameToValueMap.get(strings[i]));
+			}else{
+				System.err.println("Warning a capability not found for  String "+strings[i]);
+			}
+		
 		}
 		return caps.toArray(new Capabilities[caps.size()]);
 	}
@@ -107,6 +85,13 @@ public enum Capabilities {
 		ArrayList <String>list=new ArrayList<String>();
 		for(int i=0; i<capabilitiesAsStrings.length;i++){
 			list.add(capabilitiesAsStrings[i].toString());
+		}
+		return list.toArray(new String[list.size()]);
+	}
+	public static String[] capabilitiesAsStrings(Collection <Capabilities>capabilities){
+		ArrayList <String>list=new ArrayList<String>();
+		for(Capabilities cap:capabilities){
+			list.add(cap.toString());
 		}
 		return list.toArray(new String[list.size()]);
 	}
@@ -118,5 +103,36 @@ public enum Capabilities {
 		
 		if(Capabilities.SEQUENCE.equals(Capabilities.SEQUENCE.toString()))System.out.println("is true");
 	}
+	
+//	public static ArrayList<String> getCapabilityStringsInCoreOrder(){
+//		return capabilitiesStringsInCoreOrder;
+//	}
+//	public static ArrayList<Capabilities> getCapabilitiesInCoreOrder(){
+//		return capabilitiesInCoreOrder;
+//	}
+//	private static final ArrayList <Capabilities> capabilitiesInCoreOrder=new ArrayList<Capabilities>();
+//	private static final ArrayList <String> capabilitiesStringsInCoreOrder=new ArrayList<String>();
+//
+//    static {
+//        for (Capabilities value : EnumSet.allOf(Capabilities.class)) {
+//            nameToValueMap.put(value.toString(), value);
+//        }
+//    }
+//    static{
+//    	capabilitiesInCoreOrder.add(SOURCES);
+//    	capabilitiesInCoreOrder.add(STYLESHEET);
+//    	capabilitiesInCoreOrder.add(FEATURES);
+//    	capabilitiesInCoreOrder.add(TYPES);
+//    	capabilitiesInCoreOrder.add(SEQUENCE);
+//				capabilitiesInCoreOrder.add(ENTRY_POINTS);
+//				capabilitiesInCoreOrder.add(ALIGNMENT);
+//				capabilitiesInCoreOrder.add(STRUCTURE);
+//				capabilitiesInCoreOrder.add(INTERACTION);
+//    }
+//	static{
+//		for(Capabilities cap:EnumSet.allOf(Capabilities.class)){
+//			capabilitiesStringsInCoreOrder.add(cap.toString());
+//		}
+//	}
 
 }
