@@ -95,11 +95,7 @@ public class Das1_6Validator extends Das1Validator{
 		supportsMD5Checksum = false;
 		validationMessage = "" ;
 		
-		all_capabilities = new ArrayList<String>();
 		
-		for ( Capabilities cap:Capabilities.values()) {
-			all_capabilities.add(cap.toString());
-		}
 	}
 	
 
@@ -145,7 +141,7 @@ public class Das1_6Validator extends Das1Validator{
 		// test if all specified capabilities really work
 		for ( int c = 0 ; c < capabilities.length ; c++) {
 			String capability = capabilities[c];
-			if ( all_capabilities.contains(capability)) {
+			
 				//System.out.println("testing " + capability);
 
 				if ( capability.equals(Capabilities.SOURCES)) {
@@ -280,7 +276,7 @@ public class Das1_6Validator extends Das1Validator{
 					validationMessage += "<br/>---<br/> test of capability " + capability + " not implemented,yet or is no longer used.";
 					lst.add(capability);
 				}
-			}
+			
 		}
 
 		//if ( error) {
@@ -338,7 +334,7 @@ public class Das1_6Validator extends Das1Validator{
 			URL u = new URL(url+"features?segment="+testcode);
 			
 			
-			if(!relaxNgApproved(RelaxNGValidatorMSV.FEATURE, url+"features?segment="+testcode))return false;
+			if(!relaxNgApproved(Capabilities.FEATURES, url+"features?segment="+testcode))return false;
 			System.out.println("validation message after features and rng call= "+validationMessage);
 			InputStream dasInStream = open(u); 
 			XMLReader xmlreader = getXMLReader();

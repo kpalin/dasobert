@@ -2,6 +2,7 @@ package org.biojava.dasobert.das.validation;
 
 import java.util.Map;
 
+import org.biojava.dasobert.das.Capabilities;
 import org.biojava.dasobert.das.validation.RegistryRelaxNG;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.log4j.Logger;
@@ -39,14 +40,6 @@ public class RelaxNGValidatorMSV {
 
 	//private static String PATH="http://localhost:8080/dasregistryOID/validation1.6E/";
 	private String path = "http://www.dasregistry.org/validation/";
-	public static final String INTERACTION = "interaction.rng";
-	public static final String SOURCES = "sources.rng";
-	public static final String SEQUENCE = "sequence.rng";
-	public static final String FEATURE = "features.rng";
-	public static final String TYPES = "types.rng";
-	public static final String STRUCTURE = "structure.rng";
-	public static final String ALIGNMENT = "alignment.rng";
-	public static final String ENTRY_POINTS = "entry_points.rng";
 	
 
 	/**
@@ -72,12 +65,12 @@ public class RelaxNGValidatorMSV {
 		rng = new RegistryRelaxNG();
 	}
 
-	public boolean validateUsingRelaxNG(String cmdType, String input) {
+	public boolean validateUsingRelaxNG(Capabilities capability, String input) {
 		boolean isValid = true;
 		
 		
 		//System.out.println("running relaxng with path="+path);
-		if (-1 == rng.validateCatchingExceptions(path + cmdType, input)) {
+		if (-1 == rng.validateCatchingExceptions(path + capability+".rng", input)) {
 			isValid = false;
 			this.message += rng.getRegMessage();
 			//logger.debug("valmsg in msv=" + rng.getRegMessage());
