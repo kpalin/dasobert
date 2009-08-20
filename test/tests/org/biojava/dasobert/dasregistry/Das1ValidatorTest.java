@@ -5,6 +5,7 @@ import org.biojava.dasobert.dasregistry.Das1Validator;
 import junit.framework.TestCase;
 
 public class Das1ValidatorTest extends TestCase {
+	String registryLocation=ServerLocation.REGISTRY;
 	public void setUp(){
 		
 		System.setProperty("proxySet", "true");
@@ -20,9 +21,13 @@ public class Das1ValidatorTest extends TestCase {
 	
 	public void testSourcesResponse(){
 		Das1Validator validator=new Das1Validator();
-		assertTrue(validator.validateSourcesCmd("http://www.ensembl.org/das/sources"));
-		System.out.println(validator.getValidationMessage());
-		
+		validator.setRelaxNgPath(registryLocation+"/validation/");
+		//assertTrue(validator.validateSourcesCmd("http://www.ensembl.org/das/sources"));
+		//System.out.println(validator.getValidationMessage());
+		//assertFalse(validator.validateUnknownSegment("http://www.ebi.ac.uk/das-srv/uniprot/das/aristotle/"));
+		validator.setRelaxNgApprovalNeeded(false);
+		assertTrue(validator.validateMaxbins("http://www.ebi.ac.uk/das-srv/genomicdas/das/hydragenevar_eQTL_1mb/", "21:43001932,44001931"));
+		assertFalse(validator.validateMaxbins("http://das.ensembl.org/das/ens_zfish7_array/", "20:43603923,43653923"));
 	}
 
 }
