@@ -133,6 +133,7 @@ public class Das1Validator {
 	private HashMap sourceUrls = null;
 	private HashMap sourceIds = null;
 	protected DasRegistryOntologyLookUp lookup = new DasRegistryOntologyLookUp();
+	private int lastFeaturesSize;
 
 	public Das1Validator() {
 
@@ -373,7 +374,16 @@ public class Das1Validator {
 							lst.add(Capabilities.UNKNOWN_FEATURE);
 						}
 					
-				}
+				}else if(capability.equals(Capabilities.MAXBINS)){
+					boolean maxbins=true;
+					for (int i = 0; i < coords.length; i++) {
+						DasCoordinateSystem ds = coords[i];
+						String testcode = ds.getTestCode();
+					if(validateMaxbins(url, testcode)){
+						lst.add(Capabilities.MAXBINS);
+					}
+					}
+			}
 				else {
 					validationMessage += "<br/>---<br/> test of capability "
 							+ capability + " not implemented,yet.";
@@ -388,6 +398,24 @@ public class Das1Validator {
 		// this.validationMessage = validationMessage;
 		return Capabilities.capabilitiesAsStrings(lst);
 
+	}
+
+	public  boolean validateMaxbins(String url, String testcode) {
+		int firstFeaturesSize=0;
+		int secondFeaturesSize=0;
+		
+			validateFeatures(url, testcode, false, 1);
+			firstFeaturesSize=lastFeaturesSize;
+			validateFeatures(url, testcode, false, 1000000);
+			secondFeaturesSize=lastFeaturesSize;
+			
+				
+				if(firstFeaturesSize==secondFeaturesSize){
+					System.out.println("returning false for maxbins valid");
+					return false;
+				}
+		
+		return true;
 	}
 
 	public boolean validateUnknownSegment(String url){
@@ -1074,14 +1102,32 @@ public class Das1Validator {
 			return true;
 		return false;
 	}
-
+	
+	/**
+	 * default method for running features validation (sets maxbins set to 0)
+	 * @param url
+	 * @param testcode
+	 * @param ontologyValidation
+	 * @return
+	 */
 	public boolean validateFeatures(String url, String testcode,
 			boolean ontologyValidation) {
+		int maxbins=0;
+		return this.validateFeatures(url, testcode, ontologyValidation, maxbins);
+	}
+	
+	
+	public boolean validateFeatures(String url, String testcode,
+			boolean ontologyValidation, int maxbins) {
 		try {
-			URL u = new URL(url + "features?segment=" + testcode);
+			URL u=null;
+			if(maxbins==0){
+				u = new URL(url + "features?segment=" + testcode);
+			}else{
+				u= new URL(url + "features?segment=" + testcode+";maxbins="+maxbins);
+			}
 
-			if (!relaxNgApproved(Capabilities.FEATURES, url
-					+ "features?segment=" + testcode))
+			if (!relaxNgApproved(Capabilities.FEATURES,u.toString()))
 				return false;
 			System.out
 					.println("validation message after features and rng call= "
@@ -1093,8 +1139,11 @@ public class Das1Validator {
 
 			// make sure we do not load the features of a whole chromosome, in
 			// case a user specified those...
+			if(maxbins!=0){//but for max features testing we want to have a greater range
+				cont_handle.setMaxFeatures(10000);
+			}else{
 			cont_handle.setMaxFeatures(MAX_NR_FEATURES);
-
+			}
 			if (ontologyValidation)
 				cont_handle.setMaxFeatures(MAX_NR_FEATURES_ONTOLOGY);
 			cont_handle.setDASCommand(url.toString());
@@ -1105,6 +1154,7 @@ public class Das1Validator {
 			xmlreader.parse(insource);
 			
 			List<Map<String, String>> features = cont_handle.get_features();
+			
 			//return a list of features that are a map
 			//then check the ids are unique
 			if(!checkFeatureIdsAreUnique(features))return false;
@@ -1113,6 +1163,10 @@ public class Das1Validator {
 			if (cont_handle.isMD5Checksum())
 				supportsMD5Checksum = true;
 
+			//store this so if we are testing maxbins we can get the results for a normal request without maxbins i.e. maxbins =0
+			lastFeaturesSize=features.size();
+			
+			
 			if (features.size() > 0) {
 				if (!ontologyValidation)
 					return true;
@@ -1159,18 +1213,6 @@ public class Das1Validator {
 		
 	}
 
-	private void initOntologies() {
-		// try {
-		// ontologyBS = readOntology("BioSapiens","the BioSapiens Ontology",
-		// "biosapiens.obo");
-		// ontologySO = readOntology("SequenceOntology", "the Sequence Ontology"
-		// , "so.obo");
-		// ontologies = new Ontology[]{ontologyBS, ontologySO};
-		// ontologyECO = readOntology("ECO", "the Evidence Code Ontology" ,
-		// "evidence_code.obo");
-		// } catch (OntologyException ex) {
-		// }
-	}
 
 	private Ontology readOntology(String ontoName, String ontoDesc,
 			String fileName) throws OntologyException {
