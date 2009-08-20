@@ -16,23 +16,36 @@ public enum Capabilities {
 	
 	
 	SOURCES("sources"),STYLESHEET("stylesheet"),FEATURES("features"),TYPES(	"types"),SEQUENCE("sequence"),  ENTRY_POINTS("entry_points"),ALIGNMENT("alignment"),  STRUCTURE("structure"),   INTERACTION("interaction"), 
-		UNKNOWN_SEGMENT("unknown_segment"),UNKNOWN_FEATURE("unknown_feature"), FEATURE_BY_ID("feature_by_id"),ERROR_SEGMENT("error_segment");//NEXT_FEATURE("next_feature");
+		UNKNOWN_SEGMENT("unknown_segment"),UNKNOWN_FEATURE("unknown_feature"), FEATURE_BY_ID("feature_by_id"),ERROR_SEGMENT("error_segment"), GROUP_BY_ID("group_by_id"), MAXBINS("maxbins"), NEXT_FEATURE("next_feature");//NEXT_FEATURE("next_feature");
 
 	private static final Map<String, Capabilities> nameToValueMap =
         new HashMap<String, Capabilities>();
+  static {
+  for (Capabilities value : EnumSet.allOf(Capabilities.class)) {
+      nameToValueMap.put(value.toString(), value);
+  }
+}
 
-	private String name;
+	private String name;//name is the lowercase name of the command usually but not necessarily the same as the cgi command string 
+	private String command;//the actual command that needs to be added to the das source url
 	
 
 	Capabilities(String name) {
 		this.name = name;
+	}
+	
+	Capabilities(String name, String command){
+		this.name=name;
+		this.command=command;
 	}
 
 	public String getName() {
 		return this.name;
 	}
 
-
+	public String getCommand(){
+		return this.command;
+	}
 	
 	/**
 	 * return a subset of the capabilities as not all capabilities are DAS
@@ -113,11 +126,7 @@ public enum Capabilities {
 //	private static final ArrayList <Capabilities> capabilitiesInCoreOrder=new ArrayList<Capabilities>();
 //	private static final ArrayList <String> capabilitiesStringsInCoreOrder=new ArrayList<String>();
 //
-//    static {
-//        for (Capabilities value : EnumSet.allOf(Capabilities.class)) {
-//            nameToValueMap.put(value.toString(), value);
-//        }
-//    }
+
 //    static{
 //    	capabilitiesInCoreOrder.add(SOURCES);
 //    	capabilitiesInCoreOrder.add(STYLESHEET);
