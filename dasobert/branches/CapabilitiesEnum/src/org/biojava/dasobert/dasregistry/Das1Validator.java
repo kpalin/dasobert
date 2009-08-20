@@ -1103,7 +1103,11 @@ public class Das1Validator {
 			InputSource insource = new InputSource();
 			insource.setByteStream(dasInStream);
 			xmlreader.parse(insource);
+			
 			List<Map<String, String>> features = cont_handle.get_features();
+			//return a list of features that are a map
+			//then check the ids are unique
+			if(!checkFeatureIdsAreUnique(features))return false;
 			System.out.println("features size is=" + features.size());
 
 			if (cont_handle.isMD5Checksum())
@@ -1135,6 +1139,24 @@ public class Das1Validator {
 				validationMessage += e.toString();
 		}
 		return false;
+	}
+
+	private boolean checkFeatureIdsAreUnique(List<Map<String, String>> features) {
+		boolean idsUnique=true;
+		HashMap ids=new HashMap<String,String>();
+		for(Map<String,String> feature:features){
+			String id=feature.get("id");
+			if(ids.containsKey(id)){
+				validationMessage+="/nFeature Ids need to be Unique and are not!!/n";
+				return false;
+			}else{
+				ids.put(id,"");
+			}
+		}
+		
+		return idsUnique;
+		// TODO Auto-generated method stub
+		
 	}
 
 	private void initOntologies() {
