@@ -129,7 +129,7 @@ public class Das1Validator {
 	private DasCoordinateSystem[] registryCoordinateSystems = null;
 	private Das1Source[] registryDas1Sources = null;
 	public static final String REGISTRY_LOCATION = "http://www.dasregistry.org/das1/sources";
-	private static final String invalidTestCode = "invalidTestCode";//segment or feature that is used to test if the error handling of servers works
+	public  static final String invalidTestCode = "invalidTestCode";//segment or feature that is used to test if the error handling of servers works
 	private HashMap sourceUrls = null;
 	private HashMap sourceIds = null;
 	protected DasRegistryOntologyLookUp lookup = new DasRegistryOntologyLookUp();
@@ -359,20 +359,25 @@ public class Das1Validator {
 					// error = true;
 				} else if(capability.equals(Capabilities.ERROR_SEGMENT)){
 					if(validateErrorSegment(url)){
-						
+						lst.add(Capabilities.ERROR_SEGMENT);
 					}
 					
 				}
 				else if(capability.equals(Capabilities.UNKNOWN_SEGMENT)){
 					if(validateUnknownSegment(url)){
-						
+						lst.add(Capabilities.UNKNOWN_SEGMENT);
 					}
+				}
+				else if(capability.equals(Capabilities.UNKNOWN_FEATURE)){
+						if(validateUnknownFeature(url)){
+							lst.add(Capabilities.UNKNOWN_FEATURE);
+						}
 					
 				}
 				else {
 					validationMessage += "<br/>---<br/> test of capability "
 							+ capability + " not implemented,yet.";
-					lst.add(capability);
+					//lst.add(capability);
 				}
 			
 		}
@@ -381,22 +386,36 @@ public class Das1Validator {
 		// System.out.println("DasValidator: "+ validationMessage);
 		// }
 		// this.validationMessage = validationMessage;
-		return Capabilities.capabilitiesAsStrings(caps);
+		return Capabilities.capabilitiesAsStrings(lst);
 
 	}
 
-	private boolean validateUnknownSegment(String url){
+	public boolean validateUnknownSegment(String url){
 		//validate with a new relaxng document for unknown segment
 		if (!relaxNgApproved(Capabilities.UNKNOWN_SEGMENT, url
-				+ "features?segment=" + this.invalidTestCode))return false;
-		
-		return true;
+				+ "features?segment=" + invalidTestCode)){
+			return false;
+		}
+		else{
+		return true;}
 	}
-	private boolean validateErrorSegment(String url) {
+	public boolean validateErrorSegment(String url) {
 		if (!relaxNgApproved(Capabilities.ERROR_SEGMENT, url
-				+ "features?segment=" + this.invalidTestCode))return false;
+				+ "features?segment=" + invalidTestCode)){
+			return false;
+		}
+		else{
+			return true;
+		}
 		
+	}
+	public boolean validateUnknownFeature(String url) {
+		if (!relaxNgApproved(Capabilities.UNKNOWN_FEATURE, url
+				+ "features?segment=" + invalidTestCode)){
+			return false;
+		}else{		
 		return true;
+		}
 	}
 
 	/**
