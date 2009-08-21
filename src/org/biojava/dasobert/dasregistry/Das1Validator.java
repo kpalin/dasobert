@@ -540,8 +540,7 @@ public class Das1Validator {
 	/**
 	 * 
 	 * @param cmdType
-	 *            one of RelaxNGValidatorMSV static strings such as
-	 *            RelaxNGValidatorMSV.SOURCES
+	 *            one of Capabilities such as Capabitlities.SOURCES
 	 * @param cmd
 	 *            url string sometimes with testcode added
 	 * @return boolean true if valid according to relaxng if approval needed
@@ -859,7 +858,8 @@ public class Das1Validator {
 		try {
 			DAS_StylesheetRetrieve dsr = new DAS_StylesheetRetrieve();
 			URL styleurl = new URL(url + "stylesheet");
-
+			if (!relaxNgApproved(Capabilities.STYLESHEET, styleurl.toString()))
+				return false;
 			Map[] stylesheet = dsr.retrieve(styleurl);
 			if ((stylesheet != null) && (stylesheet.length > 0))
 				return true;
