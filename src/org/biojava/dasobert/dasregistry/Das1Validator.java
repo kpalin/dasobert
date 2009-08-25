@@ -106,6 +106,7 @@ public class Das1Validator {
 													// specifically not needed
 													// for autovalidation at the
 													// moment
+	private static boolean checkHeaders=true;
 
 	public boolean isRelaxNgApprovalNeeded() {
 		return relaxNgApprovalNeeded;
