@@ -22,6 +22,8 @@
  */
 package org.biojava.dasobert.das2;
 
+import java.util.ArrayList;
+
 import org.biojava.bio.program.das.dasalignment.DASException;
 import org.biojava.dasobert.dasregistry.Das1Source;
 
@@ -59,7 +61,7 @@ public class DasSourceConverter {
         
         // convert the capabilitites to das1 capabiltities and get the url
         Das2Capability[] caps = das2source.getDas2Capabilities();
-        String[] das1capabilitites = new String[caps.length];
+        ArrayList das1capabilitites = new ArrayList();
         int DASPREFIXLENGTH = Das2CapabilityImpl.DAS1_CAPABILITY_PREFIX.length();
 
         for ( int i = 0 ; i< caps.length;i++){
@@ -67,22 +69,27 @@ public class DasSourceConverter {
             
             String c = cap.getCapability();
 
-            das1capabilitites[i] = c.substring(DASPREFIXLENGTH,c.length());
+          
 
             String query_uri = cap.getQueryUri();
-            
+            if(query_uri!=null){
             if(query_uri.endsWith("sources")||query_uri.endsWith("sources/")){
             	//don't update the url note if we only have sources stated as a capability we are in trouble as this gets chopped later with validation!!??
-            	
+            	//just add a shortened url for sources capability without the dsn
+            	String capabilityString=c.substring(DASPREFIXLENGTH,c.length());
+            	das1capabilitites.add(capabilityString);
+            	System.out.println("adding sources capability as :"+capabilityString);
             }else{
             String url = query_uri.substring(0,(query_uri.length() - c.length() + DASPREFIXLENGTH));
+            das1capabilitites.add(c.substring(DASPREFIXLENGTH,c.length()));
             System.out.println("setting url in converter="+url);
             ds.setUrl(url);
             }
-           
+            }
             
         }
-        ds.setCapabilities(das1capabilitites);
+        
+        ds.setCapabilities((String[])das1capabilitites.toArray(new String[das1capabilitites.size()]));
         
         return ds ;
     }

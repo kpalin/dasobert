@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 
 
 import javax.xml.rpc.ServiceException;
@@ -72,13 +73,13 @@ public class DasRegistryOntologyLookUp {
 
 	private void init() {
 		//needed to get out through sanger proxy
-//		Properties props= new Properties(System.getProperties());
-//		props.put("http.proxySet", "true");
-//		props.put("http.proxyHost", "wwwcache.sanger.ac.uk");
-//		props.put("http.proxyPort", "3128");
-//		Properties newprops = new Properties(props);
-//		System.setProperties(newprops);
-//		System.out.println("set properties");
+		Properties props= new Properties(System.getProperties());
+		props.put("http.proxySet", "true");
+		props.put("http.proxyHost", "wwwcache.sanger.ac.uk");
+		props.put("http.proxyPort", "3128");
+		Properties newprops = new Properties(props);
+		System.setProperties(newprops);
+		System.out.println("set properties");
 		QueryService locator = new QueryServiceLocator();
 		this.query = null;
 		try {

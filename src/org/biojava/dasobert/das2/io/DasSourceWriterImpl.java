@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import org.biojava.dasobert.das.Capabilities;
 import org.biojava.dasobert.das.DasTimeFormat;
 import org.biojava.dasobert.das2.Das2Capability;
 import org.biojava.dasobert.das2.Das2CapabilityImpl;
@@ -172,14 +173,21 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 
 		}
 
-		// show validated capabilities
+		// show validated capabilities and probably valid capabilities ie ones that by autovalidation are shown to be valid but
+		//have not been stated as so by the user
 		if (source.getValidCapabilities() != null) {
 			String[] validCapabilities = source.getValidCapabilities();
+			String[] statedCapabilities= source.getCapabilities();
+			
 
 			// System.out.println("valid caps length="+validCapabilities.length);
 			for (int i = 0; i < validCapabilities.length; i++) {
+				String howValid="valid";
+				for(String stated:statedCapabilities){
+					if(stated.equals(validCapabilities[i]))howValid="probably_valid";
+				}
 				xw.openTag("PROP");
-				xw.attribute("name", "valid");
+				xw.attribute("name", howValid);
 				xw.attribute("value", validCapabilities[i]);
 
 				xw.closeTag("PROP");

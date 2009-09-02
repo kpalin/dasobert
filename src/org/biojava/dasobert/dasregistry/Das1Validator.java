@@ -32,8 +32,13 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -64,6 +69,7 @@ import org.biojava.dasobert.das.DAS_Types_Handler;
 import org.biojava.dasobert.das.InteractionDasSource;
 import org.biojava.dasobert.das.InteractionParameters;
 import org.biojava.dasobert.das.InteractionThread;
+import org.biojava.dasobert.das.NoSuchCapabilityException;
 import org.biojava.dasobert.das.validation.DasRegistryOntologyLookUp;
 import org.biojava.dasobert.das.validation.RelaxNGValidatorJing;
 import org.biojava.dasobert.das.validation.RelaxNGValidatorMSV;
@@ -106,7 +112,19 @@ public class Das1Validator {
 													// specifically not needed
 													// for autovalidation at the
 													// moment
-	private static boolean checkHeaders=true;
+	private boolean checkHeaders=true;
+	
+	private DasCoordinateSystem[] registryCoordinateSystems = null;
+	private Das1Source[] registryDas1Sources = null;
+	public static final String REGISTRY_LOCATION = "http://www.dasregistry.org/das1/sources";
+	public  static final String invalidTestCode = "invalidTestCode";//segment or feature that is used to test if the error handling of servers works
+	private HashMap sourceUrls = null;
+	private HashMap sourceIds = null;
+	protected DasRegistryOntologyLookUp lookup = new DasRegistryOntologyLookUp();
+	private int lastFeaturesSize;
+	private HashMap<String, Integer> specificationTypes=new HashMap<String, Integer>();
+
+	Map <String, Integer> serverTypes=new HashMap<String, Integer>();
 
 	public boolean isRelaxNgApprovalNeeded() {
 		return relaxNgApprovalNeeded;
@@ -117,6 +135,8 @@ public class Das1Validator {
 	}
 
 	protected String relaxNgPath = null;
+	private boolean appendValidationErrors=true;//append errors to validationMessage default is true
+	//but for cases where the capability has not been claimed to be there we don't want to.
 
 	public String getRelaxNgPath() {
 		return relaxNgPath;
@@ -125,16 +145,6 @@ public class Das1Validator {
 	public void setRelaxNgPath(String relaxNgPath) {
 		this.relaxNgPath = relaxNgPath;
 	}
-
-
-	private DasCoordinateSystem[] registryCoordinateSystems = null;
-	private Das1Source[] registryDas1Sources = null;
-	public static final String REGISTRY_LOCATION = "http://www.dasregistry.org/das1/sources";
-	public  static final String invalidTestCode = "invalidTestCode";//segment or feature that is used to test if the error handling of servers works
-	private HashMap sourceUrls = null;
-	private HashMap sourceIds = null;
-	protected DasRegistryOntologyLookUp lookup = new DasRegistryOntologyLookUp();
-	private int lastFeaturesSize;
 
 	public Das1Validator() {
 
@@ -195,8 +205,14 @@ public class Das1Validator {
 		System.out.println("calling validate in DAS1Validator with url=" + url);
 		verbose = true;
 		validationMessage = "";
-		Capabilities[]caps=Capabilities.capabilitiesFromStrings(capabilities);
-
+		Capabilities[] caps=null;
+		//try {
+			caps = Capabilities.capabilitiesFromStrings(capabilities);
+//		} catch (NoSuchCapabilityException e) {
+//			
+//			e.printStackTrace();
+//		}
+		
 		if (url == null)
 			return new String[0];
 
@@ -205,6 +221,10 @@ public class Das1Validator {
 
 		if (capabilities == null)
 			return new String[0];
+		HashSet <String>statedCapabilities=new HashSet<String>();
+		for(String capability:capabilities){
+			statedCapabilities.add(capability);
+		}
 
 		// a list containing all valid DAS requests ...
 
@@ -217,13 +237,18 @@ public class Das1Validator {
 		boolean valid = validateURL(url);
 		// System.out.println("is url valid : "+valid);
 
-		if (verbose)
-			System.out.println("validation message=" + validationMessage);
-
-		// test if all specified capabilities really work
-		for (int c = 0; c < caps.length; c++) {
-			Capabilities capability = caps[c];
-			
+		if (verbose)System.out.println("validation message=" + validationMessage);
+		
+		validateHeaders(removeDataSourceNameFromUrl(url));
+		// test if all possible capabilities work
+		for (Capabilities capability:EnumSet.allOf(Capabilities.class)) {
+			//Capabilities capability = caps[c];
+			if(statedCapabilities.contains(capability.toString())){
+				appendValidationErrors=true;
+			}
+			else{
+				appendValidationErrors=false;
+			}
 				// System.out.println("testing " + capability);
 
 				if (capability.equals(Capabilities.SOURCES)) {
@@ -233,6 +258,7 @@ public class Das1Validator {
 						sourcesok = false;
 
 					}
+					
 
 					if (verbose)
 						System.out.println(validationMessage);
@@ -285,6 +311,7 @@ public class Das1Validator {
 						lst.add(capability);
 					}
 				} else if (capability.equals(Capabilities.FEATURES)) {
+					
 					boolean featureok = true;
 					for (int i = 0; i < coords.length; i++) {
 						DasCoordinateSystem ds = coords[i];
@@ -386,13 +413,20 @@ public class Das1Validator {
 					}
 			}
 				else {
-					validationMessage += "<br/>---<br/> test of capability "
+					if(appendValidationErrors){
+						validationMessage += "<br/>---<br/> test of capability "
 							+ capability + " not implemented,yet.";
+					}
+							
 					//lst.add(capability);
 				}
+				
+				
+		
 			
 		}
 
+		System.out.println("serverTypes="+serverTypes.toString()+ "\nspecificationTypes="+specificationTypes.toString());
 		// if ( error) {
 		// System.out.println("DasValidator: "+ validationMessage);
 		// }
@@ -464,44 +498,13 @@ public class Das1Validator {
 		sourceUrls = new HashMap();
 		sourceIds = new HashMap();
 		//System.out.println("sources url at start of validation method " + url);
-		if (url.endsWith("/")) {
-			// System.out.println("ends with /");
-			url = url.substring(0, url.length() - 1);
-			// System.out.println("after -1="+url);
-
-		}
-		// now remove the datasource name at the end of the url
-		String choppedURL = url.substring(0, url.lastIndexOf("/") + 1);
+		String choppedURL = removeDataSourceNameFromUrl(url);
 		// System.out.println("chopped "+choppedURL);
 		String cmd = choppedURL + "sources";
 
 		// System.out.println("running sources with  cmd="+cmd);
-		// if(!relaxNgApproved(RelaxNGValidatorMSV.SOURCES, cmd))return false;
-		// hack here until relaxng is needed for all cmds. Want it to validate
-		// sources now.
-		// revert method below to above call later.
-		if (RELAX_NG) {
-			RelaxNGValidatorMSV rng = null;
-			if (relaxNgPath != null) {
-				rng = new RelaxNGValidatorMSV(relaxNgPath);
-			} else {
-				rng = new RelaxNGValidatorMSV();
-			}
-
-			if (!rng.validateUsingRelaxNG(Capabilities.SOURCES, cmd)) {
-
-				validationMessage += rng.getMessage();
-				//System.out.println("getting message in das1 validator"
-					//	+ validationMessage);
-				return false;
-
-			}
-
-		}
-		// validationMessage+="Passed RelaxNG validation test for sources cmd";
-
-		// source for programmatically validating sources response
-
+		 if(!relaxNgApproved(Capabilities.SOURCES, cmd))return false;
+		
 		// get a list of all sources from the registry either from xml for
 		// external programs or from database
 		// for the registry
@@ -538,12 +541,25 @@ public class Das1Validator {
 
 	}
 
+	public static String removeDataSourceNameFromUrl(String url) {
+		if (url.endsWith("/")) {
+			// System.out.println("ends with /");
+			url = url.substring(0, url.length() - 1);
+			// System.out.println("after -1="+url);
+
+		}
+		// now remove the datasource name at the end of the url
+		String choppedURL = url.substring(0, url.lastIndexOf("/") + 1);
+		return choppedURL;
+	}
+
 	/**
 	 * 
 	 * @param cmdType
 	 *            one of Capabilities such as Capabitlities.SOURCES
 	 * @param cmd
 	 *            url string sometimes with testcode added
+	 * @param appendValidationErrors true or false depending on if we wish for error info for this command           
 	 * @return boolean true if valid according to relaxng if approval needed
 	 *         from relaxng.
 	 */
@@ -557,7 +573,9 @@ public class Das1Validator {
 			}
 			if (!rng.validateUsingRelaxNG(cmdType, cmd)) {
 
-				validationMessage += rng.getMessage();
+				if(appendValidationErrors){
+					validationMessage += rng.getMessage();
+				}
 				System.out.println("getting message in das1 validator"
 						+ validationMessage);
 				if (relaxNgApprovalNeeded)
@@ -722,6 +740,42 @@ public class Das1Validator {
 					das1sources.add(d1s);
 				}
 
+			}
+		}
+
+		return (Das1Source[]) das1sources.toArray(new Das1Source[das1sources
+				.size()]);
+
+	}
+	
+	
+	
+	public Das1Source[] getDas1SourcesFromSourcesXml(String sourcesUrl) {
+		System.out.println("runnning get sourcesFromSourcesXml method");
+		System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
+				"org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+		System.setProperty("javax.xml.parsers.SAXParserFactory",
+				"org.apache.xerces.jaxp.SAXParserFactoryImpl");
+
+		DasSourceReaderImpl reader = new DasSourceReaderImpl();
+
+		URL url = null;
+		try {
+			url = new URL(sourcesUrl);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		DasSource[] sources = reader.readDasSource(url);
+
+		List das1sources = new ArrayList();
+		for (int i = 0; i < sources.length; i++) {
+			DasSource ds = sources[i];
+			if (ds instanceof Das1Source) {
+				System.out.println("adding das1 source from registry "
+						+ ds.getUrl());
+				das1sources.add((Das1Source) ds);
 			}
 		}
 
@@ -1126,8 +1180,8 @@ public class Das1Validator {
 				u = new URL(url + "features?segment=" + testcode);
 			}else{
 				u= new URL(url + "features?segment=" + testcode+";maxbins="+maxbins);
-			}
-
+			}	
+			
 			if (!relaxNgApproved(Capabilities.FEATURES,u.toString()))
 				return false;
 			System.out
@@ -1202,7 +1256,7 @@ public class Das1Validator {
 		for(Map<String,String> feature:features){
 			String id=feature.get("id");
 			if(ids.containsKey(id)){
-				validationMessage+="/nFeature Ids need to be Unique and are not!!/n";
+				validationMessage+="\nFeature Ids need to be Unique and are not!!/n";
 				return false;
 			}else{
 				ids.put(id,"");
@@ -1656,6 +1710,152 @@ System.out.println("validating track");
 			System.out.println("sourcesCmd was invalid"
 					+ validator.validationMessage);
 		}
+	}
+	
+	/**
+	 * look at the header information on any das response
+	 * @param url
+	 * @param testcode
+	 * @param ontologyValidation
+	 */
+	public void validateHeaders(String urlString){
+		 /** Fetch HTML headers as simple text.  */
+		  URL url=null;
+		try {
+			url = new URL(urlString);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		  
+		    StringBuilder result = new StringBuilder();
+
+		    URLConnection connection = null;
+		    try {
+		      connection = url.openConnection();
+		    }
+		    catch (IOException ex) {
+		      System.out.println("Cannot open connection to URL: " + url);
+		    }
+
+		    //not all headers come in key-value pairs - sometimes the key is
+		    //null or an empty String
+		    int headerIdx = 0;
+		    String headerKey = null;
+		    String headerValue = null;
+//		    while ( (headerValue = connection.getHeaderField(headerIdx)) != null ) {
+//		      headerKey = connection.getHeaderFieldKey(headerIdx);
+//		      if ( headerKey != null && headerKey.length()>0 ) {
+//		        result.append( headerKey );
+//		        result.append(" : ");
+//		      }
+//		      result.append( headerValue );
+//		      result.append("\n");
+//		      headerIdx++;
+//		    }
+		    String dasServer=connection.getHeaderField("X-DAS-Server");
+		    String dasVersion=connection.getHeaderField("X-DAS-Version");
+		    int serverCount=0;
+		    int dasVersionCount=0;
+		    if(serverTypes.containsKey(dasServer)){
+		    	serverCount=serverTypes.get(dasServer);
+		    }
+		    if(specificationTypes.containsKey(dasVersion)){
+		    	dasVersionCount=specificationTypes.get(dasVersion);
+		    }
+		    serverTypes.put(dasServer, serverCount++);
+		    specificationTypes.put(dasVersion, dasVersionCount++);
+		    System.out.println("header result for url "+ url+" is dasServer="+dasServer+" dasVersion="+dasVersion);
+		    specificationTypes.put(dasVersion,dasVersionCount++ );
+		  
+
+		
+	}
+	
+	/**
+	 * validate a list of DasSources
+	 * @param dasSources
+	 */
+	public boolean  validateSources(DasSource[] dasSources){
+		int numberOfSourcesFailed=0;
+		int numberFailedDueToNotMatchingStatedCaps=0;
+		int numberFailedDueToRelaxNg=0;
+		int numberFailedDueToNoIO=0;
+		
+		ArrayList failedUrls=new ArrayList();
+		
+		DasSource[] dss = dasSources;
+
+	for ( int i =0 ; i< dss.length;i++){
+		DasSource ds = dss[i];
+		
+			System.out.print("validating " + (i+1)+"/"+ dss.length + " "+ ds.getUrl() +  " ");
+
+		
+		
+		boolean validateVerbose = false;
+		setRelaxNgApprovalNeeded(true);//turn off relaxng validation approval needed for automated validation
+		//but we have turned on approval needed by default so that if validating via a web page a source owner has to update their source.
+		String[] validcaps = validate(ds.getUrl(),
+				ds.getCoordinateSystem(),
+				ds.getCapabilities(),validateVerbose, false);
+		
+		//need to write code to write the validcaps to the database
+		//TODO: also need to change code to test capabilities other than those stated#
+		//maybe by using getHeader first to see if there is a response
+		//ds.setValidCapabilities(validcaps);
+		//registry.updateValidCapabilities(ds);
+		
+		
+		
+		if ( validcaps != null ) {
+
+			if ( validcaps.length != ds.getCapabilities().length){
+
+				
+					System.out.print(" failed ");
+					
+					for (int v=0 ; v< validcaps.length ; v++){
+						System.out.print(validcaps[v]+ "o.k. ");
+					}
+					
+				
+				
+				// something went wrong ...
+				// log it
+				
+				numberOfSourcesFailed++;
+				failedUrls.add(ds.getUrl());
+				numberFailedDueToNotMatchingStatedCaps++;
+
+			} else {
+
+				
+					System.out.print(" o.k.");
+
+				
+		
+
+			}
+
+		} else {
+			
+				
+				numberOfSourcesFailed++;
+				failedUrls.add(ds.getUrl());
+				
+			//logger.info(registry.getValidationMessage());
+			
+		}
+		
+			System.out.println("number of failed sources="+numberOfSourcesFailed);
+	}//end of validate sources loo
+	
+	if(failedUrls.size()>0){
+		return false;
+	}else{
+		return true;
+	}
 	}
 
 }
