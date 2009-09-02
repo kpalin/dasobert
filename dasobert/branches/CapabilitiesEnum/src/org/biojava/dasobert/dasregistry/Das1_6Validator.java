@@ -109,7 +109,7 @@ public class Das1_6Validator extends Das1Validator{
  */
 	private boolean validateDNA(String url, String testcode){
 		
-				validationMessage += " DNA is not a valid 1.6 coommand please use sequence cmd instead";
+				if(appendValidationErrors)validationMessage += " DNA is not a valid 1.6 coommand please use sequence cmd instead";
 
 				return false;
 			
@@ -125,7 +125,7 @@ public class Das1_6Validator extends Das1Validator{
 	 * @return flag if the DSN  response is o.k.
 	 */
 	public boolean validateDSN(String url){
-		validationMessage += " DSN is not a valid 1.6 coommand please use sources cmd instead as this gives more helpful information for DAS clients";
+		if(appendValidationErrors)validationMessage += " DSN is not a valid 1.6 coommand please use sources cmd instead as this gives more helpful information for DAS clients";
 
 		return false;
 		
@@ -135,61 +135,6 @@ public class Das1_6Validator extends Das1Validator{
 	
 	
 
-	public boolean validateFeatures(String url, 
-			String testcode, boolean ontologyValidation){
-		try {
-			URL u = new URL(url+"features?segment="+testcode);
-			
-			
-			if(!relaxNgApproved(Capabilities.FEATURES, url+"features?segment="+testcode))return false;
-			System.out.println("validation message after features and rng call= "+validationMessage);
-			InputStream dasInStream = open(u); 
-			XMLReader xmlreader = getXMLReader();
-
-			DAS_Feature_Handler cont_handle = new DAS_Feature_Handler() ;
-
-			// make sure we do not load the features of a whole chromosome, in case a user specified those...
-			cont_handle.setMaxFeatures(MAX_NR_FEATURES);
-			
-			if (ontologyValidation)
-				cont_handle.setMaxFeatures(MAX_NR_FEATURES_ONTOLOGY);
-			cont_handle.setDASCommand(url.toString());
-			xmlreader.setContentHandler(cont_handle);
-			xmlreader.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
-			InputSource insource = new InputSource() ;
-			insource.setByteStream(dasInStream);
-			xmlreader.parse(insource);
-			List<Map<String,String>> features = cont_handle.get_features();
-			System.out.println("features size is="+features.size());
-			
-			if ( cont_handle.isMD5Checksum())
-				supportsMD5Checksum = true;
-			
-			if ( features.size() > 0 ) {
-				if ( ! ontologyValidation)
-					return true;
-				validationMessage  +="<br/>---<br/> contacting " + url+"features?segment="+testcode + "<br/>";				
-				return validateFeatureOntology(features);
-				
-			} else {
-				validationMessage  +="<br/>---<br/> contacting " + url+"features?segment="+testcode + "<br/>";
-				validationMessage += " no features were returned";
-
-				return false;
-			}
-
-		} catch ( Exception e) {
-			//e.printStackTrace();
-			validationMessage += "<br/>---<br/> contacting " + url+"features?segment="+testcode + "<br/>";
-
-			Throwable cause = e.getCause();
-			if ( cause != null) 
-				validationMessage += cause.toString();
-			else
-				validationMessage += e.toString();
-		}
-		return false;
-	}
 	
 	
 
