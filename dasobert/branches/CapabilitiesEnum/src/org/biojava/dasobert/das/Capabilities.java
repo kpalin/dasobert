@@ -81,14 +81,21 @@ public enum Capabilities {
 	}
 	
 	
-	
-	public static Capabilities [] capabilitiesFromStrings(String[] strings){
+	/**
+	 * create a list of the enums represented by the strings
+	 * @param strings
+	 * @return array of Capabilities
+	 * @throws NoSuchCapabilityException - if no Capability found represented by a string[]
+	 */
+	public static Capabilities [] capabilitiesFromStrings  (String[] strings) {
 		ArrayList <Capabilities>caps=new ArrayList<Capabilities>();
 		for(int i=0;i<strings.length;i++){
 			if(nameToValueMap.containsKey(strings[i])){
 				caps.add(nameToValueMap.get(strings[i]));
 			}else{
 				System.err.println("Warning a capability not found for  String "+strings[i]);
+				 //throw new NoSuchCapabilityException(strings[i]);
+				
 			}
 		
 		}
@@ -117,31 +124,5 @@ public enum Capabilities {
 		if(Capabilities.SEQUENCE.equals(Capabilities.SEQUENCE.toString()))System.out.println("is true");
 	}
 	
-//	public static ArrayList<String> getCapabilityStringsInCoreOrder(){
-//		return capabilitiesStringsInCoreOrder;
-//	}
-//	public static ArrayList<Capabilities> getCapabilitiesInCoreOrder(){
-//		return capabilitiesInCoreOrder;
-//	}
-//	private static final ArrayList <Capabilities> capabilitiesInCoreOrder=new ArrayList<Capabilities>();
-//	private static final ArrayList <String> capabilitiesStringsInCoreOrder=new ArrayList<String>();
-//
-
-//    static{
-//    	capabilitiesInCoreOrder.add(SOURCES);
-//    	capabilitiesInCoreOrder.add(STYLESHEET);
-//    	capabilitiesInCoreOrder.add(FEATURES);
-//    	capabilitiesInCoreOrder.add(TYPES);
-//    	capabilitiesInCoreOrder.add(SEQUENCE);
-//				capabilitiesInCoreOrder.add(ENTRY_POINTS);
-//				capabilitiesInCoreOrder.add(ALIGNMENT);
-//				capabilitiesInCoreOrder.add(STRUCTURE);
-//				capabilitiesInCoreOrder.add(INTERACTION);
-//    }
-//	static{
-//		for(Capabilities cap:EnumSet.allOf(Capabilities.class)){
-//			capabilitiesStringsInCoreOrder.add(cap.toString());
-//		}
-//	}
 
 }
