@@ -125,6 +125,10 @@ public class Das1Validator {
 	private HashMap<String, Integer> specificationTypes=new HashMap<String, Integer>();
 
 	Map <String, Integer> serverTypes=new HashMap<String, Integer>();
+	protected String relaxNgPath = null;
+	protected boolean appendValidationErrors=true;//append errors to validationMessage default is true
+	//but for cases where the capability has not been claimed to be there we don't want to.
+
 
 	public boolean isRelaxNgApprovalNeeded() {
 		return relaxNgApprovalNeeded;
@@ -134,10 +138,7 @@ public class Das1Validator {
 		this.relaxNgApprovalNeeded = relaxNgApprovalNeeded;
 	}
 
-	protected String relaxNgPath = null;
-	private boolean appendValidationErrors=true;//append errors to validationMessage default is true
-	//but for cases where the capability has not been claimed to be there we don't want to.
-
+	
 	public String getRelaxNgPath() {
 		return relaxNgPath;
 	}
@@ -645,7 +646,9 @@ public class Das1Validator {
 				// System.out.println("authority in reg="+tempCs.getAuthority());
 
 			}
-			if(!isValid)validationMessage+=cs.toString()+ " not found";
+			if(!isValid){
+				if(appendValidationErrors)validationMessage+=cs.toString()+ " not found";
+			}
 		}
 		return isValid;
 	}
@@ -665,12 +668,12 @@ public class Das1Validator {
 		String id = ds.getId();
 
 		if (sourceUrls.containsKey(url)) {
-			validationMessage += "Url "+url+" already exists in your sources document and are supposed to be unique!! ";
+			if(appendValidationErrors)validationMessage += "Url "+url+" already exists in your sources document and are supposed to be unique!! ";
 			return false;
 		}
 		if (sourceIds.containsKey(id)) {
 			System.out.println("testing id" + id);
-			validationMessage += "Id "+id+" already exists in your sources document and are supposed to be unique!! ";
+			if(appendValidationErrors)validationMessage += "Id "+id+" already exists in your sources document and are supposed to be unique!! ";
 			return false;
 		}
 
@@ -821,12 +824,12 @@ public class Das1Validator {
 		// }
 
 		if (spl == null) {
-			validationMessage += "---<br/> URL is not well formed";
+			if(appendValidationErrors)validationMessage += "---<br/> URL is not well formed";
 			return false;
 		}
 
 		if (spl.length <= 4) {
-			validationMessage += "---<br/> URL is not well formed <br/>"
+			if(appendValidationErrors)validationMessage += "---<br/> URL is not well formed <br/>"
 					+ "should be http[s]://site.specific.prefix/das/dassourcename/";
 			return false;
 		}
@@ -834,7 +837,7 @@ public class Das1Validator {
 		// System.out.println("split 0 : " + spl[0]);
 		if (!(spl[0].equals("http:"))) {
 			if (!(spl[0].equals("https:"))) {
-				validationMessage += "---<br/> URL is not well formed (does not start with http:// or https://)";
+				if(appendValidationErrors)validationMessage += "---<br/> URL is not well formed (does not start with http:// or https://)";
 				return false;
 			}
 
@@ -852,7 +855,8 @@ public class Das1Validator {
 			suggestion += "<b>das</b>/" + spl[spl.length - 1];
 			wrong += "<b>" + spl[spl.length - 2] + "</b>/"
 					+ spl[spl.length - 1];
-			validationMessage += "--<br/> the URL does not match the DAS spec. it should be <br/>"
+			
+			if(appendValidationErrors)validationMessage += "--<br/> the URL does not match the DAS spec. it should be <br/>"
 					+ " http[s]://site.specific.prefix/das/dassourcename/ <br/>"
 					+ " found >"
 					+ dastxt
@@ -887,23 +891,24 @@ public class Das1Validator {
 			if (sequence.length() > 0) {
 				return true;
 			} else {
-				validationMessage += "<br/>---<br/> contacting " + cmd
+				if(appendValidationErrors){validationMessage += "<br/>---<br/> contacting " + cmd
 						+ "<br/>";
 				validationMessage += " no sequence was returned";
-
+				}
 				return false;
 			}
 
 		} catch (Exception e) {
 			// e.printStackTrace();
-			validationMessage += "<br/>---<br/> contacting " + url
+			if(appendValidationErrors)validationMessage += "<br/>---<br/> contacting " + url
 					+ "dna?segment=" + testcode + "<br/>";
 
 			Throwable cause = e.getCause();
-			if (cause != null)
-				validationMessage += cause.toString();
-			else
-				validationMessage += e.toString();
+			if (cause != null){
+				if(appendValidationErrors)validationMessage += cause.toString();
+			}else{
+				if(appendValidationErrors)validationMessage += e.toString();
+			}
 		}
 		return false;
 
@@ -919,21 +924,23 @@ public class Das1Validator {
 			if ((stylesheet != null) && (stylesheet.length > 0))
 				return true;
 			else {
-				validationMessage += "<br/>---<br/> contacting " + url
+				if(appendValidationErrors){validationMessage += "<br/>---<br/> contacting " + url
 						+ "stylesheet<br/>";
 				validationMessage += " no stylesheet was returned";
+				}
 				return false;
 			}
 		} catch (Exception e) {
-			validationMessage += "<br/>---<br/> contacting " + url
+			if(appendValidationErrors)validationMessage += "<br/>---<br/> contacting " + url
 					+ "stylesheet <br/>";
 
 			Throwable cause = e.getCause();
-			if (cause != null)
-				validationMessage += cause.toString();
-			else
-				validationMessage += e.toString();
-		}
+			if (cause != null){
+				if(appendValidationErrors)validationMessage += cause.toString();
+			}else{
+				if(appendValidationErrors)validationMessage += e.toString();
+			}
+			}
 		return false;
 	}
 
@@ -952,21 +959,23 @@ public class Das1Validator {
 			if (alignments.length > 0) {
 				return true;
 			} else {
-				validationMessage += "<br/>---<br/> contacting " + cmd
+				if(appendValidationErrors){validationMessage += "<br/>---<br/> contacting " + cmd
 						+ testcode + "<br/>";
 				validationMessage += " no Alignments were returned";
+				}
 				return false;
 			}
 
 		} catch (Exception e) {
-			validationMessage += "<br/>---<br/> contacting " + cmd + testcode
+			if(appendValidationErrors)validationMessage += "<br/>---<br/> contacting " + cmd + testcode
 					+ "<br/>";
 
 			Throwable cause = e.getCause();
-			if (cause != null)
-				validationMessage += cause.toString();
-			else
-				validationMessage += e.toString();
+			if (cause != null){
+				if(appendValidationErrors)validationMessage += cause.toString();
+			}else{
+				if(appendValidationErrors)validationMessage += e.toString();
+			}
 		}
 		return false;
 	}
@@ -994,10 +1003,10 @@ public class Das1Validator {
 			if (version != null) {
 				return true;
 			} else {
-				validationMessage += "<br/>---<br/> contacting " + url
+				if(appendValidationErrors){validationMessage += "<br/>---<br/> contacting " + url
 						+ "entry_points <br/>";
 				validationMessage += " no version was returned";
-
+				}
 				return false;
 			}
 
@@ -1007,11 +1016,12 @@ public class Das1Validator {
 					+ "entry_points <br/>";
 
 			Throwable cause = e.getCause();
-			if (cause != null)
-				validationMessage += cause.toString();
-			else
-				validationMessage += e.toString();
-		}
+			if (cause != null){
+				if(appendValidationErrors)validationMessage += cause.toString();
+			}else{
+				if(appendValidationErrors)validationMessage += e.toString();
+			}
+			}
 		return false;
 	}
 
@@ -1124,9 +1134,11 @@ public class Das1Validator {
 				return validateTypesAgainstOntology(types);
 
 			} else {
-				validationMessage += "<br/>---<br/> contacting " + urlString+ "<br/>";
+				if(appendValidationErrors){
+					if(appendValidationErrors){validationMessage += "<br/>---<br/> contacting " + urlString+ "<br/>";
 				validationMessage += " no types were returned";
-
+					}
+				}
 				return false;
 			}
 	}
@@ -1229,24 +1241,25 @@ public class Das1Validator {
 				return validateFeatureOntology(features);
 
 			} else {
-				validationMessage += "<br/>---<br/> contacting " + url
+				if(appendValidationErrors){validationMessage += "<br/>---<br/> contacting " + url
 						+ "features?segment=" + testcode + "<br/>";
 				validationMessage += " no features were returned";
-
+				}
 				return false;
 			}
 
 		} catch (Exception e) {
 			// e.printStackTrace();
-			validationMessage += "<br/>---<br/> contacting " + url
+			if(appendValidationErrors)validationMessage += "<br/>---<br/> contacting " + url
 					+ "features?segment=" + testcode + "<br/>";
 
 			Throwable cause = e.getCause();
-			if (cause != null)
-				validationMessage += cause.toString();
-			else
-				validationMessage += e.toString();
-		}
+			if (cause != null){
+				if(appendValidationErrors)validationMessage += cause.toString();
+			}else{
+				if(appendValidationErrors)validationMessage += e.toString();
+			}
+			}
 		return false;
 	}
 
@@ -1256,7 +1269,7 @@ public class Das1Validator {
 		for(Map<String,String> feature:features){
 			String id=feature.get("id");
 			if(ids.containsKey(id)){
-				validationMessage+="\nFeature Ids need to be Unique and are not!!/n";
+				if(appendValidationErrors)validationMessage+="\nFeature Ids need to be Unique and are not!!/n";
 				return false;
 			}else{
 				ids.put(id,"");
@@ -1454,8 +1467,9 @@ System.out.println("validating track");
 			} catch (DASException ex) {
 				// System.out.println(ex.getMessage());
 				// ex.printStackTrace();
-				validationMessage += "   " + ex.getMessage() + "\n";
+				if(appendValidationErrors){validationMessage += "   " + ex.getMessage() + "\n";
 				validationMessage += "   This DAS source does NOT comply with these SO, ECO, BS ontologies!\n";
+				}
 				ontologyOK = false;
 
 			}
@@ -1484,14 +1498,15 @@ System.out.println("validating track");
 				// equivalent method
 				SimpleTerm term = testTypeIDAgainstOntology(typesList[i]);
 				if (term == null) {
-					validationMessage += "  track ontology "+typesList[i]+" not found in ontology!\n";
+					if(appendValidationErrors)validationMessage += "  track ontology "+typesList[i]+" not found in ontology!\n";
 					return false;
 				}
 			} catch (DASException ex) {
 				// System.out.println(ex.getMessage());
 				// ex.printStackTrace();
-				validationMessage += "   " + ex.getMessage() + "\n";
+				if(appendValidationErrors){validationMessage += "   " + ex.getMessage() + "\n";
 				validationMessage += "   This DAS source does NOT comply with these SO, ECO, BS ontologies!\n";
+				}
 				ontologyOK = false;
 
 			}
@@ -1516,21 +1531,22 @@ System.out.println("validating track");
 			if (c.getAtomLength() > 0) {
 				return true;
 			} else {
-				validationMessage += "<br/>---<br/>contacting " + cmd
+				if(appendValidationErrors){validationMessage += "<br/>---<br/>contacting " + cmd
 						+ testcode + "<br/>";
 				validationMessage += " no structure found";
+				}
 				return false;
 			}
 		} catch (Exception e) {
-			validationMessage += "<br/>---<br/>contacting " + cmd + testcode
+			if(appendValidationErrors)validationMessage += "<br/>---<br/>contacting " + cmd + testcode
 					+ "<br/>";
 
 			Throwable cause = e.getCause();
-			if (cause != null)
-				validationMessage += cause.toString();
-			else
-				validationMessage += e.toString();
-			// e.printStackTrace();
+			if (cause != null){
+				if(appendValidationErrors)validationMessage += cause.toString();
+			}else{
+				if(appendValidationErrors)validationMessage += e.toString();
+			}// e.printStackTrace();
 		}
 		return false;
 	}
@@ -1622,20 +1638,22 @@ System.out.println("validating track");
 			String sequence = cont_handle.get_sequence();
 			// System.out.println("done parsing sequence ...");
 			if ((sequence == null) || (sequence.equals(""))) {
-				validationMessage += "---<br/>contacting " + cmd + "<br/>";
-				validationMessage += "no sequence found";
+				if (appendValidationErrors) {
+					validationMessage += "---<br/>contacting " + cmd + "<br/>";
+					validationMessage += "no sequence found";
+				}
 				return false;
 			}
 			return true;
 		} catch (Exception e) {
-			validationMessage += "---<br/>contacting " + cmd + "<br/>";
+			if(appendValidationErrors)validationMessage += "---<br/>contacting " + cmd + "<br/>";
 
 			Throwable cause = e.getCause();
-			if (cause != null)
-				validationMessage += cause.toString();
-			else
-				validationMessage += e.toString();
-			// e.printStackTrace();
+			if (cause != null){
+				if(appendValidationErrors)validationMessage += cause.toString();
+			}else{
+				if(appendValidationErrors)validationMessage += e.toString();
+			}// e.printStackTrace();
 		}
 		return false;
 	}
