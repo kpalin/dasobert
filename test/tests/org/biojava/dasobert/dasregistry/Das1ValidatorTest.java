@@ -29,5 +29,7 @@ public class Das1ValidatorTest extends TestCase {
 		assertTrue(validator.validateMaxbins("http://www.ebi.ac.uk/das-srv/genomicdas/das/hydragenevar_eQTL_1mb/", "21:43001932,44001931"));
 		assertFalse(validator.validateMaxbins("http://das.ensembl.org/das/ens_zfish7_array/", "20:43603923,43653923"));
 	}
+	
+
 
 }
