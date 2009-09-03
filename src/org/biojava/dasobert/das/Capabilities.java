@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 public enum Capabilities {
@@ -71,6 +73,11 @@ public enum Capabilities {
 
 	}
 
+	/**
+	 * test if a capability exists that is represented by this string
+	 * @param capability
+	 * @return
+	 */
 	public static boolean exists(String capability) {
 		if(nameToValueMap.containsKey(capability))return true;
 		return false;
@@ -101,19 +108,32 @@ public enum Capabilities {
 		}
 		return caps.toArray(new Capabilities[caps.size()]);
 	}
-	public static String[] capabilitiesAsStrings(Capabilities []capabilitiesAsStrings){
-		ArrayList <String>list=new ArrayList<String>();
-		for(int i=0; i<capabilitiesAsStrings.length;i++){
-			list.add(capabilitiesAsStrings[i].toString());
-		}
-		return list.toArray(new String[list.size()]);
-	}
+	
 	public static String[] capabilitiesAsStrings(Collection <Capabilities>capabilities){
 		ArrayList <String>list=new ArrayList<String>();
 		for(Capabilities cap:capabilities){
 			list.add(cap.toString());
 		}
 		return list.toArray(new String[list.size()]);
+	}
+	/**
+	 * is this set of capabilities Strings contained fully in the superset of Strings
+	 * @param stated
+	 * @param valid
+	 * @return
+	 */
+	public static List<String> containsSubSet(String [] stated, String[] valid){
+		ArrayList <String> notValidButStated=new ArrayList<String>();
+		for(String sub: stated){
+			boolean found=false;
+			for(String superS:valid){
+				if(sub.equals(superS)){
+					found=true;
+				}
+			}
+			if(!found)notValidButStated.add(sub);
+		}
+		return notValidButStated;
 	}
 
 	public static void main(String[] args) {
