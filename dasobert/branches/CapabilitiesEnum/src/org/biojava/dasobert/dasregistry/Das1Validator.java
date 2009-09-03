@@ -1269,7 +1269,7 @@ public class Das1Validator {
 		for(Map<String,String> feature:features){
 			String id=feature.get("id");
 			if(ids.containsKey(id)){
-				if(appendValidationErrors)validationMessage+="\nFeature Ids need to be Unique and are not!!/n";
+				if(appendValidationErrors)validationMessage+="\nFeature Ids need to be unique and are not!! Offending id is:"+id;
 				return false;
 			}else{
 				ids.put(id,"");
@@ -1781,17 +1781,17 @@ System.out.println("validating track");
 		    if(specificationTypes.containsKey(dasVersion)){
 		    	dasVersionCount=specificationTypes.get(dasVersion);
 		    }
-		    serverTypes.put(dasServer, serverCount++);
-		    specificationTypes.put(dasVersion, dasVersionCount++);
-		    System.out.println("header result for url "+ url+" is dasServer="+dasServer+" dasVersion="+dasVersion);
-		    specificationTypes.put(dasVersion,dasVersionCount++ );
+		    serverTypes.put(dasServer, ++serverCount);
+		    specificationTypes.put(dasVersion, ++dasVersionCount);
+		    System.out.println("header result for url "+ url+" is dasServer="+dasServer+" "+serverCount+" dasVersion="+dasVersion+" "+dasVersionCount);
+		   
 		  
 
 		
 	}
 	
 	/**
-	 * validate a list of DasSources
+	 * validate a list of DasSources - does not effect the registry!!
 	 * @param dasSources
 	 */
 	public boolean  validateSources(DasSource[] dasSources){
@@ -1803,6 +1803,7 @@ System.out.println("validating track");
 		ArrayList failedUrls=new ArrayList();
 		
 		DasSource[] dss = dasSources;
+		HashMap<String, Integer> failedValidation=new HashMap<String, Integer>();
 
 	for ( int i =0 ; i< dss.length;i++){
 		DasSource ds = dss[i];
@@ -1827,8 +1828,8 @@ System.out.println("validating track");
 		
 		
 		if ( validcaps != null ) {
-
-			if ( validcaps.length != ds.getCapabilities().length){
+			List <String> notValidButStated=Capabilities.containsSubSet(ds.getCapabilities(),validcaps );
+			if ( validcaps.length < ds.getCapabilities().length || notValidButStated.size()>0 ){
 
 				
 					System.out.print(" failed ");
@@ -1837,7 +1838,17 @@ System.out.println("validating track");
 						System.out.print(validcaps[v]+ "o.k. ");
 					}
 					
-				
+					for(String notValid:notValidButStated){
+						
+						
+						if(failedValidation.containsKey(notValid)){
+							Integer numberFailedSoFar=failedValidation.get(notValid);
+							failedValidation.put(notValid, ++numberFailedSoFar);
+						}else{
+							failedValidation.put(notValid, 1);
+						}
+						System.out.println("failedValidation:"+failedValidation);
+					}
 				
 				// something went wrong ...
 				// log it
@@ -1868,7 +1879,7 @@ System.out.println("validating track");
 		
 			System.out.println("number of failed sources="+numberOfSourcesFailed);
 	}//end of validate sources loo
-	
+	System.out.println(failedUrls);
 	if(failedUrls.size()>0){
 		return false;
 	}else{
