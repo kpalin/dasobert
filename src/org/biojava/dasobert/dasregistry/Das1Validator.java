@@ -457,7 +457,7 @@ public class Das1Validator {
 	public boolean validateUnknownSegment(String url){
 		//validate with a new relaxng document for unknown segment
 		if (!relaxNgApproved(Capabilities.UNKNOWN_SEGMENT, url
-				+ "features?segment=" + invalidTestCode)){
+				+ "features?segment=" + invalidTestCode+ ":1,1000")){
 			return false;
 		}
 		else{
@@ -465,7 +465,7 @@ public class Das1Validator {
 	}
 	public boolean validateErrorSegment(String url) {
 		if (!relaxNgApproved(Capabilities.ERROR_SEGMENT, url
-				+ "features?segment=" + invalidTestCode)){
+				+ "features?segment=" + invalidTestCode+ ":1,1000")){
 			return false;
 		}
 		else{
@@ -475,7 +475,7 @@ public class Das1Validator {
 	}
 	public boolean validateUnknownFeature(String url) {
 		if (!relaxNgApproved(Capabilities.UNKNOWN_FEATURE, url
-				+ "features?segment=" + invalidTestCode)){
+				+ "features?segment=" + invalidTestCode+ ":1,1000")){
 			return false;
 		}else{		
 		return true;

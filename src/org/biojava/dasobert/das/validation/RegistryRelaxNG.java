@@ -318,6 +318,7 @@ public class RegistryRelaxNG {
 	public int validateCatchingExceptions(String rng, String input) {
 		int valid = 0;
 		try {
+			System.out.println("validating rng:"+rng +"  input:"+input);
 			valid = this.validate(rng, input);
 		} catch (MalformedURLException e) {
 
