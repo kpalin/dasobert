@@ -475,7 +475,7 @@ public class Das1Validator {
 	}
 	public boolean validateUnknownFeature(String url) {
 		if (!relaxNgApproved(Capabilities.UNKNOWN_FEATURE, url
-				+ "features?segment=" + invalidTestCode+ ":1,1000")){
+				+ "features?feature_id=" + invalidTestCode)){
 			return false;
 		}else{		
 		return true;

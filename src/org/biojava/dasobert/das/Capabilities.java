@@ -17,7 +17,7 @@ public enum Capabilities {
 
 	
 	
-	SOURCES("sources"),STYLESHEET("stylesheet"),FEATURES("features"),TYPES(	"types"),SEQUENCE("sequence"),  ENTRY_POINTS("entry_points"),ALIGNMENT("alignment"),  STRUCTURE("structure"),   INTERACTION("interaction"), 
+	SOURCES("sources"),STYLESHEET("stylesheet"),FEATURES("features"),TYPES(	"types"), SEQUENCE("sequence"),  ENTRY_POINTS("entry_points"),ALIGNMENT("alignment"),  STRUCTURE("structure"),   INTERACTION("interaction"), 
 		UNKNOWN_SEGMENT("unknown_segment"),UNKNOWN_FEATURE("unknown_feature"), ERROR_SEGMENT("error_segment"),  MAXBINS("maxbins"), NEXT_FEATURE("next_feature");//FEATURE_BY_ID("feature_by_id"), GROUP_BY_ID("group_by_id")
 //error_segments: Annotation servers should report unknown-segment and unknown-feature, and reference servers should indicate error-segment instead of unknown-segment.
 	private static final Map<String, Capabilities> nameToValueMap =
