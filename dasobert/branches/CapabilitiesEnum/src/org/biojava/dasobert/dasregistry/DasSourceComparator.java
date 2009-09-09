@@ -101,6 +101,7 @@ public abstract class DasSourceComparator
     };
     public static final Comparator BY_CAPABILITIES = new DasSourceComparator("capabilities") {
         protected Comparable getField(DasSource ds) {
+        	//System.out.println("nickname="+ds.getNickname());
             String[] caps = ds.getValidCapabilities();
             //System.out.println("return="+caps.length);
             

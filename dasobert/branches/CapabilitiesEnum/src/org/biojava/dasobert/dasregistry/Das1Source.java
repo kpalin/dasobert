@@ -69,6 +69,7 @@ public class Das1Source implements DasSource {
 		coordinateSystem = new DasCoordinateSystem[0];
 
 		capabilities     = new String[0];
+		validCapabilities     = new String[0];
 		labels 	         = new String[0];
 
 		registerDate     = new Date() ;
@@ -301,14 +302,19 @@ System.out.println("hashcode="+h);
 
 
 	public void setValidCapabilities(String[] validCapabilities) {
+//		System.out.println("setting valid capabilities!!");
+//		for(String valid:validCapabilities){
+//			System.out.println("setting valid capabilities:"+valid);
+//		}
 		this.validCapabilities=validCapabilities;
 		
 	}
 	public String[] getValidCapabilities(){
 		
-//			String []standin={"features"};
-//			return  standin;
-		
+//System.out.println("getting valid capabs!!");
+//for(String valid:validCapabilities){
+//	System.out.println("setting valid capabilities:"+valid);
+//}
 		return validCapabilities;
 	}
 	

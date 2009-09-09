@@ -189,12 +189,13 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 					} else {
 						howValid = "probably_valid";
 					}
+				}
 					xw.openTag("PROP");
 					xw.attribute("name", howValid);
 					xw.attribute("value", validCapabilities[i]);
 
 					xw.closeTag("PROP");
-				}
+				
 			}
 		}
 		xw.closeTag("VERSION");
