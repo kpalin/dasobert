@@ -440,18 +440,27 @@ public class Das1Validator {
 		int firstFeaturesSize=0;
 		int secondFeaturesSize=0;
 		
-			validateFeatures(url, testcode, false, 1);
+			boolean firstValid=validateFeatures(url, testcode, false, 1);
+			
+			if(firstValid){//only bother doing another call if the first returned a valid response
 			firstFeaturesSize=lastFeaturesSize;
-			validateFeatures(url, testcode, false, 1000000);
+			boolean secondValid=validateFeatures(url, testcode, false, 1000000);
 			secondFeaturesSize=lastFeaturesSize;
 			
-				
+				if(firstValid && secondValid){
+					
 				if(firstFeaturesSize==secondFeaturesSize){
 					System.out.println("returning false for maxbins valid");
 					return false;
+				}else{
+					return true;}
+				
 				}
+			}else{
+				return false;
+			}
 		
-		return true;
+		return false;
 	}
 
 	public boolean validateUnknownSegment(String url){
@@ -523,11 +532,11 @@ public class Das1Validator {
 				 System.out.println("source before checking validation"+ds.getUrl());
 				boolean isValid = this.checkDAS1SourceInSourcesXML(ds);
 
-//				if (!isValid) {
-//					numberOfInvalidSources++;
-//					validationMessage += " No coordinate system found in the registry that matches the one for this source "
-//							+ ds.getNickname() + "\n";
-//				}
+				if (!isValid) {
+					numberOfInvalidSources++;
+					validationMessage += " No coordinate system found in the registry that matches the one for this source "
+							+ ds.getNickname() + "\n";
+				}
 
 			}
 

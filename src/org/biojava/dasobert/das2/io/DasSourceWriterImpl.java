@@ -186,6 +186,7 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 				for (String stated : statedCapabilities) {
 					if (stated.equals(validCapabilities[i])) {
 						howValid = "valid";
+						break;
 					} else {
 						howValid = "probably_valid";
 					}
