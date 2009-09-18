@@ -76,7 +76,7 @@ public class Das2SourceHandler extends DefaultHandler{
 		String doc_ref = atts.getValue("doc_href");
 		String description = atts.getValue("description");
 
- System.out.println("setting id/uri="+id);
+ //System.out.println("setting id/uri="+id);
 		currentSource.setId(id);
 		currentSource.setNickname(title);
 		currentSource.setHelperurl(doc_ref);

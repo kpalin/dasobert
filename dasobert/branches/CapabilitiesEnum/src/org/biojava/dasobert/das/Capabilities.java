@@ -18,7 +18,7 @@ public enum Capabilities {
 	
 	
 	SOURCES("sources"),STYLESHEET("stylesheet"),FEATURES("features"),TYPES(	"types"), SEQUENCE("sequence"),  ENTRY_POINTS("entry_points"),ALIGNMENT("alignment"),  STRUCTURE("structure"),   INTERACTION("interaction"), 
-		UNKNOWN_SEGMENT("unknown_segment"),UNKNOWN_FEATURE("unknown_feature"), ERROR_SEGMENT("error_segment"),  MAXBINS("maxbins"), NEXT_FEATURE("next_feature");//FEATURE_BY_ID("feature_by_id"), GROUP_BY_ID("group_by_id")
+		UNKNOWN_SEGMENT("unknown_segment"),UNKNOWN_FEATURE("unknown_feature"), ERROR_SEGMENT("error_segment"),  MAXBINS("maxbins"); //NEXT_FEATURE("next_feature");//FEATURE_BY_ID("feature_by_id"), GROUP_BY_ID("group_by_id")
 //error_segments: Annotation servers should report unknown-segment and unknown-feature, and reference servers should indicate error-segment instead of unknown-segment.
 	private static final Map<String, Capabilities> nameToValueMap =
         new HashMap<String, Capabilities>();
@@ -144,5 +144,15 @@ public enum Capabilities {
 		if(Capabilities.SEQUENCE.equals(Capabilities.SEQUENCE.toString()))System.out.println("is true");
 	}
 	
+	/**
+	 * convenience method to see if all stated capabilities are contained in valid capabilities
+	 * @param stated
+	 * @param valid
+	 * @return
+	 */
+	public static boolean allStatedAreValid(String []stated, String[] valid){
+	List <String> notValidButStated=Capabilities.containsSubSet(stated,valid );
+	return notValidButStated.size()==0 ? true : false;
+	}
 
 }

@@ -78,11 +78,11 @@ public class DasSourceConverter {
             	//just add a shortened url for sources capability without the dsn
             	String capabilityString=c.substring(DASPREFIXLENGTH,c.length());
             	das1capabilitites.add(capabilityString);
-            	System.out.println("adding sources capability as :"+capabilityString);
+            	//System.out.println("adding sources capability as :"+capabilityString);
             }else{
             String url = query_uri.substring(0,(query_uri.length() - c.length() + DASPREFIXLENGTH));
             das1capabilitites.add(c.substring(DASPREFIXLENGTH,c.length()));
-            System.out.println("setting url in converter="+url);
+            //System.out.println("setting url in converter="+url);
             ds.setUrl(url);
             }
             }
