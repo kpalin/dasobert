@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.biojava.dasobert.dasregistry.Das1Validator;
+
 public enum Capabilities {
 
 //	SEQUENCE("sequence"), STRUCTURE("structure"), ALIGNMENT("alignment"), TYPES(
@@ -15,10 +17,48 @@ public enum Capabilities {
 //			"sources"),
 //			ERROR_SEGMENT("error_segment"),UNKNOWN_SEGMENT("unknown_segment"),UNKNOWN_FEATURE("unknown_feature"), FEATURE_BY_ID("feature_by_id");
 
+//	else if (capability.equals(Capabilities.SEQUENCE)
+//			|| capability.equals(Capabilities.FEATURES)) {
+//		cmd += capability + "?segment=" + testCode;
+//		
+//		
+//	} else if (capability.equals(Capabilities.ALIGNMENT)
+//			|| capability.equals(Capabilities.STRUCTURE)) {
+//		cmd += capability + "?query=" + testCode;
+//	} else if (capability.equals(Capabilities.ENTRY_POINTS)) {
+//		cmd += capability;
+//	} else if (capability.equals(Capabilities.STYLESHEET)) {
+//		cmd += capability;
+//	}  else if (capability.equals(Capabilities.TYPES)) {
+//		cmd += capability;
+//	} else if (capability.equals(Capabilities.INTERACTION)) {
+//		cmd += capability + "?interactor=" + testCode;
+//}else if (capability.equals(Capabilities.ERROR_SEGMENT)) {
+//	cmd+="features?"+"segment="+Das1Validator.invalidTestCode;
+//} else if (capability.equals(Capabilities.UNKNOWN_SEGMENT)) {
+//	cmd+="features?"+"segment="+Das1Validator.invalidTestCode;
+//} else if (capability.equals(Capabilities.UNKNOWN_FEATURE)) {
+//	cmd+="features?feature_id=" + Das1Validator.invalidTestCode;
+//} else if(capability.equals(Capabilities.MAXBINS)){
+//	cmd += "features" + "?segment=" + testCode+";maxbins=1";
+//}
 	
 	
-	SOURCES("sources"),STYLESHEET("stylesheet"),FEATURES("features"),TYPES(	"types"), SEQUENCE("sequence"),  ENTRY_POINTS("entry_points"),ALIGNMENT("alignment"),  STRUCTURE("structure"),   INTERACTION("interaction"), 
-		UNKNOWN_SEGMENT("unknown_segment"),UNKNOWN_FEATURE("unknown_feature"), ERROR_SEGMENT("error_segment"),  MAXBINS("maxbins"); //NEXT_FEATURE("next_feature");//FEATURE_BY_ID("feature_by_id"), GROUP_BY_ID("group_by_id")
+	
+	
+	SOURCES("sources"){ public String getCommandString(String testCode) { return "sources"; } }
+	,STYLESHEET("stylesheet"){ public String getCommandString(String testCode) { return getName(); } }
+	,FEATURES("features"){ public String getCommandString(String testCode) { return getName()+"?segment=" + testCode; } }
+	,TYPES(	"types"){ public String getCommandString(String testCode) { return getName(); } }
+	,SEQUENCE("sequence"){ public String getCommandString(String testCode) { return getName()+"?segment=" + testCode; } }
+	,ENTRY_POINTS("entry_points"){ public String getCommandString(String testCode) { return getName(); } }
+	,ALIGNMENT("alignment"){ public String getCommandString(String testCode) { return getName()+"?query=" + testCode; } }
+	,STRUCTURE("structure"){ public String getCommandString(String testCode) { return getName()+"?query=" + testCode; } }
+	,INTERACTION("interaction"){ public String getCommandString(String testCode) { return getName() + "?interactor=" + testCode; } } 
+	,UNKNOWN_SEGMENT("unknown_segment"){ public String getCommandString(String testCode) { return "features"+"?segment=" + Das1Validator.invalidTestCode; } }
+	,UNKNOWN_FEATURE("unknown_feature"){ public String getCommandString(String testCode) { return "features"+"?segment=" + Das1Validator.invalidTestCode; } }
+	,ERROR_SEGMENT("error_segment"){ public String getCommandString(String testCode) { return "features"+"?segment=" + Das1Validator.invalidTestCode; } }
+	,MAXBINS("maxbins"){ public String getCommandString(String testCode) { return "features" + "?segment=" + testCode+";maxbins=1"; } }; //NEXT_FEATURE("next_feature");//FEATURE_BY_ID("feature_by_id"), GROUP_BY_ID("group_by_id")
 //error_segments: Annotation servers should report unknown-segment and unknown-feature, and reference servers should indicate error-segment instead of unknown-segment.
 	private static final Map<String, Capabilities> nameToValueMap =
         new HashMap<String, Capabilities>();
@@ -41,6 +81,8 @@ public enum Capabilities {
 		this.command=command;
 	}
 
+	public abstract String getCommandString(String testCode);
+	
 	public String getName() {
 		return this.name;
 	}
