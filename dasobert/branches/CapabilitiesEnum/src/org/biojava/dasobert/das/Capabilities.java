@@ -46,19 +46,19 @@ public enum Capabilities {
 	
 	
 	
-	SOURCES("sources"){ public String getCommandString(String testCode) { return "sources"; } }
-	,STYLESHEET("stylesheet"){ public String getCommandString(String testCode) { return getName(); } }
-	,FEATURES("features"){ public String getCommandString(String testCode) { return getName()+"?segment=" + testCode; } }
-	,TYPES(	"types"){ public String getCommandString(String testCode) { return getName(); } }
-	,SEQUENCE("sequence"){ public String getCommandString(String testCode) { return getName()+"?segment=" + testCode; } }
-	,ENTRY_POINTS("entry_points"){ public String getCommandString(String testCode) { return getName(); } }
-	,ALIGNMENT("alignment"){ public String getCommandString(String testCode) { return getName()+"?query=" + testCode; } }
-	,STRUCTURE("structure"){ public String getCommandString(String testCode) { return getName()+"?query=" + testCode; } }
-	,INTERACTION("interaction"){ public String getCommandString(String testCode) { return getName() + "?interactor=" + testCode; } } 
-	,UNKNOWN_SEGMENT("unknown_segment"){ public String getCommandString(String testCode) { return "features"+"?segment=" + Das1Validator.invalidTestCode; } }
-	,UNKNOWN_FEATURE("unknown_feature"){ public String getCommandString(String testCode) { return "features"+"?segment=" + Das1Validator.invalidTestCode; } }
-	,ERROR_SEGMENT("error_segment"){ public String getCommandString(String testCode) { return "features"+"?segment=" + Das1Validator.invalidTestCode; } }
-	,MAXBINS("maxbins"){ public String getCommandString(String testCode) { return "features" + "?segment=" + testCode+";maxbins=1"; } }; //NEXT_FEATURE("next_feature");//FEATURE_BY_ID("feature_by_id"), GROUP_BY_ID("group_by_id")
+	SOURCES("sources"){ public String getCommandTestString(String testCode) { return "sources"; } }
+	,STYLESHEET("stylesheet"){ public String getCommandTestString(String testCode) { return getName(); } }
+	,FEATURES("features"){ public String getCommandTestString(String testCode) { return getName()+"?segment=" + testCode; } }
+	,TYPES(	"types"){ public String getCommandTestString(String testCode) { return getName(); } }
+	,SEQUENCE("sequence"){ public String getCommandTestString(String testCode) { return getName()+"?segment=" + testCode; } }
+	,ENTRY_POINTS("entry_points"){ public String getCommandTestString(String testCode) { return getName(); } }
+	,ALIGNMENT("alignment"){ public String getCommandTestString(String testCode) { return getName()+"?query=" + testCode; } }
+	,STRUCTURE("structure"){ public String getCommandTestString(String testCode) { return getName()+"?query=" + testCode; } }
+	,INTERACTION("interaction"){ public String getCommandTestString(String testCode) { return getName() + "?interactor=" + testCode; } } 
+	,UNKNOWN_SEGMENT("unknown_segment"){ public String getCommandTestString(String testCode) { return "features"+"?segment=" + Das1Validator.invalidTestCode+":1,1000"; } }
+	,UNKNOWN_FEATURE("unknown_feature"){ public String getCommandTestString(String testCode) { return "features"+"?feature_id=" + Das1Validator.invalidTestCode; } }
+	,ERROR_SEGMENT("error_segment"){ public String getCommandTestString(String testCode) { return "features"+"?segment=" + Das1Validator.invalidTestCode+":1,1000"; } }
+	,MAXBINS("maxbins"){ public String getCommandTestString(String testCode) { return "features" + "?segment=" + testCode+";maxbins=1"; } }; //NEXT_FEATURE("next_feature");//FEATURE_BY_ID("feature_by_id"), GROUP_BY_ID("group_by_id")
 //error_segments: Annotation servers should report unknown-segment and unknown-feature, and reference servers should indicate error-segment instead of unknown-segment.
 	private static final Map<String, Capabilities> nameToValueMap =
         new HashMap<String, Capabilities>();
@@ -81,7 +81,7 @@ public enum Capabilities {
 		this.command=command;
 	}
 
-	public abstract String getCommandString(String testCode);
+	public abstract String getCommandTestString(String testCode);
 	
 	public String getName() {
 		return this.name;
@@ -108,8 +108,8 @@ public enum Capabilities {
 
 	public static String[] getCapabilityStrings() {
 		ArrayList caps = new ArrayList();
-		for (Capabilities cap : Capabilities.values()) {
-			caps.add(cap.toString());
+		for (Capabilities value : EnumSet.allOf(Capabilities.class)) {
+			caps.add(value.toString());
 		}
 		return (String[]) caps.toArray(new String[caps.size()]);
 
