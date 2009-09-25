@@ -534,7 +534,7 @@ public class Das1Validator {
 
 				if (!isValid) {
 					numberOfInvalidSources++;
-					validationMessage += " No coordinate system found in the registry that matches the one for this source "
+					if(appendValidationErrors)validationMessage += " No coordinate system found in the registry that matches the one for this source "
 							+ ds.getNickname() + "\n";
 				}
 
