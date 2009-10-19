@@ -88,8 +88,11 @@ private List<Das1Source> getDas1Sources(List<HashMap<String,String>> dsns){
 		List <String>types=this.getTypes(url);
 		for(String type:types){
 			System.out.println(type);
+			//create a source for each type here
+			
 			allTypes.add(type);
 		}
+		break;//for testing just stop after first dsn
 		//Das1Source source=new Das1Source();
 		//source.setNickname(name)
 		
@@ -99,6 +102,14 @@ private List<Das1Source> getDas1Sources(List<HashMap<String,String>> dsns){
 	}
 	System.out.println("alltypes size="+allTypes.size());
 	return sources;
+}
+
+private Das1Source createDas1SourceFromUCSCType(HashMap dsn, String type){
+	Das1Source source=new Das1Source();
+	//source.setNickname(dsn.get("ID")id)
+	return source; 
+	
+	
 }
 	
 	private List getDSNs(){
