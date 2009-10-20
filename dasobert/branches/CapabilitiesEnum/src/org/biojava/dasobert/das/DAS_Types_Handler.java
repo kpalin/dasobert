@@ -27,57 +27,78 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.Attributes;
 
 import java.util.ArrayList ;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /** a class to parse the reponse of a DAS - types request 
  */
 public class DAS_Types_Handler extends DefaultHandler {
-    List types;
-    boolean dastypesPresent;
-    boolean gffPresent;
-    boolean segmentPresent;
-	private int maxNrFeaturesOntolgy;
-    
-    public DAS_Types_Handler() {
-	super();
-	types = new ArrayList();
-	dastypesPresent = false;
-	gffPresent=false;
-	segmentPresent=false;
-    }
-
-    public void startElement (String uri, String name, String qName, Attributes atts){
-	if ( qName.equals("DASTYPES")) {
-	    dastypesPresent = true;
+	 List <Map<String,String>>types;
+	    boolean dastypesPresent;
+	    boolean gffPresent;
+	    boolean segmentPresent;
+		private int maxNrFeaturesOntolgy;
 	    
-	} else if ( qName.equals("GFF")) {
-	    gffPresent = true;
-	    
-	} else if ( qName.equals("SEGMENT")) {
-	    segmentPresent = true;	
-	 
-	    String id = atts.getValue("id");
-	    // id is optional here
-	    if ( id != null ) {
-		types.add(id);
+	    public DAS_Types_Handler() {
+		super();
+		types = new ArrayList<Map<String,String>>();
+		dastypesPresent = false;
+		gffPresent=false;
+		segmentPresent=false;
 	    }
-	} else if ( qName.equals("TYPE")){
-	    String type = atts.getValue("id");
-	    // id is mandatory ...	    
-	    types.add(type);
+
+	    public void startElement (String uri, String name, String qName, Attributes atts){
+		if ( qName.equals("DASTYPES")) {
+		    dastypesPresent = true;
+		    
+		} else if ( qName.equals("GFF")) {
+		    gffPresent = true;
+		    
+		} else if ( qName.equals("SEGMENT")) {
+		    segmentPresent = true;	
+		 
+		    String id = atts.getValue("id");
+		    // id is optional here
+		    //if ( id != null ) {
+			//types.add("id",id);
+		    //}
+		} else if ( qName.equals("TYPE")){
+			HashMap<String,String>map=new HashMap<String,String>();
+		    String type = atts.getValue("id");
+		    // id is mandatory ...	    
+		    
+		    String category=atts.getValue("category");
+		    String method=atts.getValue("method");
+		    String cvId=atts.getValue("cvId");
+		    if(type!=null){
+		    	map.put("id",type);
+		    }
+		    if(category!=null){
+		    	map.put("category",category);
+		    }
+		    if(method!=null){
+		    	map.put("method",method);
+		    }
+		    if(cvId!=null){
+		    	map.put("cvId",cvId);
+		    }
+		    types.add(map);
+		}
+		
+	    }
+
+	    public String[] getTypes(){
+		return (String[])types.toArray(new String[types.size()]);
+	    }
 	    
+	    public List<Map<String,String>> getTypesAsList(){
+	    	return types;
+	        }
+
+		public void setMaxFeatures(int maxNrFeaturesOntology) {
+			// TODO Auto-generated method stub
+			this.maxNrFeaturesOntolgy=maxNrFeaturesOntology;
+		}
 	}
-	
-    }
-
-    public String[] getTypes(){
-	return (String[])types.toArray(new String[types.size()]);
-    }
-
-	public void setMaxFeatures(int maxNrFeaturesOntology) {
-		// TODO Auto-generated method stub
-		this.maxNrFeaturesOntolgy=maxNrFeaturesOntology;
-	}
-}
-
