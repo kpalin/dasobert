@@ -803,7 +803,7 @@ public class Das1Validator {
 	 * 
 	 * @return
 	 */
-	private DasCoordinateSystem[] getRegistryCoordinateSystems() {
+	public  DasCoordinateSystem[] getRegistryCoordinateSystems() {
 
 		DASRegistryCoordinatesReaderXML reader = new DASRegistryCoordinatesReaderXML();
 		// need to implement a reader for
@@ -989,7 +989,7 @@ public class Das1Validator {
 		return false;
 	}
 
-	protected boolean validateEntry_Points(String url) {
+	public  boolean validateEntry_Points(String url) {
 		try {
 			URL u = new URL(url + "entry_points");
 
@@ -1135,8 +1135,8 @@ public class Das1Validator {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			String[] types = cont_handle.getTypes();
-			if (types.length > 0) {
+			List <Map<String,String>>types = cont_handle.getTypesAsList();
+			if (types.size() > 0) {
 				if (!ontologyValidation)
 					return true;
 				
@@ -1492,22 +1492,23 @@ System.out.println("validating track");
 	 * @param typesList
 	 * @return
 	 */
-	private boolean validateTypesAgainstOntology(String[] typesList) {
+	private boolean validateTypesAgainstOntology(List <Map<String,String>>typesList) {
 		// System.out.println("validating type ontology jw");
 		//validationMessage += "got " + typesList.length + " types\n";
 		boolean ontologyOK = true;
 
 		// start at 1 as 0 is ID
-		for (int i = 1; i < typesList.length; i++) {
+		for (int i = 1; i < typesList.size(); i++) {
 
 			//validationMessage += "*** validating type " + i + ": "
 					//+ typesList[i] + "\n";
 			try {
 				// validate code here to replace validat tracks in feature
 				// equivalent method
-				SimpleTerm term = testTypeIDAgainstOntology(typesList[i]);
+				Map <String,String>map=typesList.get(i);
+				SimpleTerm term = testTypeIDAgainstOntology(map.get("id"));
 				if (term == null) {
-					if(appendValidationErrors)validationMessage += "  track ontology "+typesList[i]+" not found in ontology!\n";
+					if(appendValidationErrors)validationMessage += "  track ontology "+typesList.get(i)+" not found in ontology!\n";
 					return false;
 				}
 			} catch (DASException ex) {
@@ -1645,7 +1646,7 @@ System.out.println("validating track");
 			insource.setByteStream(dasInStream);
 			xmlreader.parse(insource);
 			String sequence = cont_handle.get_sequence();
-			// System.out.println("done parsing sequence ...");
+			//System.out.println(sequence+"done parsing sequence ...");
 			if ((sequence == null) || (sequence.equals(""))) {
 				if (appendValidationErrors) {
 					validationMessage += "---<br/>contacting " + cmd + "<br/>";
