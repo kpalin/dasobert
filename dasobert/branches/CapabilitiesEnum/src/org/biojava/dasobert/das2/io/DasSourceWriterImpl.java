@@ -35,6 +35,7 @@ import org.biojava.dasobert.das2.Das2Capability;
 import org.biojava.dasobert.das2.Das2CapabilityImpl;
 import org.biojava.dasobert.das2.Das2Source;
 import org.biojava.dasobert.dasregistry.Das1Source;
+import org.biojava.dasobert.dasregistry.Das1SourceUCSC;
 import org.biojava.dasobert.dasregistry.DasCoordinateSystem;
 import org.biojava.dasobert.dasregistry.DasSource;
 import org.biojava.utils.xml.PrettyXMLWriter;
@@ -138,6 +139,21 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 				xw.attribute("query_uri", source.getUrl() + c);
 				xw.closeTag("CAPABILITY");
 			}
+			
+
+		}
+		else if (source instanceof Das1SourceUCSC) {
+			// System.out.println("das1source");
+			String[] capabilities = source.getCapabilities();
+			for (int i = 0; i < capabilities.length; i++) {
+				String c = capabilities[i];
+				xw.openTag("CAPABILITY");
+				xw.attribute("type", Das2CapabilityImpl.DAS1_CAPABILITY_PREFIX
+						+ c);
+				xw.attribute("query_uri", source.getUrl() + c);
+				xw.closeTag("CAPABILITY");
+			}
+			
 
 		}
 
