@@ -84,6 +84,7 @@ public class DAS_DSN_Handler
 			String id = atts.getValue("id");
 			if (! (id == null)){
 				currentDSN.put("id",id);
+				//System.out.println(id);
 			}
 		}
 		
