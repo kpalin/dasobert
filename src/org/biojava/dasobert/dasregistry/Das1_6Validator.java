@@ -64,7 +64,6 @@ import org.biojava.dasobert.das.InteractionDasSource;
 import org.biojava.dasobert.das.InteractionParameters;
 import org.biojava.dasobert.das.InteractionThread;
 import org.biojava.dasobert.das.validation.DasRegistryOntologyLookUp;
-import org.biojava.dasobert.das.validation.RelaxNGValidatorJing;
 import org.biojava.dasobert.das.validation.RelaxNGValidatorMSV;
 import org.biojava.dasobert.das2.Das2Source;
 import org.biojava.dasobert.das2.DasSourceConverter;
@@ -267,7 +266,7 @@ public class Das1_6Validator extends Das1Validator{
 		String dasregistry="http://www.dasregistry.org/das1/sources";
 		String myLocalTest="http://localhost:8080/das/sources";
 		//validator.validateSourcesCmd("http://www.ensembl.org/das/sources");
-		if(validator.validateSourcesCmd(myLocalTest)){
+		if(validator.validateSourcesCmdShallow(myLocalTest)){
 			System.out.println("sourcesCmd Was valid "+validator.validationMessage);
 		}else{
 			System.out.println("sourcesCmd was invalid"+validator.validationMessage);

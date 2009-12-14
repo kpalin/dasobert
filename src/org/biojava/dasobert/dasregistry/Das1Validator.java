@@ -71,7 +71,6 @@ import org.biojava.dasobert.das.InteractionParameters;
 import org.biojava.dasobert.das.InteractionThread;
 import org.biojava.dasobert.das.NoSuchCapabilityException;
 import org.biojava.dasobert.das.validation.DasRegistryOntologyLookUp;
-import org.biojava.dasobert.das.validation.RelaxNGValidatorJing;
 import org.biojava.dasobert.das.validation.RelaxNGValidatorMSV;
 import org.biojava.dasobert.das2.Das2Source;
 import org.biojava.dasobert.das2.DasSourceConverter;
@@ -107,42 +106,79 @@ public class Das1Validator {
 	protected static final int MAX_SEQUENCE_LENGTH = 1000;
 	protected static final int MAX_NR_FEATURES = 10;
 	protected static final int MAX_NR_FEATURES_ONTOLOGY = 1000;
-	public static final boolean VERBOSE = false;
+	public static final boolean VERBOSE = true;
 	private boolean relaxNgApprovalNeeded = true;// needed if via web page, but
-													// specifically not needed
-													// for autovalidation at the
-													// moment
-	private boolean checkHeaders=true;
-	
+	// specifically not needed
+	// for autovalidation at the
+	// moment
+	private boolean checkHeaders = true;
+
 	private DasCoordinateSystem[] registryCoordinateSystems = null;
-	private Das1Source[] registryDas1Sources = null;
+
 	public static final String REGISTRY_LOCATION = "http://www.dasregistry.org/das1/sources";
-	public  static final String invalidTestCode = "invalidTestCode";//segment or feature that is used to test if the error handling of servers works
+	public static final String invalidTestCode = "invalidTestCode";// segment or
+																	// feature
+																	// that is
+																	// used to
+																	// test if
+																	// the error
+																	// handling
+																	// of
+																	// servers
+																	// works
 	private HashMap sourceUrls = null;
 	private HashMap sourceIds = null;
 	protected DasRegistryOntologyLookUp lookup = new DasRegistryOntologyLookUp();
 	private int lastFeaturesSize;
-	private HashMap<String, Integer> specificationTypes=new HashMap<String, Integer>();
+	private HashMap<String, Integer> specificationTypes = new HashMap<String, Integer>();
 
-	Map <String, Integer> serverTypes=new HashMap<String, Integer>();
+	Map<String, Integer> serverTypes = new HashMap<String, Integer>();
 	protected String relaxNgPath = null;
-	protected boolean appendValidationErrors=true;//append errors to validationMessage default is true
-	//but for cases where the capability has not been claimed to be there we don't want to.
+	protected boolean appendValidationErrors = true;// append errors to
+													// validationMessage default
+													// is true
+	private DasValidationResult result;
 
+	// but for cases where the capability has not been claimed to be there we
+	// don't want to.
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.biojava.dasobert.dasregistry.DasValidator#isRelaxNgApprovalNeeded()
+	 */
 	public boolean isRelaxNgApprovalNeeded() {
 		return relaxNgApprovalNeeded;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.biojava.dasobert.dasregistry.DasValidator#setRelaxNgApprovalNeeded
+	 * (boolean)
+	 */
 	public void setRelaxNgApprovalNeeded(boolean relaxNgApprovalNeeded) {
 		this.relaxNgApprovalNeeded = relaxNgApprovalNeeded;
 	}
 
-	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.biojava.dasobert.dasregistry.DasValidator#getRelaxNgPath()
+	 */
 	public String getRelaxNgPath() {
 		return relaxNgPath;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.biojava.dasobert.dasregistry.DasValidator#setRelaxNgPath(java.lang
+	 * .String)
+	 */
 	public void setRelaxNgPath(String relaxNgPath) {
 		this.relaxNgPath = relaxNgPath;
 	}
@@ -152,353 +188,390 @@ public class Das1Validator {
 		supportsMD5Checksum = false;
 		validationMessage = "";
 
-		
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.biojava.dasobert.dasregistry.DasValidator#supportsMD5Checksum()
+	 */
 	public boolean supportsMD5Checksum() {
 		return supportsMD5Checksum;
 	}
 
-	/**
-	 * return which errors have been produced during validation...
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return String the validation message
+	 * @see org.biojava.dasobert.dasregistry.DasValidator#getValidationMessage()
 	 */
 	public String getValidationMessage() {
 		return validationMessage;
 	}
 
-	/**
-	 * validate the DAS source that is located at the provided url
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param url
-	 *            the URL of the DAS source
-	 * @param coords
-	 *            the coordinate systems that should be supported by it
-	 * @param capabilities
-	 *            the capabilities that should be tested.
-	 * @return an array of capabilities that were tested successfully.
+	 * @see
+	 * org.biojava.dasobert.dasregistry.DasValidator#validate(java.lang.String,
+	 * org.biojava.dasobert.dasregistry.DasCoordinateSystem[],
+	 * java.lang.String[])
 	 */
-	public String[] validate(String url, DasCoordinateSystem[] coords,
-			String[] capabilities) {
+	public DasValidationResult validate(String url,
+			DasCoordinateSystem[] coords, String[] capabilities) {
 		return validate(url, coords, capabilities, VERBOSE,
 				NO_ONTOLOGY_VALIDATION);
 	}
 
-	/**
-	 * validate the DAS source that is located at the provided url method called
-	 * by AutoValidator by registry
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param url
-	 *            the URL of the DAS source
-	 * @param coords
-	 *            the coordinate systems that should be supported by it
-	 * @param capabilities
-	 *            the capabilities that should be tested.
-	 * @param verbose
-	 *            flag if the output should be verbose or not
-	 * @param ontologyValidation
-	 *            flag if the ontology should be checked as well
-	 * @return an array of capabilities that were tested successfully.
+	 * @see
+	 * org.biojava.dasobert.dasregistry.DasValidator#validate(java.lang.String,
+	 * org.biojava.dasobert.dasregistry.DasCoordinateSystem[],
+	 * java.lang.String[], boolean, boolean)
 	 */
-	public String[] validate(String url, DasCoordinateSystem[] coords,
-			String[] capabilities, boolean verbose, boolean ontologyValidation) {
+	public DasValidationResult validate(String url,
+			DasCoordinateSystem[] coords, String[] capabilities,
+			boolean verbose, boolean ontologyValidation) {
 		System.out.println("calling validate in DAS1Validator with url=" + url);
 		verbose = true;
-		validationMessage = "";
-		Capabilities[] caps=null;
-		//try {
-			caps = Capabilities.capabilitiesFromStrings(capabilities);
-//		} catch (NoSuchCapabilityException e) {
-//			
-//			e.printStackTrace();
-//		}
-		
+
+		result = new DasValidationResult(url, coords);
+
 		if (url == null)
-			return new String[0];
+			return result;
 
 		if (coords == null)
-			return new String[0];
+			return result;
 
 		if (capabilities == null)
-			return new String[0];
-		HashSet <String>statedCapabilities=new HashSet<String>();
-		for(String capability:capabilities){
+			return result;
+		HashSet<String> statedCapabilities = new HashSet<String>();
+		for (String capability : capabilities) {
 			statedCapabilities.add(capability);
 		}
-
-		// a list containing all valid DAS requests ...
-
-		List<Capabilities> lst = new ArrayList<Capabilities>();
 
 		char lastChar = url.charAt(url.length() - 1);
 		if (lastChar != '/')
 			url += "/";
 
-		boolean valid = validateURL(url);
-		// System.out.println("is url valid : "+valid);
+		if (verbose)
+			System.out.println("validation message=" + validationMessage);
 
-		if (verbose)System.out.println("validation message=" + validationMessage);
+		String specification = getSpec(removeDataSourceNameFromUrl(url));
 		
-		validateHeaders(removeDataSourceNameFromUrl(url));
 		// test if all possible capabilities work
-		for (Capabilities capability:EnumSet.allOf(Capabilities.class)) {
-			//Capabilities capability = caps[c];
-			if(statedCapabilities.contains(capability.toString())){
-				appendValidationErrors=true;
+		for (Capabilities capability : EnumSet.allOf(Capabilities.class)) {
+			boolean isValid = false;
+			validationMessage = "";
+			// Capabilities capability = caps[c];
+			if (statedCapabilities.contains(capability.toString())) {
+				appendValidationErrors = true;
+			} else {
+				appendValidationErrors = false;
 			}
-			else{
-				appendValidationErrors=false;
-			}
-				// System.out.println("testing " + capability);
+			// System.out.println("testing " + capability);
 
-				if (capability.equals(Capabilities.SOURCES)) {
-					boolean sourcesok = true;
-
-					if (!validateSourcesCmd(url)) {
-						sourcesok = false;
-
-					}
-					
-
-					if (verbose)
-						System.out.println(validationMessage);
-
-					if (sourcesok){
-						lst.add(capability);
-					}
-				} else if (capability.equals(Capabilities.SEQUENCE)) {
-					boolean sequenceok = true;
-					for (int i = 0; i < coords.length; i++) {
-						DasCoordinateSystem ds = coords[i];
-						String testcode = ds.getTestCode();
-
-						// do a DAS sequence retreive
-						if (!validateSequence(url, testcode)) {
-							sequenceok = false;
-
-						}
-
-						if (verbose)
-							System.out.println(validationMessage);
-					}
-					if (sequenceok){
-						lst.add(capability);
-					}
-				} else if (capability.equals(Capabilities.STRUCTURE)) {
-					boolean structureok = true;
-					for (int i = 0; i < coords.length; i++) {
-						DasCoordinateSystem ds = coords[i];
-
-						// don't test for structure if this can't work...
-						System.out.println("catagory=" + ds.getCategory());
-						// if (! ds.getCategory().equals("Protein Structure"))
-						// continue;
-
-						String testcode = ds.getTestCode();
-
-						if (!validateStructure(url, testcode))
-							{
-							structureok = false;
-							}
-						if (verbose)
-							System.out.println(validationMessage);
-
-					}
-
-					String cmd = url + "structure?model=1&query=";
-
-					if (structureok){
-						lst.add(capability);
-					}
-				} else if (capability.equals(Capabilities.FEATURES)) {
-					
-					boolean featureok = true;
-					for (int i = 0; i < coords.length; i++) {
-						DasCoordinateSystem ds = coords[i];
-						String testcode = ds.getTestCode();
-
-						if (!validateFeatures(url, testcode, ontologyValidation)) {
-							featureok = false;
-							logger.debug("features not ok! in validate");
-						}
-						if (verbose)
-							System.out.println(validationMessage);
-					}
-					if (featureok) {
-						lst.add(capability);
-						logger.debug("adding features as a validated capability");
-					}
-				} else if (capability.equals(Capabilities.INTERACTION)) {
-					boolean interactionok = true;
-					for (int i = 0; i < coords.length; i++) {
-						DasCoordinateSystem ds = coords[i];
-						String testcode = ds.getTestCode();
-
-						if (verbose) {
-							System.out.println(" validating interaction ");
-							System.out.println(url + " " + testcode);
-						}
-						if (!validateInteraction(url, testcode))
-							interactionok = false;
-						if (verbose)
-							System.out.println(validationMessage);
-					}
-					if (interactionok){
-						lst.add(capability);
-					}
-				} else if (capability.equals(Capabilities.ALIGNMENT)) {
-					boolean alignmentok = true;
-					for (int i = 0; i < coords.length; i++) {
-						DasCoordinateSystem ds = coords[i];
-						String testcode = ds.getTestCode();
-
-						if (!validateAlignment(url, testcode))
-							alignmentok = false;
-						if (verbose)
-							System.out.println(validationMessage);
-					}
-					if (alignmentok){
-						lst.add(capability);
-					}
-					
-				} else if (capability.equals(Capabilities.TYPES)) {
-					if (validateTypes(url, ontologyValidation)){
-						lst.add(capability);
-					}
-					if (verbose)
-						System.out.println(validationMessage);
-					// else
-					// error =true ;
-
-				} else if (capability.equals(Capabilities.ENTRY_POINTS)) {
-					if (validateEntry_Points(url)){
-						lst.add(capability);
-					}
-					if (verbose)
-						System.out.println(validationMessage);
-					// else
-					// error = true;
-				} else if (capability.equals(Capabilities.STYLESHEET)) {
-					if (validateStylesheet(url)){
-						lst.add(capability);
-					}
-					if (verbose)
-						System.out.println(validationMessage);
-					// } else
-					// error = true;
-				} else if(capability.equals(Capabilities.ERROR_SEGMENT)){
-					if(validateErrorSegment(url)){
-						lst.add(Capabilities.ERROR_SEGMENT);
-					}
-					
+			if (capability.equals(Capabilities.SOURCES)) {
+				if(specification.equals("")){
+					specification = getSpec(removeDataSourceNameFromUrl(url)+"sources");
 				}
-				else if(capability.equals(Capabilities.UNKNOWN_SEGMENT)){
-					if(validateUnknownSegment(url)){
-						lst.add(Capabilities.UNKNOWN_SEGMENT);
+				boolean sourcesok = true;
+
+				if (!validateSourcesCmdShallow(url)) {
+					sourcesok = false;
+
+				}
+
+				if (verbose)
+					System.out.println(validationMessage);
+
+				if (sourcesok) {
+					isValid = true;
+				}
+			} else if (capability.equals(Capabilities.SEQUENCE)) {
+				boolean sequenceok = true;
+				for (int i = 0; i < coords.length; i++) {
+					DasCoordinateSystem ds = coords[i];
+					String testcode = ds.getTestCode();
+
+					// do a DAS sequence retreive
+					if (!validateSequence(url, testcode)) {
+						sequenceok = false;
+
+					}
+
+					if (verbose)
+						System.out.println(validationMessage);
+				}
+				if (sequenceok) {
+					isValid = true;
+				}
+				if (coords.length < 1) {
+					isValid = false;
+					validationMessage += " no testcode provided";
+				}
+			} else if (capability.equals(Capabilities.STRUCTURE)) {
+				boolean structureok = true;
+				for (int i = 0; i < coords.length; i++) {
+					DasCoordinateSystem ds = coords[i];
+
+					// don't test for structure if this can't work...
+					System.out.println("catagory=" + ds.getCategory());
+					// if (! ds.getCategory().equals("Protein Structure"))
+					// continue;
+
+					String testcode = ds.getTestCode();
+
+					if (!validateStructure(url, testcode)) {
+						structureok = false;
+					}
+					if (verbose)
+						System.out.println(validationMessage);
+
+				}
+
+				String cmd = url + "structure?model=1&query=";
+
+				if (structureok) {
+					isValid = true;
+				}
+				if (coords.length < 1) {
+					isValid = false;
+					validationMessage += " no testcode provided";
+				}
+			} else if (capability.equals(Capabilities.FEATURES)) {
+				
+				boolean featureok = true;
+				for (int i = 0; i < coords.length; i++) {
+					DasCoordinateSystem ds = coords[i];
+					String testcode = ds.getTestCode();
+					if(specification.equals("")){
+						specification = getSpec(url+Capabilities.FEATURES.getCommandTestString(testcode));
+					}
+					if (!validateFeatures(url, testcode, ontologyValidation)) {
+						featureok = false;
+						logger.debug("features not ok! in validate");
+					}
+					if (verbose)
+						System.out.println(validationMessage);
+				}
+
+				if (featureok) {
+					isValid = true;
+				}
+				if (coords.length < 1) {
+					isValid = false;
+					validationMessage += " no testcode provided";
+				}
+			} else if (capability.equals(Capabilities.INTERACTION)) {
+				boolean interactionok = true;
+				for (int i = 0; i < coords.length; i++) {
+					DasCoordinateSystem ds = coords[i];
+					String testcode = ds.getTestCode();
+
+					if (verbose) {
+						System.out.println(" validating interaction ");
+						System.out.println(url + " " + testcode);
+					}
+					if (!validateInteraction(url, testcode))
+						interactionok = false;
+
+				}
+				if (interactionok) {
+					isValid = true;
+				}
+				if (coords.length < 1) {
+					isValid = false;
+					validationMessage += " no testcode provided";
+				}
+			} else if (capability.equals(Capabilities.ALIGNMENT)) {
+				boolean alignmentok = true;
+				for (int i = 0; i < coords.length; i++) {
+					DasCoordinateSystem ds = coords[i];
+					String testcode = ds.getTestCode();
+
+					if (!validateAlignment(url, testcode))
+						alignmentok = false;
+					if (verbose)
+						System.out.println(validationMessage);
+				}
+				if (alignmentok) {
+					isValid = true;
+				}
+				if (coords.length < 1) {
+					isValid = false;
+					validationMessage += " no testcode provided";
+				}
+			} else if (capability.equals(Capabilities.TYPES)) {
+				if (validateTypes(url, ontologyValidation)) {
+					isValid = true;
+				}
+				if (verbose)
+					System.out.println(validationMessage);
+				// else
+				// error =true ;
+
+			} else if (capability.equals(Capabilities.ENTRY_POINTS)) {
+				if (validateEntry_Points(url)) {
+					isValid = true;
+				}
+				if (verbose)
+					System.out.println(validationMessage);
+				// else
+				// error = true;
+			} else if (capability.equals(Capabilities.STYLESHEET)) {
+				if (validateStylesheet(url)) {
+					isValid = true;
+				}
+				if (verbose)
+					System.out.println(validationMessage);
+				// } else
+				// error = true;
+			} else if (capability.equals(Capabilities.ERROR_SEGMENT)) {
+				if (validateErrorSegment(url)) {
+					isValid = true;
+				}
+
+			} else if (capability.equals(Capabilities.UNKNOWN_SEGMENT)) {
+				if (validateUnknownSegment(url)) {
+					isValid = true;
+				}
+			} else if (capability.equals(Capabilities.UNKNOWN_FEATURE)) {
+				if (validateUnknownFeature(url)) {
+					isValid = true;
+				}
+
+			} else if (capability.equals(Capabilities.MAXBINS)) {
+				boolean maxbins = true;
+				for (int i = 0; i < coords.length; i++) {
+					DasCoordinateSystem ds = coords[i];
+					String testcode = ds.getTestCode();
+					if (validateMaxbins(url, testcode)) {
+						isValid = true;
 					}
 				}
-				else if(capability.equals(Capabilities.UNKNOWN_FEATURE)){
-						if(validateUnknownFeature(url)){
-							lst.add(Capabilities.UNKNOWN_FEATURE);
-						}
-					
-				}else if(capability.equals(Capabilities.MAXBINS)){
-					boolean maxbins=true;
-					for (int i = 0; i < coords.length; i++) {
-						DasCoordinateSystem ds = coords[i];
-						String testcode = ds.getTestCode();
-					if(validateMaxbins(url, testcode)){
-						lst.add(Capabilities.MAXBINS);
-					}
-					}
-			}
-				else {
-					if(appendValidationErrors){
-						validationMessage += "<br/>---<br/> test of capability "
+				if (coords.length < 1) {
+					isValid = false;
+					validationMessage += " no testcode provided";
+				}
+			} else {
+				if (appendValidationErrors) {
+					validationMessage += "<br/>---<br/> test of capability "
 							+ capability + " not implemented,yet.";
-					}
-							
-					//lst.add(capability);
 				}
-				
-				
-		
-			
-		}
 
-		System.out.println("serverTypes="+serverTypes.toString()+ "\nspecificationTypes="+specificationTypes.toString());
+				// lst.add(capability);
+			}
+			result.isValid(capability, isValid);
+			result.error(capability, validationMessage);
+
+		}
+		result.setSpecification(specification);
+		
 		// if ( error) {
 		// System.out.println("DasValidator: "+ validationMessage);
 		// }
 		// this.validationMessage = validationMessage;
-		return Capabilities.capabilitiesAsStrings(lst);
+		return result;
 
 	}
 
-	public  boolean validateMaxbins(String url, String testcode) {
-		int firstFeaturesSize=0;
-		int secondFeaturesSize=0;
-		
-			boolean firstValid=validateFeatures(url, testcode, false, 1);
-			
-			if(firstValid){//only bother doing another call if the first returned a valid response
-			firstFeaturesSize=lastFeaturesSize;
-			boolean secondValid=validateFeatures(url, testcode, false, 1000000);
-			secondFeaturesSize=lastFeaturesSize;
-			
-				if(firstValid && secondValid){
-					
-				if(firstFeaturesSize==secondFeaturesSize){
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.biojava.dasobert.dasregistry.DasValidator#validateMaxbins(java.lang
+	 * .String, java.lang.String)
+	 */
+	public boolean validateMaxbins(String url, String testcode) {
+		int firstFeaturesSize = 0;
+		int secondFeaturesSize = 0;
+
+		boolean firstValid = validateFeatures(url, testcode, false, 1);
+
+		if (firstValid) {// only bother doing another call if the first returned
+							// a valid response
+			firstFeaturesSize = lastFeaturesSize;
+			boolean secondValid = validateFeatures(url, testcode, false,
+					1000000);
+			secondFeaturesSize = lastFeaturesSize;
+
+			if (firstValid && secondValid) {
+
+				if (firstFeaturesSize == secondFeaturesSize) {
 					System.out.println("returning false for maxbins valid");
 					return false;
-				}else{
-					return true;}
-				
+				} else {
+					return true;
 				}
-			}else{
-				return false;
+
 			}
-		
+		} else {
+			return false;
+		}
+
 		return false;
 	}
 
-	public boolean validateUnknownSegment(String url){
-		//validate with a new relaxng document for unknown segment
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.biojava.dasobert.dasregistry.DasValidator#validateUnknownSegment(
+	 * java.lang.String)
+	 */
+	public boolean validateUnknownSegment(String url) {
+		// validate with a new relaxng document for unknown segment
 		if (!relaxNgApproved(Capabilities.UNKNOWN_SEGMENT, url
-				+ "features?segment=" + invalidTestCode+ ":1,1000")){
+				+ "features?segment=" + invalidTestCode + ":1,1000")) {
 			return false;
-		}
-		else{
-		return true;}
-	}
-	public boolean validateErrorSegment(String url) {
-		if (!relaxNgApproved(Capabilities.ERROR_SEGMENT, url
-				+ "features?segment=" + invalidTestCode+ ":1,1000")){
-			return false;
-		}
-		else{
+		} else {
 			return true;
-		}
-		
-	}
-	public boolean validateUnknownFeature(String url) {
-		if (!relaxNgApproved(Capabilities.UNKNOWN_FEATURE, url
-				+ "features?feature_id=" + invalidTestCode)){
-			return false;
-		}else{		
-		return true;
 		}
 	}
 
-	/**
-	 * validate the sources cmd of a server
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param url
-	 * @param testcode
-	 * @return
+	 * @see
+	 * org.biojava.dasobert.dasregistry.DasValidator#validateErrorSegment(java
+	 * .lang.String)
 	 */
-	public boolean validateSourcesCmd(String url) {
+	public boolean validateErrorSegment(String url) {
+		if (!relaxNgApproved(Capabilities.ERROR_SEGMENT, url
+				+ "features?segment=" + invalidTestCode + ":1,1000")) {
+			return false;
+		} else {
+			return true;
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.biojava.dasobert.dasregistry.DasValidator#validateUnknownFeature(
+	 * java.lang.String)
+	 */
+	public boolean validateUnknownFeature(String url) {
+		if (!relaxNgApproved(Capabilities.UNKNOWN_FEATURE, url
+				+ "features?feature_id=" + invalidTestCode)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.biojava.dasobert.dasregistry.DasValidator#validateSourcesCmd(java
+	 * .lang.String)
+	 */
+	public boolean validateSourcesCmdShallow(String url) {
 		// sources is the odd capability as belongs to the server not the source
 		// therefor need to chop DataSourceName off the end of the url
 
@@ -507,14 +580,16 @@ public class Das1Validator {
 		// there are no duplicates
 		sourceUrls = new HashMap();
 		sourceIds = new HashMap();
-		//System.out.println("sources url at start of validation method " + url);
+		// System.out.println("sources url at start of validation method " +
+		// url);
 		String choppedURL = removeDataSourceNameFromUrl(url);
 		// System.out.println("chopped "+choppedURL);
 		String cmd = choppedURL + "sources";
 
 		// System.out.println("running sources with  cmd="+cmd);
-		 if(!relaxNgApproved(Capabilities.SOURCES, cmd))return false;
-		
+		if (!relaxNgApproved(Capabilities.SOURCES, cmd))
+			return false;
+
 		// get a list of all sources from the registry either from xml for
 		// external programs or from database
 		// for the registry
@@ -529,13 +604,15 @@ public class Das1Validator {
 
 			for (int i = 0; i < sources.length; i++) {
 				Das1Source ds = (Das1Source) sources[i];
-				 System.out.println("source before checking validation"+ds.getUrl());
+				System.out.println("source before checking validation"
+						+ ds.getUrl());
 				boolean isValid = this.checkDAS1SourceInSourcesXML(ds);
 
 				if (!isValid) {
 					numberOfInvalidSources++;
-					if(appendValidationErrors)validationMessage += " No coordinate system found in the registry that matches the one for this source "
-							+ ds.getNickname() + "\n";
+					if (appendValidationErrors)
+						validationMessage += " No coordinate system found in the registry that matches the one for this source "
+								+ ds.getNickname() + "\n";
 				}
 
 			}
@@ -543,8 +620,9 @@ public class Das1Validator {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		//validationMessage += "Number of invalid sources returned from this sources cmd was "
-				//+ numberOfInvalidSources + "\n";
+		// validationMessage +=
+		// "Number of invalid sources returned from this sources cmd was "
+		// + numberOfInvalidSources + "\n";
 		if (numberOfInvalidSources != 0)
 			return false;
 		return true;
@@ -569,7 +647,9 @@ public class Das1Validator {
 	 *            one of Capabilities such as Capabitlities.SOURCES
 	 * @param cmd
 	 *            url string sometimes with testcode added
-	 * @param appendValidationErrors true or false depending on if we wish for error info for this command           
+	 * @param appendValidationErrors
+	 *            true or false depending on if we wish for error info for this
+	 *            command
 	 * @return boolean true if valid according to relaxng if approval needed
 	 *         from relaxng.
 	 */
@@ -583,7 +663,7 @@ public class Das1Validator {
 			}
 			if (!rng.validateUsingRelaxNG(cmdType, cmd)) {
 
-				if(appendValidationErrors){
+				if (appendValidationErrors) {
 					validationMessage += rng.getMessage();
 				}
 				System.out.println("getting message in das1 validator"
@@ -613,11 +693,11 @@ public class Das1Validator {
 		// already
 		boolean isValid = false;
 		isValid = isCoordinateSystemValid(ds, isValid);
-		//logger.debug("coordinate system valid=" + isValid);
+		// logger.debug("coordinate system valid=" + isValid);
 		// also need to check if uri has been used already in both this sources
 		// document and in the registry
 		isValid = isValidUniqueUrlAndId(ds, isValid);
-		//logger.debug("uniqueURL and Ids valid=" + isValid);
+		// logger.debug("uniqueURL and Ids valid=" + isValid);
 		// also check the capabilities are of a type that is allowed eg
 		// das1:types etc this is done in relaxng validation
 
@@ -635,7 +715,7 @@ public class Das1Validator {
 
 		for (int j = 0; j < coords.length; j++) {
 			DasCoordinateSystem cs = coords[j];
-			//System.out.println("coordinate system=" + cs);
+			// System.out.println("coordinate system=" + cs);
 			// need to check if split cs then should equal "authority, type";
 			String userCSAuthority = cs.getAuthority();
 			String userCSCategory = cs.getCategory();
@@ -646,8 +726,8 @@ public class Das1Validator {
 				DasCoordinateSystem tempCs = registryCoordinateSystems[k];
 				// System.out.println("uniqueId="+tempCs.uniqueId+"");
 				if (tempCs.equals(cs)) {
-					//logger
-						//	.debug("--------------coordinate sytem found in registry-----------------");
+					// logger
+					// .debug("--------------coordinate sytem found in registry-----------------");
 					isValid = true;
 
 				}
@@ -655,8 +735,9 @@ public class Das1Validator {
 				// System.out.println("authority in reg="+tempCs.getAuthority());
 
 			}
-			if(!isValid){
-				if(appendValidationErrors)validationMessage+=cs.toString()+ " not found";
+			if (!isValid) {
+				if (appendValidationErrors)
+					validationMessage += cs.toString() + " not found";
 			}
 		}
 		return isValid;
@@ -677,12 +758,18 @@ public class Das1Validator {
 		String id = ds.getId();
 
 		if (sourceUrls.containsKey(url)) {
-			if(appendValidationErrors)validationMessage += "Url "+url+" already exists in your sources document and are supposed to be unique!! ";
+			if (appendValidationErrors)
+				validationMessage += "Url "
+						+ url
+						+ " already exists in your sources document and are supposed to be unique!! ";
 			return false;
 		}
 		if (sourceIds.containsKey(id)) {
 			System.out.println("testing id" + id);
-			if(appendValidationErrors)validationMessage += "Id "+id+" already exists in your sources document and are supposed to be unique!! ";
+			if (appendValidationErrors)
+				validationMessage += "Id "
+						+ id
+						+ " already exists in your sources document and are supposed to be unique!! ";
 			return false;
 		}
 
@@ -705,7 +792,8 @@ public class Das1Validator {
 		// isValid=false;//url has exists already so return not valid
 		// }
 		// }
-		System.out.println("adding url to hash="+url+" for source id="+ds.getId());
+		System.out.println("adding url to hash=" + url + " for source id="
+				+ ds.getId());
 		sourceUrls.put(url, "");
 		sourceIds.put(id, "");
 		// logger.debug("adding id="+id);
@@ -759,9 +847,14 @@ public class Das1Validator {
 				.size()]);
 
 	}
-	
-	
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.biojava.dasobert.dasregistry.DasValidator#getDas1SourcesFromSourcesXml
+	 * (java.lang.String)
+	 */
 	public Das1Source[] getDas1SourcesFromSourcesXml(String sourcesUrl) {
 		System.out.println("runnning get sourcesFromSourcesXml method");
 		System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
@@ -796,14 +889,14 @@ public class Das1Validator {
 
 	}
 
-	/**
-	 * use this method to get known Coordinate systems from the registry using
-	 * das call to registry by default but the registry itself can change this
-	 * method to use the database directly if needed.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return
+	 * @see
+	 * org.biojava.dasobert.dasregistry.DasValidator#getRegistryCoordinateSystems
+	 * ()
 	 */
-	public  DasCoordinateSystem[] getRegistryCoordinateSystems() {
+	public DasCoordinateSystem[] getRegistryCoordinateSystems() {
 
 		DASRegistryCoordinatesReaderXML reader = new DASRegistryCoordinatesReaderXML();
 		// need to implement a reader for
@@ -817,12 +910,12 @@ public class Das1Validator {
 
 	}
 
-	/**
-	 * make sure the URL matches the DAS spec returns true if URL looks o.k...
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param url
-	 *            to validate
-	 * @return boolean true if URL looks ok
+	 * @see
+	 * org.biojava.dasobert.dasregistry.DasValidator#validateURL(java.lang.String
+	 * )
 	 */
 	public boolean validateURL(String url) {
 		System.out.println("*********validating url**************");
@@ -833,20 +926,23 @@ public class Das1Validator {
 		// }
 
 		if (spl == null) {
-			if(appendValidationErrors)validationMessage += "---<br/> URL is not well formed";
+			if (appendValidationErrors)
+				validationMessage += "---<br/> URL is not well formed";
 			return false;
 		}
 
 		if (spl.length <= 4) {
-			if(appendValidationErrors)validationMessage += "---<br/> URL is not well formed <br/>"
-					+ "should be http[s]://site.specific.prefix/das/dassourcename/";
+			if (appendValidationErrors)
+				validationMessage += "---<br/> URL is not well formed <br/>"
+						+ "should be http[s]://site.specific.prefix/das/dassourcename/";
 			return false;
 		}
 
 		// System.out.println("split 0 : " + spl[0]);
 		if (!(spl[0].equals("http:"))) {
 			if (!(spl[0].equals("https:"))) {
-				if(appendValidationErrors)validationMessage += "---<br/> URL is not well formed (does not start with http:// or https://)";
+				if (appendValidationErrors)
+					validationMessage += "---<br/> URL is not well formed (does not start with http:// or https://)";
 				return false;
 			}
 
@@ -864,16 +960,17 @@ public class Das1Validator {
 			suggestion += "<b>das</b>/" + spl[spl.length - 1];
 			wrong += "<b>" + spl[spl.length - 2] + "</b>/"
 					+ spl[spl.length - 1];
-			
-			if(appendValidationErrors)validationMessage += "--<br/> the URL does not match the DAS spec. it should be <br/>"
-					+ " http[s]://site.specific.prefix/das/dassourcename/ <br/>"
-					+ " found >"
-					+ dastxt
-					+ " < instead of >das< <br/>"
-					+ " suggested url: "
-					+ suggestion
-					+ "<br/>"
-					+ " instead of: " + wrong;
+
+			if (appendValidationErrors)
+				validationMessage += "--<br/> the URL does not match the DAS spec. it should be <br/>"
+						+ " http[s]://site.specific.prefix/das/dassourcename/ <br/>"
+						+ " found >"
+						+ dastxt
+						+ " < instead of >das< <br/>"
+						+ " suggested url: "
+						+ suggestion
+						+ "<br/>"
+						+ " instead of: " + wrong;
 			return false;
 		}
 		return true;
@@ -900,23 +997,27 @@ public class Das1Validator {
 			if (sequence.length() > 0) {
 				return true;
 			} else {
-				if(appendValidationErrors){validationMessage += "<br/>---<br/> contacting " + cmd
-						+ "<br/>";
-				validationMessage += " no sequence was returned";
+				if (appendValidationErrors) {
+					validationMessage += "<br/>---<br/> contacting " + cmd
+							+ "<br/>";
+					validationMessage += " no sequence was returned";
 				}
 				return false;
 			}
 
 		} catch (Exception e) {
 			// e.printStackTrace();
-			if(appendValidationErrors)validationMessage += "<br/>---<br/> contacting " + url
-					+ "dna?segment=" + testcode + "<br/>";
+			if (appendValidationErrors)
+				validationMessage += "<br/>---<br/> contacting " + url
+						+ "dna?segment=" + testcode + "<br/>";
 
 			Throwable cause = e.getCause();
-			if (cause != null){
-				if(appendValidationErrors)validationMessage += cause.toString();
-			}else{
-				if(appendValidationErrors)validationMessage += e.toString();
+			if (cause != null) {
+				if (appendValidationErrors)
+					validationMessage += cause.toString();
+			} else {
+				if (appendValidationErrors)
+					validationMessage += e.toString();
 			}
 		}
 		return false;
@@ -933,23 +1034,27 @@ public class Das1Validator {
 			if ((stylesheet != null) && (stylesheet.length > 0))
 				return true;
 			else {
-				if(appendValidationErrors){validationMessage += "<br/>---<br/> contacting " + url
-						+ "stylesheet<br/>";
-				validationMessage += " no stylesheet was returned";
+				if (appendValidationErrors) {
+					validationMessage += "<br/>---<br/> contacting " + url
+							+ "stylesheet<br/>";
+					validationMessage += " no stylesheet was returned";
 				}
 				return false;
 			}
 		} catch (Exception e) {
-			if(appendValidationErrors)validationMessage += "<br/>---<br/> contacting " + url
-					+ "stylesheet <br/>";
+			if (appendValidationErrors)
+				validationMessage += "<br/>---<br/> contacting " + url
+						+ "stylesheet <br/>";
 
 			Throwable cause = e.getCause();
-			if (cause != null){
-				if(appendValidationErrors)validationMessage += cause.toString();
-			}else{
-				if(appendValidationErrors)validationMessage += e.toString();
+			if (cause != null) {
+				if (appendValidationErrors)
+					validationMessage += cause.toString();
+			} else {
+				if (appendValidationErrors)
+					validationMessage += e.toString();
 			}
-			}
+		}
 		return false;
 	}
 
@@ -968,28 +1073,39 @@ public class Das1Validator {
 			if (alignments.length > 0) {
 				return true;
 			} else {
-				if(appendValidationErrors){validationMessage += "<br/>---<br/> contacting " + cmd
-						+ testcode + "<br/>";
-				validationMessage += " no Alignments were returned";
+				if (appendValidationErrors) {
+					validationMessage += "<br/>---<br/> contacting " + cmd
+							+ testcode + "<br/>";
+					validationMessage += " no Alignments were returned";
 				}
 				return false;
 			}
 
 		} catch (Exception e) {
-			if(appendValidationErrors)validationMessage += "<br/>---<br/> contacting " + cmd + testcode
-					+ "<br/>";
+			if (appendValidationErrors)
+				validationMessage += "<br/>---<br/> contacting " + cmd
+						+ testcode + "<br/>";
 
 			Throwable cause = e.getCause();
-			if (cause != null){
-				if(appendValidationErrors)validationMessage += cause.toString();
-			}else{
-				if(appendValidationErrors)validationMessage += e.toString();
+			if (cause != null) {
+				if (appendValidationErrors)
+					validationMessage += cause.toString();
+			} else {
+				if (appendValidationErrors)
+					validationMessage += e.toString();
 			}
 		}
 		return false;
 	}
 
-	public  boolean validateEntry_Points(String url) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.biojava.dasobert.dasregistry.DasValidator#validateEntry_Points(java
+	 * .lang.String)
+	 */
+	public boolean validateEntry_Points(String url) {
 		try {
 			URL u = new URL(url + "entry_points");
 
@@ -1012,9 +1128,10 @@ public class Das1Validator {
 			if (version != null) {
 				return true;
 			} else {
-				if(appendValidationErrors){validationMessage += "<br/>---<br/> contacting " + url
-						+ "entry_points <br/>";
-				validationMessage += " no version was returned";
+				if (appendValidationErrors) {
+					validationMessage += "<br/>---<br/> contacting " + url
+							+ "entry_points <br/>";
+					validationMessage += " no version was returned";
 				}
 				return false;
 			}
@@ -1025,21 +1142,23 @@ public class Das1Validator {
 					+ "entry_points <br/>";
 
 			Throwable cause = e.getCause();
-			if (cause != null){
-				if(appendValidationErrors)validationMessage += cause.toString();
-			}else{
-				if(appendValidationErrors)validationMessage += e.toString();
+			if (cause != null) {
+				if (appendValidationErrors)
+					validationMessage += cause.toString();
+			} else {
+				if (appendValidationErrors)
+					validationMessage += e.toString();
 			}
-			}
+		}
 		return false;
 	}
 
-	/**
-	 * validate the DSN command for a DAS source.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param url
-	 *            the full url of a source, including the name of the das source
-	 * @return flag if the DSN response is o.k.
+	 * @see
+	 * org.biojava.dasobert.dasregistry.DasValidator#validateDSN(java.lang.String
+	 * )
 	 */
 	public boolean validateDSN(String url) {
 		try {
@@ -1089,67 +1208,78 @@ public class Das1Validator {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.biojava.dasobert.dasregistry.DasValidator#validateTypes(java.lang
+	 * .String, boolean)
+	 */
 	public boolean validateTypes(String url, boolean ontologyValidation) {
-		
-			String urlString=url+"types";
-			URL u=null;
-			try {
-				u = new URL(url + "types");
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 
-			if (!relaxNgApproved(Capabilities.TYPES, urlString))
-				return false;
+		String urlString = url + "types";
+		URL u = null;
+		try {
+			u = new URL(url + "types");
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-			InputStream dasInStream=null;
-			try {
-				dasInStream = open(u);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			XMLReader xmlreader=null;
-			try {
-				xmlreader = getXMLReader();
-			} catch (SAXException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		if (!relaxNgApproved(Capabilities.TYPES, urlString))
+			return false;
 
-			DAS_Types_Handler cont_handle = new DAS_Types_Handler();
+		InputStream dasInStream = null;
+		try {
+			dasInStream = open(u);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		XMLReader xmlreader = null;
+		try {
+			xmlreader = getXMLReader();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-			xmlreader.setContentHandler(cont_handle);
-			xmlreader.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
-			InputSource insource = new InputSource();
-			if (ontologyValidation)
-				cont_handle.setMaxFeatures(MAX_NR_FEATURES_ONTOLOGY);
-			insource.setByteStream(dasInStream);
-			try {
-				xmlreader.parse(insource);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SAXException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			List <Map<String,String>>types = cont_handle.getTypesAsList();
-			if (types.size() > 0) {
-				if (!ontologyValidation)
-					return true;
-				
-				return validateTypesAgainstOntology(types);
+		DAS_Types_Handler cont_handle = new DAS_Types_Handler();
 
-			} else {
-				if(appendValidationErrors){
-					if(appendValidationErrors){validationMessage += "<br/>---<br/> contacting " + urlString+ "<br/>";
-				validationMessage += " no types were returned";
-					}
+		xmlreader.setContentHandler(cont_handle);
+		xmlreader.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
+		InputSource insource = new InputSource();
+		if (ontologyValidation)
+			cont_handle.setMaxFeatures(MAX_NR_FEATURES_ONTOLOGY);
+		insource.setByteStream(dasInStream);
+		try {
+			xmlreader.parse(insource);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		List<Map<String, String>> types = cont_handle.getTypesAsList();
+		if (types.size() > 0) {
+			result.setTypes(types);
+
+			if (!ontologyValidation)
+				return true;
+
+			return validateTypesAgainstOntology(types);
+
+		} else {
+			if (appendValidationErrors) {
+				if (appendValidationErrors) {
+					validationMessage += "<br/>---<br/> contacting "
+							+ urlString + "<br/>";
+					validationMessage += " no types were returned";
 				}
-				return false;
 			}
+			return false;
+		}
 	}
 
 	protected boolean validateInteraction(String url, String testcode) {
@@ -1178,32 +1308,40 @@ public class Das1Validator {
 			return true;
 		return false;
 	}
-	
-	/**
-	 * default method for running features validation (sets maxbins set to 0)
-	 * @param url
-	 * @param testcode
-	 * @param ontologyValidation
-	 * @return
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.biojava.dasobert.dasregistry.DasValidator#validateFeatures(java.lang
+	 * .String, java.lang.String, boolean)
 	 */
 	public boolean validateFeatures(String url, String testcode,
 			boolean ontologyValidation) {
-		int maxbins=0;
-		return this.validateFeatures(url, testcode, ontologyValidation, maxbins);
+		int maxbins = 0;
+		return this
+				.validateFeatures(url, testcode, ontologyValidation, maxbins);
 	}
-	
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.biojava.dasobert.dasregistry.DasValidator#validateFeatures(java.lang
+	 * .String, java.lang.String, boolean, int)
+	 */
 	public boolean validateFeatures(String url, String testcode,
 			boolean ontologyValidation, int maxbins) {
 		try {
-			URL u=null;
-			if(maxbins==0){
+			URL u = null;
+			if (maxbins == 0) {
 				u = new URL(url + "features?segment=" + testcode);
-			}else{
-				u= new URL(url + "features?segment=" + testcode+";maxbins="+maxbins);
-			}	
-			
-			if (!relaxNgApproved(Capabilities.FEATURES,u.toString()))
+			} else {
+				u = new URL(url + "features?segment=" + testcode + ";maxbins="
+						+ maxbins);
+			}
+
+			if (!relaxNgApproved(Capabilities.FEATURES, u.toString()))
 				return false;
 			System.out
 					.println("validation message after features and rng call= "
@@ -1215,10 +1353,11 @@ public class Das1Validator {
 
 			// make sure we do not load the features of a whole chromosome, in
 			// case a user specified those...
-			if(maxbins!=0){//but for max features testing we want to have a greater range
+			if (maxbins != 0) {// but for max features testing we want to have a
+								// greater range
 				cont_handle.setMaxFeatures(10000);
-			}else{
-			cont_handle.setMaxFeatures(MAX_NR_FEATURES);
+			} else {
+				cont_handle.setMaxFeatures(MAX_NR_FEATURES);
 			}
 			if (ontologyValidation)
 				cont_handle.setMaxFeatures(MAX_NR_FEATURES_ONTOLOGY);
@@ -1228,68 +1367,74 @@ public class Das1Validator {
 			InputSource insource = new InputSource();
 			insource.setByteStream(dasInStream);
 			xmlreader.parse(insource);
-			
+
 			List<Map<String, String>> features = cont_handle.get_features();
-			
-			//return a list of features that are a map
-			//then check the ids are unique
-			if(!checkFeatureIdsAreUnique(features))return false;
+
+			// return a list of features that are a map
+			// then check the ids are unique
+			if (!checkFeatureIdsAreUnique(features))
+				return false;
 			System.out.println("features size is=" + features.size());
 
 			if (cont_handle.isMD5Checksum())
 				supportsMD5Checksum = true;
 
-			//store this so if we are testing maxbins we can get the results for a normal request without maxbins i.e. maxbins =0
-			lastFeaturesSize=features.size();
-			
-			
+			// store this so if we are testing maxbins we can get the results
+			// for a normal request without maxbins i.e. maxbins =0
+			lastFeaturesSize = features.size();
+
 			if (features.size() > 0) {
 				if (!ontologyValidation)
 					return true;
-				
+
 				return validateFeatureOntology(features);
 
 			} else {
-				if(appendValidationErrors){validationMessage += "<br/>---<br/> contacting " + url
-						+ "features?segment=" + testcode + "<br/>";
-				validationMessage += " no features were returned";
+				if (appendValidationErrors) {
+					validationMessage += "<br/>---<br/> contacting " + url
+							+ "features?segment=" + testcode + "<br/>";
+					validationMessage += " no features were returned";
 				}
 				return false;
 			}
 
 		} catch (Exception e) {
 			// e.printStackTrace();
-			if(appendValidationErrors)validationMessage += "<br/>---<br/> contacting " + url
-					+ "features?segment=" + testcode + "<br/>";
+			if (appendValidationErrors)
+				validationMessage += "<br/>---<br/> contacting " + url
+						+ "features?segment=" + testcode + "<br/>";
 
 			Throwable cause = e.getCause();
-			if (cause != null){
-				if(appendValidationErrors)validationMessage += cause.toString();
-			}else{
-				if(appendValidationErrors)validationMessage += e.toString();
+			if (cause != null) {
+				if (appendValidationErrors)
+					validationMessage += cause.toString();
+			} else {
+				if (appendValidationErrors)
+					validationMessage += e.toString();
 			}
-			}
+		}
 		return false;
 	}
 
 	private boolean checkFeatureIdsAreUnique(List<Map<String, String>> features) {
-		boolean idsUnique=true;
-		HashMap ids=new HashMap<String,String>();
-		for(Map<String,String> feature:features){
-			String id=feature.get("id");
-			if(ids.containsKey(id)){
-				if(appendValidationErrors)validationMessage+="\nFeature Ids need to be unique and are not!! Offending id is:"+id;
+		boolean idsUnique = true;
+		HashMap ids = new HashMap<String, String>();
+		for (Map<String, String> feature : features) {
+			String id = feature.get("id");
+			if (ids.containsKey(id)) {
+				if (appendValidationErrors)
+					validationMessage += "\nFeature Ids need to be unique and are not!! Offending id is:"
+							+ id;
 				return false;
-			}else{
-				ids.put(id,"");
+			} else {
+				ids.put(id, "");
 			}
 		}
-		
+
 		return idsUnique;
 		// TODO Auto-generated method stub
-		
-	}
 
+	}
 
 	private Ontology readOntology(String ontoName, String ontoDesc,
 			String fileName) throws OntologyException {
@@ -1357,21 +1502,20 @@ public class Das1Validator {
 		return term;
 	}
 
-	/**
-	 * validates a track for consistency with the BioSapiens annotation
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param feature
-	 * 
-	 * @return true if the track validates
-	 * @throws DASException
+	 * @see
+	 * org.biojava.dasobert.dasregistry.DasValidator#validateTrack(java.util
+	 * .Map)
 	 */
 	public boolean validateTrack(Map<String, String> feature)
 			throws DASException {
-System.out.println("validating track");
+		System.out.println("validating track");
 		Pattern ecoPattern = Pattern.compile("(ECO:[0-9]+)");
 
 		// validate type:
-		//String type = feature.get("TYPE");
+		// String type = feature.get("TYPE");
 		String typeID = feature.get("TYPE_ID");
 		String typeCategory = feature.get("TYPE_CATEGORY");
 		// System.out.println("type  " + type);
@@ -1387,10 +1531,12 @@ System.out.println("validating track");
 			throw new DASException(
 					"track does not have the TYPE - category field set");
 		}
-		System.out.println("validating track and found typeID"+typeID+" typeCatagory="+typeCategory);
+		System.out.println("validating track and found typeID" + typeID
+				+ " typeCatagory=" + typeCategory);
 		SimpleTerm t = testTypeIDAgainstOntology(typeID);
-		if(t==null){
-			System.out.println("no term found for typeid so ontology is invalid");
+		if (t == null) {
+			System.out
+					.println("no term found for typeid so ontology is invalid");
 			return false;
 		}
 		// if (! t.getDescription().equals(type)){
@@ -1424,20 +1570,21 @@ System.out.println("validating track");
 			throw new DASException("could not identify ECO id in "
 					+ typeCategory);
 		}
-		System.out.println("checking ECO:"+eco);
+		System.out.println("checking ECO:" + eco);
 		if (!lookup.exists(eco, "ECO")) {
 			throw new DASException("unknown evidence code >" + eco + "<");
 		}
 
 		return true;// returning true at the moment as failing ontology test
-					// currently does not stop source being valid
+		// currently does not stop source being valid
 
 	}
 
 	protected SimpleTerm testTypeIDAgainstOntology(String typeID)
 			throws DASException {
 		SimpleTerm t = getTerm(typeID);
-		if (t != null)System.out.println(t);
+		if (t != null)
+			System.out.println(t);
 
 		if (t == null) {
 			throw new DASException("term " + typeID
@@ -1456,28 +1603,30 @@ System.out.println("validating track");
 	protected boolean validateFeatureOntology(
 			List<Map<String, String>> featuresList) {
 
-		//validationMessage += "got " + featuresList.size() + " features\n";
+		// validationMessage += "got " + featuresList.size() + " features\n";
 		boolean ontologyOK = true;
 		int i = 0;
 		for (Map<String, String> feature : featuresList) {
 			i++;
-			//validationMessage += "*** validating track " + i + ": "
-					//+ feature.get("TYPE") + "\n";
+			// validationMessage += "*** validating track " + i + ": "
+			// + feature.get("TYPE") + "\n";
 			try {
 
 				if ((feature.get("START").equals(feature.get("END")))
 						&& (feature.get("START").equals("0"))) {
-					//validationMessage += "  Non-positional features are currently not supported, yet.\n";
+					// validationMessage +=
+					// "  Non-positional features are currently not supported, yet.\n";
 					continue;
 				}
 				if (validateTrack(feature)) {
-					//validationMessage += "  track ok!\n";
+					// validationMessage += "  track ok!\n";
 				}
 			} catch (DASException ex) {
 				// System.out.println(ex.getMessage());
 				// ex.printStackTrace();
-				if(appendValidationErrors){validationMessage += "   " + ex.getMessage() + "\n";
-				validationMessage += "   This DAS source does NOT comply with these SO, ECO, BS ontologies!\n";
+				if (appendValidationErrors) {
+					validationMessage += "   " + ex.getMessage() + "\n";
+					validationMessage += "   This DAS source does NOT comply with these SO, ECO, BS ontologies!\n";
 				}
 				ontologyOK = false;
 
@@ -1492,30 +1641,35 @@ System.out.println("validating track");
 	 * @param typesList
 	 * @return
 	 */
-	private boolean validateTypesAgainstOntology(List <Map<String,String>>typesList) {
+	private boolean validateTypesAgainstOntology(
+			List<Map<String, String>> typesList) {
 		// System.out.println("validating type ontology jw");
-		//validationMessage += "got " + typesList.length + " types\n";
+		// validationMessage += "got " + typesList.length + " types\n";
 		boolean ontologyOK = true;
 
 		// start at 1 as 0 is ID
 		for (int i = 1; i < typesList.size(); i++) {
 
-			//validationMessage += "*** validating type " + i + ": "
-					//+ typesList[i] + "\n";
+			// validationMessage += "*** validating type " + i + ": "
+			// + typesList[i] + "\n";
 			try {
 				// validate code here to replace validat tracks in feature
 				// equivalent method
-				Map <String,String>map=typesList.get(i);
+				Map<String, String> map = typesList.get(i);
 				SimpleTerm term = testTypeIDAgainstOntology(map.get("id"));
 				if (term == null) {
-					if(appendValidationErrors)validationMessage += "  track ontology "+typesList.get(i)+" not found in ontology!\n";
+					if (appendValidationErrors)
+						validationMessage += "  track ontology "
+								+ typesList.get(i)
+								+ " not found in ontology!\n";
 					return false;
 				}
 			} catch (DASException ex) {
 				// System.out.println(ex.getMessage());
 				// ex.printStackTrace();
-				if(appendValidationErrors){validationMessage += "   " + ex.getMessage() + "\n";
-				validationMessage += "   This DAS source does NOT comply with these SO, ECO, BS ontologies!\n";
+				if (appendValidationErrors) {
+					validationMessage += "   " + ex.getMessage() + "\n";
+					validationMessage += "   This DAS source does NOT comply with these SO, ECO, BS ontologies!\n";
 				}
 				ontologyOK = false;
 
@@ -1541,26 +1695,37 @@ System.out.println("validating track");
 			if (c.getAtomLength() > 0) {
 				return true;
 			} else {
-				if(appendValidationErrors){validationMessage += "<br/>---<br/>contacting " + cmd
-						+ testcode + "<br/>";
-				validationMessage += " no structure found";
+				if (appendValidationErrors) {
+					validationMessage += "<br/>---<br/>contacting " + cmd
+							+ testcode + "<br/>";
+					validationMessage += " no structure found";
 				}
 				return false;
 			}
 		} catch (Exception e) {
-			if(appendValidationErrors)validationMessage += "<br/>---<br/>contacting " + cmd + testcode
-					+ "<br/>";
+			if (appendValidationErrors)
+				validationMessage += "<br/>---<br/>contacting " + cmd
+						+ testcode + "<br/>";
 
 			Throwable cause = e.getCause();
-			if (cause != null){
-				if(appendValidationErrors)validationMessage += cause.toString();
-			}else{
-				if(appendValidationErrors)validationMessage += e.toString();
+			if (cause != null) {
+				if (appendValidationErrors)
+					validationMessage += cause.toString();
+			} else {
+				if (appendValidationErrors)
+					validationMessage += e.toString();
 			}// e.printStackTrace();
 		}
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.biojava.dasobert.dasregistry.DasValidator#validateSequence(java.lang
+	 * .String, java.lang.String)
+	 */
 	public boolean validateSequence(String url, String testcode) {
 		URL dasUrl;
 
@@ -1603,8 +1768,7 @@ System.out.println("validating track");
 			return false;
 		}
 
-		URL schemaLocation = null;
-
+		
 		if (!relaxNgApproved(Capabilities.SEQUENCE, cmd))
 			return false;
 
@@ -1646,7 +1810,7 @@ System.out.println("validating track");
 			insource.setByteStream(dasInStream);
 			xmlreader.parse(insource);
 			String sequence = cont_handle.get_sequence();
-			//System.out.println(sequence+"done parsing sequence ...");
+			// System.out.println(sequence+"done parsing sequence ...");
 			if ((sequence == null) || (sequence.equals(""))) {
 				if (appendValidationErrors) {
 					validationMessage += "---<br/>contacting " + cmd + "<br/>";
@@ -1656,13 +1820,16 @@ System.out.println("validating track");
 			}
 			return true;
 		} catch (Exception e) {
-			if(appendValidationErrors)validationMessage += "---<br/>contacting " + cmd + "<br/>";
+			if (appendValidationErrors)
+				validationMessage += "---<br/>contacting " + cmd + "<br/>";
 
 			Throwable cause = e.getCause();
-			if (cause != null){
-				if(appendValidationErrors)validationMessage += cause.toString();
-			}else{
-				if(appendValidationErrors)validationMessage += e.toString();
+			if (cause != null) {
+				if (appendValidationErrors)
+					validationMessage += cause.toString();
+			} else {
+				if (appendValidationErrors)
+					validationMessage += e.toString();
 			}// e.printStackTrace();
 		}
 		return false;
@@ -1731,7 +1898,7 @@ System.out.println("validating track");
 		String dasregistry = "http://www.dasregistry.org/das1/sources";
 		String myLocalTest = "http://localhost:8080/das/sources";
 		// validator.validateSourcesCmd("http://www.ensembl.org/das/sources");
-		if (validator.validateSourcesCmd(ensembl)) {
+		if (validator.validateSourcesCmdShallow(ensembl)) {
 			System.out.println("sourcesCmd Was valid "
 					+ validator.validationMessage);
 		} else {
@@ -1739,162 +1906,107 @@ System.out.println("validating track");
 					+ validator.validationMessage);
 		}
 	}
-	
-	/**
-	 * look at the header information on any das response
-	 * @param url
-	 * @param testcode
-	 * @param ontologyValidation
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.biojava.dasobert.dasregistry.DasValidator#validateHeaders(java.lang
+	 * .String)
 	 */
-	public void validateHeaders(String urlString){
-		 /** Fetch HTML headers as simple text.  */
-		  URL url=null;
+	public String validateHeaders(String urlString) {
+		/** Fetch HTML headers as simple text. */
+		String info = "";
+		URL url = null;
 		try {
 			url = new URL(urlString);
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		  
-		    StringBuilder result = new StringBuilder();
 
-		    URLConnection connection = null;
-		    try {
-		      connection = url.openConnection();
-		    }
-		    catch (IOException ex) {
-		      System.out.println("Cannot open connection to URL: " + url);
-		    }
-
-		    //not all headers come in key-value pairs - sometimes the key is
-		    //null or an empty String
-		    int headerIdx = 0;
-		    String headerKey = null;
-		    String headerValue = null;
-//		    while ( (headerValue = connection.getHeaderField(headerIdx)) != null ) {
-//		      headerKey = connection.getHeaderFieldKey(headerIdx);
-//		      if ( headerKey != null && headerKey.length()>0 ) {
-//		        result.append( headerKey );
-//		        result.append(" : ");
-//		      }
-//		      result.append( headerValue );
-//		      result.append("\n");
-//		      headerIdx++;
-//		    }
-		    String dasServer=connection.getHeaderField("X-DAS-Server");
-		    String dasVersion=connection.getHeaderField("X-DAS-Version");
-		    int serverCount=0;
-		    int dasVersionCount=0;
-		    if(serverTypes.containsKey(dasServer)){
-		    	serverCount=serverTypes.get(dasServer);
-		    }
-		    if(specificationTypes.containsKey(dasVersion)){
-		    	dasVersionCount=specificationTypes.get(dasVersion);
-		    }
-		    serverTypes.put(dasServer, ++serverCount);
-		    specificationTypes.put(dasVersion, ++dasVersionCount);
-		    System.out.println("header result for url "+ url+" is dasServer="+dasServer+" "+serverCount+" dasVersion="+dasVersion+" "+dasVersionCount);
-		   
-		  
-
-		
-	}
-	
-	/**
-	 * validate a list of DasSources - does not effect the registry!!
-	 * @param dasSources
-	 */
-	public boolean  validateSources(DasSource[] dasSources){
-		int numberOfSourcesFailed=0;
-		int numberFailedDueToNotMatchingStatedCaps=0;
-		int numberFailedDueToRelaxNg=0;
-		int numberFailedDueToNoIO=0;
-		
-		ArrayList failedUrls=new ArrayList();
-		
-		DasSource[] dss = dasSources;
-		HashMap<String, Integer> failedValidation=new HashMap<String, Integer>();
-
-	for ( int i =0 ; i< dss.length;i++){
-		DasSource ds = dss[i];
-		
-			System.out.print("validating " + (i+1)+"/"+ dss.length + " "+ ds.getUrl() +  " ");
-
-		
-		
-		boolean validateVerbose = false;
-		setRelaxNgApprovalNeeded(true);//turn off relaxng validation approval needed for automated validation
-		//but we have turned on approval needed by default so that if validating via a web page a source owner has to update their source.
-		String[] validcaps = validate(ds.getUrl(),
-				ds.getCoordinateSystem(),
-				ds.getCapabilities(),validateVerbose, false);
-		
-		//need to write code to write the validcaps to the database
-		//TODO: also need to change code to test capabilities other than those stated#
-		//maybe by using getHeader first to see if there is a response
-		//ds.setValidCapabilities(validcaps);
-		//registry.updateValidCapabilities(ds);
-		
-		
-		
-		if ( validcaps != null ) {
-			List <String> notValidButStated=Capabilities.containsSubSet(ds.getCapabilities(),validcaps );
-			if ( validcaps.length < ds.getCapabilities().length || notValidButStated.size()>0 ){
-
-				
-					System.out.print(" failed ");
-					
-					for (int v=0 ; v< validcaps.length ; v++){
-						System.out.print(validcaps[v]+ "o.k. ");
-					}
-					
-					for(String notValid:notValidButStated){
-						
-						
-						if(failedValidation.containsKey(notValid)){
-							Integer numberFailedSoFar=failedValidation.get(notValid);
-							failedValidation.put(notValid, ++numberFailedSoFar);
-						}else{
-							failedValidation.put(notValid, 1);
-						}
-						System.out.println("failedValidation:"+failedValidation);
-					}
-				
-				// something went wrong ...
-				// log it
-				
-				numberOfSourcesFailed++;
-				failedUrls.add(ds.getUrl());
-				numberFailedDueToNotMatchingStatedCaps++;
-
-			} else {
-
-				
-					System.out.print(" o.k.");
-
-				
-		
-
-			}
-
-		} else {
-			
-				
-				numberOfSourcesFailed++;
-				failedUrls.add(ds.getUrl());
-				
-			//logger.info(registry.getValidationMessage());
-			
+		URLConnection connection = null;
+		try {
+			connection = url.openConnection();
+		} catch (IOException ex) {
+			System.out.println("Cannot open connection to URL: " + url);
 		}
-		
-			System.out.println("number of failed sources="+numberOfSourcesFailed);
-	}//end of validate sources loo
-	System.out.println(failedUrls);
-	if(failedUrls.size()>0){
-		return false;
-	}else{
-		return true;
+
+		// not all headers come in key-value pairs - sometimes the key is
+		// null or an empty String
+		int headerIdx = 0;
+		String headerKey = null;
+		String headerValue = null;
+		// while ( (headerValue = connection.getHeaderField(headerIdx)) != null
+		// ) {
+		// headerKey = connection.getHeaderFieldKey(headerIdx);
+		// if ( headerKey != null && headerKey.length()>0 ) {
+		// result.append( headerKey );
+		// result.append(" : ");
+		// }
+		// result.append( headerValue );
+		// result.append("\n");
+		// headerIdx++;
+		// }
+		String dasServer = connection.getHeaderField("X-DAS-Server");
+		String dasVersion = connection.getHeaderField("X-DAS-Version");
+		int serverCount = 0;
+		int dasVersionCount = 0;
+		if (serverTypes.containsKey(dasServer)) {
+			serverCount = serverTypes.get(dasServer);
+		}
+		if (specificationTypes.containsKey(dasVersion)) {
+			dasVersionCount = specificationTypes.get(dasVersion);
+		}
+		serverTypes.put(dasServer, ++serverCount);
+		specificationTypes.put(dasVersion, ++dasVersionCount);
+		System.out.println("header result for url " + url + " is dasServer="
+				+ dasServer + " " + serverCount + " dasVersion=" + dasVersion
+				+ " " + dasVersionCount);
+
+		info += "s=" + dasServer + " das=" + dasVersion;
+		return info;
+
 	}
+
+	public String getSpec(String urlString) {
+		 URL url=null;
+		 String dasVersion="";
+		 try {
+		 url = new URL(urlString);
+		 } catch (MalformedURLException e) {
+		 // TODO Auto-generated catch block
+		 e.printStackTrace();
+		 }
+				  
+				    
+		
+		 URLConnection connection = null;
+		 try {
+		 connection = url.openConnection();
+		 }
+		 catch (IOException ex) {
+		 System.out.println("Cannot open connection to URL: " + url);
+		 }
+		
+				   
+				   
+		 String headerVersion=connection.getHeaderField("X-DAS-Version");
+			if(headerVersion!=null){
+				dasVersion=headerVersion;
+			}
+			   
+				  
+				  
+		 return dasVersion;
+
+		//return this.validateHeaders(urlString);
+
+	}
+
+	public Map<Capabilities, String> getValidationResults() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

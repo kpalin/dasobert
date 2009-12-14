@@ -53,12 +53,12 @@ public class DasSourceValidator {
             
             Das1Validator validator = new Das1Validator();
             
-            String[] okcaps = validator.validate(url,ds.getCoordinateSystem(),caps);
-            String validationMessage = validator.getValidationMessage();
-            if ( okcaps.length != caps.length){
-                throw new DASException("could not validate DasSource " + validationMessage);
-            }
-            
+//            String[] okcaps = validator.validate(url,ds.getCoordinateSystem(),caps);
+//            String validationMessage = validator.getValidationMessage();
+//            if ( okcaps.length != caps.length){
+//                throw new DASException("could not validate DasSource " + validationMessage);
+//            }
+//            
             
         }
         

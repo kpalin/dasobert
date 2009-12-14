@@ -26,10 +26,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.biojava.dasobert.das.Capabilities;
+import org.biojava.dasobert.das.CapabilityStatus;
 import org.biojava.dasobert.das.DasTimeFormat;
 import org.biojava.dasobert.das2.Das2Capability;
 import org.biojava.dasobert.das2.Das2CapabilityImpl;
@@ -38,6 +40,8 @@ import org.biojava.dasobert.dasregistry.Das1Source;
 
 import org.biojava.dasobert.dasregistry.DasCoordinateSystem;
 import org.biojava.dasobert.dasregistry.DasSource;
+import org.biojava.dasobert.dasregistry.LightBean;
+import org.biojava.dasobert.dasregistry.ValidationResultLights;
 import org.biojava.utils.xml.PrettyXMLWriter;
 import org.biojava.utils.xml.XMLWriter;
 
@@ -176,31 +180,19 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 
 		}
 
-		// show validated capabilities and probably valid capabilities ie ones
-		// that by autovalidation are shown to be valid but
-		// have not been stated as so by the user
-		if (source.getValidCapabilities() != null) {
-			String[] validCapabilities = source.getValidCapabilities();
-			String[] statedCapabilities = source.getCapabilities();
+		ValidationResultLights results = new ValidationResultLights(
+				source);
+		List<LightBean> beans = results.getLightsLinksAndResults();
+		for (LightBean bean : beans) {
+			CapabilityStatus status = bean.getStatus();
+			if(!status.equals(CapabilityStatus.OPTIONAL)){//don't bother writing optional fields
+				xw.openTag("PROP");
+				xw.attribute("name", bean.getCapability().toString());
+				xw.attribute("value", status.toString());
 
-			// System.out.println("valid caps length="+validCapabilities.length);
-			for (int i = 0; i < validCapabilities.length; i++) {
-				String howValid = "valid";
-				for (String stated : statedCapabilities) {
-					if (stated.equals(validCapabilities[i])) {
-						howValid = "valid";
-						break;
-					} else {
-						howValid = "probably_valid";
-					}
-				}
-					xw.openTag("PROP");
-					xw.attribute("name", howValid);
-					xw.attribute("value", validCapabilities[i]);
-
-					xw.closeTag("PROP");
-				
+				xw.closeTag("PROP");
 			}
+
 		}
 		xw.closeTag("VERSION");
 
@@ -215,6 +207,12 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 		PrettyXMLWriter xw = new PrettyXMLWriter(pw);
 		writeDasSource(xw, source);
 
+	}
+
+	public void writeDasSourceTypes(XMLWriter xw, String sourceIdentifier,
+			List<Map<String, String>> typesInfo) throws IOException {
+		System.err.println("called writeDasSourceTypes on DasSourceWriterImpl where method has not been written yet!");
+		
 	}
 
 }

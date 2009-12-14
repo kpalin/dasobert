@@ -26,25 +26,28 @@ package org.biojava.dasobert.dasregistry;
 import java.util.ArrayList;
 import java.util.List;
 
-/** a class to filter a set of DAS sources, or to check if
- *  single DAS sources fulfill certain requirements
+import org.biojava.dasobert.das.DasSpec;
+
+/**
+ * a class to filter a set of DAS sources, or to check if single DAS sources
+ * fulfill certain requirements
  * 
  * 
  * @author Andreas Prlic
- *
+ * 
  */
 public class DasSourceFilter {
 
-	public boolean hasAuthority(DasSource source, String authority){
-		if ( authority == null )
+	public boolean hasAuthority(DasSource source, String authority) {
+		if (authority == null)
 			return true;
-		if ( authority.equals(""))
+		if (authority.equals(""))
 			return true;
 
 		DasCoordinateSystem[] coords = source.getCoordinateSystem();
-		for ( int j =0 ; j < coords.length ; j++ ){
+		for (int j = 0; j < coords.length; j++) {
 			DasCoordinateSystem cs = coords[j];
-			if ( authority.equalsIgnoreCase(cs.getName())) {
+			if (authority.equalsIgnoreCase(cs.getName())) {
 				return true;
 			}
 		}
@@ -52,44 +55,42 @@ public class DasSourceFilter {
 		return false;
 	}
 
-	public boolean hasCapability(DasSource source, String capability){
+	public boolean hasCapability(DasSource source, String capability) {
 
-		if ( capability == null)
+		if (capability == null)
 			return true;
-		if ( capability.equals(""))
+		if (capability.equals(""))
 			return true;
 
 		return source.hasCapability(capability);
 	}
 
-
-	public boolean hasLabel(DasSource source, String label){
-		if ( label == null)
+	public boolean hasLabel(DasSource source, String label) {
+		if (label == null)
 			return true;
-		if ( label.equals(""))
+		if (label.equals(""))
 			return true;
-
 
 		String[] labels = source.getLabels();
-		for ( int j = 0 ; j< labels.length ; j++){
+		for (int j = 0; j < labels.length; j++) {
 			String l = labels[j];
-			if ( l.equalsIgnoreCase(label))
+			if (l.equalsIgnoreCase(label))
 				return true;
 		}
 
 		return false;
 	}
-	
-	public boolean hasType(DasSource source, String type){
-		if ( type == null )
+
+	public boolean hasType(DasSource source, String type) {
+		if (type == null)
 			return true;
-		if ( type.equals(""))
+		if (type.equals(""))
 			return true;
 
 		DasCoordinateSystem[] coords = source.getCoordinateSystem();
-		for ( int j =0 ; j < coords.length ; j++ ){
+		for (int j = 0; j < coords.length; j++) {
 			DasCoordinateSystem cs = coords[j];
-			if ( type.equalsIgnoreCase(cs.getCategory())) {
+			if (type.equalsIgnoreCase(cs.getCategory())) {
 				return true;
 			}
 		}
@@ -97,63 +98,65 @@ public class DasSourceFilter {
 		return false;
 	}
 
-	public boolean hasOrganism(DasSource source, String organism){
-//		test for correct organism
-		if ( organism == null)
+	public boolean hasOrganism(DasSource source, String organism) {
+		// test for correct organism
+		if (organism == null)
 			return true;
-		if ( organism.equals(""))
+		if (organism.equals(""))
 			return true;
-
 
 		DasCoordinateSystem[] coords = source.getCoordinateSystem();
-		for ( int j =0 ; j < coords.length ; j++ ){
+		for (int j = 0; j < coords.length; j++) {
 			DasCoordinateSystem cs = coords[j];
-			if ( ( organism.equalsIgnoreCase(cs.getOrganismName())) ||
-					( organism.equalsIgnoreCase(cs.getNCBITaxId()+""))) {
+			if ((organism.equalsIgnoreCase(cs.getOrganismName()))
+					|| (organism.equalsIgnoreCase(cs.getNCBITaxId() + ""))) {
 				return true;
 			}
 		}
 		return false;
 	}
 
+	public boolean isSpec(DasSource source, DasSpec spec) {
+		if (spec == null)
+			return true;
+		
+		if (DasSpec.convertToRegistrySpecification(source.getSpecification()).equals(spec)) {
+			return true;
+		}
+System.out.println("returning false:"+source.getUrl());
+		return false;
+	}
 
-
-	/** filter a set of DasSources by particular requirements
-	 * all arguments can be set to null which means they are ignored
+	/**
+	 * filter a set of DasSources by particular requirements all arguments can
+	 * be set to null which means they are ignored
 	 * 
 	 * @param sources
 	 * @param label
 	 * @param organism
 	 * @param authority
 	 * @param capability
-	 * @param type 
+	 * @param type
+	 * @param spec TODO
 	 * @return an array of DasSources that match the requested filtering rules
 	 */
-	public  DasSource[] filterBy(DasSource[] sources, 
-			String label, 
-			String organism,
-			String authority,
-			String capability,
-			String type) {
+	public DasSource[] filterBy(DasSource[] sources, String label,
+			String organism, String authority, String capability, String type, DasSpec spec) {
 
-		if ( (label == null ) &&
-				( organism == null) &&
-				( authority == null) &&
-				( capability == null) &&
-				( type == null))
+		if ((label == null) && (organism == null) && (authority == null)
+				&& (capability == null) && (type == null) && (spec==null))
 			return sources;
 
-
 		List lst = new ArrayList();
-		for (int i = 0 ; i < sources.length; i++) {
+		for (int i = 0; i < sources.length; i++) {
 			DasSource source = sources[i];
 
 			// test for correct label
-			if (  hasLabel(source, label) &&
-					hasOrganism(source, organism) &&
-					hasAuthority(source,authority) &&
-					hasCapability(source,capability) &&
-					hasType(source,type)){
+			if (hasLabel(source, label) && hasOrganism(source, organism)
+					&& hasAuthority(source, authority)
+					&& hasCapability(source, capability)
+					&& hasType(source, type)
+					&& isSpec(source, spec)) {
 				lst.add(source);
 			}
 		}
@@ -161,7 +164,5 @@ public class DasSourceFilter {
 		return (DasSource[]) lst.toArray(new DasSource[lst.size()]);
 
 	}
-
-
 
 }

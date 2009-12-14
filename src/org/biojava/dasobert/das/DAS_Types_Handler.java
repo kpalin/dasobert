@@ -40,6 +40,8 @@ public class DAS_Types_Handler extends DefaultHandler {
 	    boolean gffPresent;
 	    boolean segmentPresent;
 		private int maxNrFeaturesOntolgy;
+		private String chars;//hold data from between a set of tags
+		HashMap<String,String>map;
 	    
 	    public DAS_Types_Handler() {
 		super();
@@ -50,7 +52,9 @@ public class DAS_Types_Handler extends DefaultHandler {
 	    }
 
 	    public void startElement (String uri, String name, String qName, Attributes atts){
-		if ( qName.equals("DASTYPES")) {
+	    	 chars = "";
+	    	
+	    	if ( qName.equals("DASTYPES")) {
 		    dastypesPresent = true;
 		    
 		} else if ( qName.equals("GFF")) {
@@ -65,7 +69,7 @@ public class DAS_Types_Handler extends DefaultHandler {
 			//types.add("id",id);
 		    //}
 		} else if ( qName.equals("TYPE")){
-			HashMap<String,String>map=new HashMap<String,String>();
+			map=new HashMap<String,String>();
 		    String type = atts.getValue("id");
 		    // id is mandatory ...	    
 		    
@@ -84,9 +88,16 @@ public class DAS_Types_Handler extends DefaultHandler {
 		    if(cvId!=null){
 		    	map.put("cvId",cvId);
 		    }
-		    types.add(map);
+		    
 		}
 		
+	    }
+	    
+	    public void endElement(String uri, String name, String qName) {
+	    	if ( qName.equals("TYPE")){
+	    		map.put("number",chars);
+	    		types.add(map);
+	    	}
 	    }
 
 	    public String[] getTypes(){
@@ -101,4 +112,15 @@ public class DAS_Types_Handler extends DefaultHandler {
 			// TODO Auto-generated method stub
 			this.maxNrFeaturesOntolgy=maxNrFeaturesOntology;
 		}
+		
+		
+		 public void characters (char ch[], int start, int length){
+		        
+		     
+	            for (int i = start; i < start + length; i++) {
+	               chars += ch[i];
+	            }
+	        
+	        
+	    }
 	}
