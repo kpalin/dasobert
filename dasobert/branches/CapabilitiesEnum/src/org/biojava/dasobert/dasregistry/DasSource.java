@@ -125,5 +125,9 @@ public interface DasSource {
 	public void setValidCapabilities(String[] validCapabilities);
 	
 	public String[] getValidCapabilities();
+	
+	public String getSpecification();
+
+	public void setSpecification(String specification);
 
 }

@@ -66,8 +66,8 @@ public class RegistryRelaxNG {
 			ClassNotFoundException, MalformedURLException, IOException,
 			FactoryConfigurationError, ParserConfigurationException, Exception,
 			SAXException {
-		System.out.println("starting relaxng validate method here with grammer name="+grammarName);
-		regMessage += " RegistryRelaxNG validation:\n";
+		//System.out.println("starting relaxng validate method here with grammer name="+grammarName);
+		//regMessage += " RegistryRelaxNG validation:\n";
 
 		boolean verbose = false;
 		boolean warning = true;

@@ -66,30 +66,31 @@ public class Das1RegistryCoordinatesHandler  extends DefaultHandler{
 	private DasCoordinateSystem getCoordinateSystem(String uri, String name, String qname, Attributes atts){
 		// e.g. uri="http://das.sanger.ac.uk/dasregistry/coordsys/CS_LOCAL6" 
 		// source="Protein Sequence" authority="UniProt" test_range="P06213" />
+		String id="", source="",authority="", test_range="", taxidstr="0", version="";
 		characterdata=new StringBuffer();
 		 dcs = new DasCoordinateSystem();
-		String id = atts.getValue("uri");
+		if(atts.getValue("uri")!=null)id = atts.getValue("uri");
 		dcs.setUniqueId(id);
 
-		String source = atts.getValue("source");
+		if(atts.getValue("source")!=null)source = atts.getValue("source");
 		dcs.setCategory(source);
 
-		String authority = atts.getValue("authority");
+		if(atts.getValue("authority")!=null)authority=atts.getValue("authority");
 		dcs.setName(authority);
 
-		String test_range = atts.getValue("test_range");
+		if(atts.getValue("test_range")!=null)test_range = atts.getValue("test_range");
 		dcs.setTestCode(test_range);
 		
 //		String organism=atts.getValue("organism");
 //		dcs.setOrganismName(organism);
 
 		try {
-			String taxidstr = atts.getValue("taxid");
+			taxidstr = atts.getValue("taxid");
 			int taxid = Integer.parseInt(taxidstr);
 			dcs.setNCBITaxId(taxid);
 		} catch (Exception e){}
 
-		String version = atts.getValue("version");
+		version = atts.getValue("version");
 		if ( version != null)
 			dcs.setVersion(version);
 

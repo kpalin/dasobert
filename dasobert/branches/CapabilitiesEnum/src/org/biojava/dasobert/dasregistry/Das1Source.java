@@ -56,12 +56,13 @@ public class Das1Source implements DasSource {
 	Map<String,String> properties;
 	boolean alertAdmin;
 	private String[] validCapabilities;
+	private String specification;
 
 	public static String EMPTY_ID = "UNK:-1" ;
 
 	public Das1Source () {
 		id               = EMPTY_ID;
-		url              = "empty";
+		url              = "";
 		adminemail       = "" ;
 		description      = "" ;
 		//String empty     = "" ;
@@ -77,9 +78,11 @@ public class Das1Source implements DasSource {
 		helperurl        = "";	
 		local=true;
 		properties = new HashMap<String, String>();
+		specification="";
 		
 		
 	}
+  
 
 
 	/** do a quick comparison if URL and nickname are the same
@@ -316,6 +319,20 @@ System.out.println("hashcode="+h);
 //	System.out.println("setting valid capabilities:"+valid);
 //}
 		return validCapabilities;
+	}
+
+
+
+	public String getSpecification() {
+		
+		return this.specification;
+	}
+
+
+
+	public void setSpecification(String specification) {
+		this.specification=specification;
+		
 	}
 	
 

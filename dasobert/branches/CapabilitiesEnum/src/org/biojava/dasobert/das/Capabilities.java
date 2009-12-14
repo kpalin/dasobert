@@ -197,4 +197,13 @@ public enum Capabilities {
 	return notValidButStated.size()==0 ? true : false;
 	}
 
+	
+	public static Map capabilitiesToMap(Capabilities [] caps){
+		Map<Capabilities,String> map =new HashMap<Capabilities,String>();
+	  
+	  for (Capabilities cap:caps) {
+	      map.put(cap, "");
+	  }
+	  return map;
+	  }
 }

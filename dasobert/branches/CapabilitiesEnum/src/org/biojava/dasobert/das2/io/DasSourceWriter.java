@@ -24,6 +24,8 @@ package org.biojava.dasobert.das2.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
+import java.util.Map;
 
 import org.biojava.dasobert.dasregistry.DasCoordinateSystem;
 import org.biojava.dasobert.dasregistry.DasSource;
@@ -36,6 +38,9 @@ public interface DasSourceWriter {
     public void writeDasSource(XMLWriter writer, DasSource source) throws IOException;
     
     public void writeCoordinateSystem(XMLWriter writer, DasCoordinateSystem dcs) throws IOException;
+
+	public void writeDasSourceTypes(XMLWriter xw, String sourceIdentifier,
+			List<Map<String, String>> typesInfo) throws IOException;
     
             
 }
