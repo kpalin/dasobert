@@ -149,6 +149,29 @@ public class DasValidationResult  {
 		this.specification=specification;
 		
 	}
+	public String getValidationResultsString() {
+		String resultString="";
+		Set <Map.Entry<Capabilities, Boolean>>keys=isValid.entrySet();
+		Iterator<Map.Entry<Capabilities, Boolean>>valuesIterator=keys.iterator();
+		
+		while(valuesIterator.hasNext()){
+			Map.Entry<Capabilities,Boolean>entry=valuesIterator.next();
+			
+				resultString+=entry.getKey().toString()+"|"+entry.getValue()+"\n";
+			
+		}
+		
+		Set <Map.Entry<Capabilities,String>>errorKeys=errors.entrySet();
+		Iterator<Map.Entry<Capabilities, String>>errorValuesIterator=errorKeys.iterator();
+		
+		while(errorValuesIterator.hasNext()){
+			Map.Entry<Capabilities,String>errorEntry=errorValuesIterator.next();
+			
+				resultString+=errorEntry.getKey().toString()+"|"+errorEntry.getValue()+"\n";
+			
+		}
+		return resultString;
+	}
 	
 
 }
