@@ -123,7 +123,7 @@ public class DasSourceFilter {
 		if (DasSpec.convertToRegistrySpecification(source.getSpecification()).equals(spec)) {
 			return true;
 		}
-System.out.println("returning false:"+source.getUrl());
+//System.out.println("returning false:"+source.getUrl());
 		return false;
 	}
 
