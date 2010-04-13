@@ -110,11 +110,12 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 
 		// System.out.println("before coords");
 		DasCoordinateSystem[] coords = source.getCoordinateSystem();
-
+		if(coords!=null && coords.length>0){
 		for (int i = 0; i < coords.length; i++) {
 			DasCoordinateSystem co = coords[i];
 			writeCoordinateSystem(xw, co);
 
+		}
 		}
 		// System.out.println("before das specific part");
 		if (source instanceof Das2Source) {

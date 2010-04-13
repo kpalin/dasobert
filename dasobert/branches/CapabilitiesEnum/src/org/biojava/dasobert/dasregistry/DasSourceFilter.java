@@ -108,6 +108,7 @@ public class DasSourceFilter {
 		DasCoordinateSystem[] coords = source.getCoordinateSystem();
 		for (int j = 0; j < coords.length; j++) {
 			DasCoordinateSystem cs = coords[j];
+			System.out.println(cs.getOrganismName()+" "+organism);
 			if ((organism.equalsIgnoreCase(cs.getOrganismName()))
 					|| (organism.equalsIgnoreCase(cs.getNCBITaxId() + ""))) {
 				return true;
@@ -138,10 +139,11 @@ public class DasSourceFilter {
 	 * @param capability
 	 * @param type
 	 * @param spec TODO
+	 * @param version TODO
 	 * @return an array of DasSources that match the requested filtering rules
 	 */
 	public DasSource[] filterBy(DasSource[] sources, String label,
-			String organism, String authority, String capability, String type, DasSpec spec) {
+			String organism, String authority, String capability, String type, DasSpec spec, String version) {
 
 		if ((label == null) && (organism == null) && (authority == null)
 				&& (capability == null) && (type == null) && (spec==null))
@@ -156,13 +158,29 @@ public class DasSourceFilter {
 					&& hasAuthority(source, authority)
 					&& hasCapability(source, capability)
 					&& hasType(source, type)
-					&& isSpec(source, spec)) {
+					&& isSpec(source, spec) && hasVersion(source,version)) {
 				lst.add(source);
 			}
 		}
 
 		return (DasSource[]) lst.toArray(new DasSource[lst.size()]);
 
+	}
+
+	private boolean hasVersion(DasSource source, String version) {
+		if (version == null)
+			return true;
+		if (version.equals(""))
+			return true;
+
+		DasCoordinateSystem[] coords = source.getCoordinateSystem();
+		for (int j = 0; j < coords.length; j++) {
+			DasCoordinateSystem cs = coords[j];
+			if ((version.equalsIgnoreCase(cs.getVersion()))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
