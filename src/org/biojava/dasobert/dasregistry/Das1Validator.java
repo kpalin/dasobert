@@ -1876,7 +1876,9 @@ public class Das1Validator {
 		InputStream inStream = null;
 
 		HttpURLConnection huc = null;
+		
 		huc = (HttpURLConnection) url.openConnection();
+		huc.setRequestProperty ( "User-Agent", "DasRegistry" ) ; //set user agent so people such as ensembl know who is making the requests
 		// String contentEncoding = huc.getContentEncoding();
 		inStream = huc.getInputStream();
 		return inStream;

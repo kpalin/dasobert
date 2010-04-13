@@ -45,7 +45,7 @@ public class HttpConnectionTools {
 
 
 
-	static int    DEFAULT_CONNECTION_TIMEOUT = 15000; // timeout for http connection = 15. sec
+	static int    DEFAULT_CONNECTION_TIMEOUT = 120000; // timeout for http connection = 15. sec
 
 
 	public HttpConnectionTools() {
