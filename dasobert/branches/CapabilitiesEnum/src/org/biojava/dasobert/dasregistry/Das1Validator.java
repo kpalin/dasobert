@@ -1606,18 +1606,19 @@ public class Das1Validator {
 		// validationMessage += "got " + featuresList.size() + " features\n";
 		boolean ontologyOK = true;
 		int i = 0;
+		
 		for (Map<String, String> feature : featuresList) {
 			i++;
 			// validationMessage += "*** validating track " + i + ": "
 			// + feature.get("TYPE") + "\n";
 			try {
 
-				if ((feature.get("START").equals(feature.get("END")))
-						&& (feature.get("START").equals("0"))) {
-					// validationMessage +=
-					// "  Non-positional features are currently not supported, yet.\n";
-					continue;
-				}
+//				if ((feature.get("START").equals(feature.get("END")))
+//						&& (feature.get("START").equals("0"))) {
+//					// validationMessage +=
+//					// "  Non-positional features are currently not supported, yet.\n";
+//					continue;
+//				}
 				if (validateTrack(feature)) {
 					// validationMessage += "  track ok!\n";
 				}
