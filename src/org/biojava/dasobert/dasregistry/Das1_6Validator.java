@@ -139,77 +139,48 @@ public class Das1_6Validator extends Das1Validator{
 
 	
 	
-	/**validates a track for consistency with the BioSapiens annotation
-	 * @param feature 
-	 * 
-	 * @return true if the track validates
-	 * @throws DASException 
-	 */
-	public boolean  validateTrack(Map<String,String> feature) throws DASException{
-
-		Pattern ecoPattern = Pattern.compile("(ECO:[0-9]+)");
-		
-		// validate type:
-		String type         = feature.get("TYPE");
-		String typeID       = feature.get("TYPE_ID");
-		String typeCategory = feature.get("TYPE_CATEGORY");
-		//System.out.println("type  " + type);
-		//System.out.println("method " + feature.get("METHOD"));
-		//System.out.println("typeID " + typeID);
-		//System.out.println("typeCategory " + typeCategory);
 	
-		if ( typeID == null) {
-			throw new DASException("track does not have the TYPE - id field set");
+
+	protected boolean validateFeatureOntology(
+			List<Map<String, String>> featuresList) {
+
+		// validationMessage += "got " + featuresList.size() + " features\n";
+		boolean ontologyOK = true;
+		int i = 0;
+		HashMap <String,String> cvIdAlreadyChecked=new HashMap<String,String>();
+		for (Map<String, String> feature : featuresList) {
+			i++;
+			// validationMessage += "*** validating track " + i + ": "
+			// + feature.get("TYPE") + "\n";
+			try {
+
+
+				String cvId=feature.get("TYPE_CVID");
+				System.out.println("cvId="+cvId);
+				if(cvId==null){
+					throw new DASException("cvId cannot be undefined " + cvId + "<");
+				}//need an cvId for ontologies to be valid
+				if(!cvIdAlreadyChecked.containsKey(cvId)){
+				if (! lookup.exists(cvId)){
+					throw new DASException("unknown cvId >" + cvId + "<");
+				}
+				}
+
+
+				return true;
+			} catch (DASException ex) {
+				// System.out.println(ex.getMessage());
+				// ex.printStackTrace();
+				if (appendValidationErrors) {
+					validationMessage += "   " + ex.getMessage() + "\n";
+					validationMessage += "   This DAS source does NOT comply with these SO, ECO, BS ontologies!\n";
+				}
+				ontologyOK = false;
+
+			}
 		}
-		if ( typeCategory == null) {
-			throw new DASException("track does not have the TYPE - category field set");
-		}
-
-		SimpleTerm t = testTypeIDAgainstOntology(typeID);
-
-
-		
-//		if (! t.getDescription().equals(type)){
-//			boolean synonymUsed = false;
-//			Object[] synonyms = t.getSynonyms();
-//			for (Object syno :  synonyms){
-//				//System.out.println(syno);
-//				if ( syno.equals(type)){
-//					synonymUsed = true;
-//					break;
-//				}
-//			}
-//			if ( ! synonymUsed) {			
-//				throw new DASException("feature type ("+ type + 
-//						") does not match Ontology description (" + 
-//						t.getDescription()+" for termID: " +
-//				typeID+")");
-//			}
-//		}
-//
-//		// test evidence code
-//
-		// parse the ECO id from the typeCategory;
-		Matcher m = ecoPattern.matcher(typeCategory);
-		String eco = null;
-		if ( m.find() ) {
-			eco = m.group(0);
-		}
-
-		if ( eco == null){
-			throw new DASException("could not identify ECO id in " + typeCategory);
-		}
-		if (! lookup.exists(eco, "ECO")){
-			throw new DASException("unknown evidence code >" + eco + "<");
-		}
-
-
-
-		return true;//returning true at the moment as failing ontology test currently does not stop source being valid
-
+		return ontologyOK;
 	}
-
-	
 	
 	
 	/**
@@ -261,16 +232,21 @@ public class Das1_6Validator extends Das1Validator{
 //		System.out.println("set Sanger specific properties");
 		
 		Das1_6Validator validator=new Das1_6Validator();
-		String andy="http://www.ebi.ac.uk/~aj/test/das/sources";
-		String ensembl="http://www.ensembl.org/das/sources";
-		String dasregistry="http://www.dasregistry.org/das1/sources";
-		String myLocalTest="http://localhost:8080/das/sources";
-		//validator.validateSourcesCmd("http://www.ensembl.org/das/sources");
-		if(validator.validateSourcesCmdShallow(myLocalTest)){
-			System.out.println("sourcesCmd Was valid "+validator.validationMessage);
-		}else{
-			System.out.println("sourcesCmd was invalid"+validator.validationMessage);
-		}
+		
+		
+//		String andy="http://www.ebi.ac.uk/~aj/test/das/sources";
+//		String ensembl="http://www.ensembl.org/das/sources";
+//		String dasregistry="http://www.dasregistry.org/das1/sources";
+//		String myLocalTest="http://localhost:8080/das/sources";
+//		//validator.validateSourcesCmd("http://www.ensembl.org/das/sources");
+//		if(validator.validateSourcesCmdShallow(myLocalTest)){
+//			System.out.println("sourcesCmd Was valid "+validator.validationMessage);
+//		}else{
+//			System.out.println("sourcesCmd was invalid"+validator.validationMessage);
+//		}
+		validator.setRelaxNgPath("http://localhost:8080/dasregistry/validation1.6/");
+		System.out.println("is ontology valid="+validator.validateFeatures("http://localhost:8080/das/test16genes/", "1:113387,6757161", true));
+		System.out.println("validation message="+validator.validationMessage);
 	}
 
 	public void setRelaxNgPath(String relaxNgPath) {
