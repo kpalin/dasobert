@@ -56,6 +56,7 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 	String version;
 	String type_id;
 	String type_category;
+	String type_cvId;
 	
 	
 	public DAS_Feature_Handler() {
@@ -72,6 +73,7 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 		version   = "";
 		type_id = "";
 		type_category="";
+		type_cvId="";
 	}
 
 	
@@ -159,8 +161,10 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 		
 			feature.put("TYPE_ID",type_id);
 			feature.put("TYPE_CATEGORY", type_category);
+			feature.put("TYPE_CVID",type_cvId);
 			type_id = "";
 			type_category="";
+			type_cvId="";
 		}
 		
 		
@@ -217,6 +221,7 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 		if ( qName.equals("TYPE")){
 			type_id      = atts.getValue("id");
 			type_category= atts.getValue("category");
+			type_cvId=atts.getValue("cvId");
 		}
 
 	}
