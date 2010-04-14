@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 
 import javax.xml.rpc.ServiceException;
@@ -38,7 +39,7 @@ public class DasRegistryOntologyLookUp {
 	private Query query = null;
 	private String fieldSep="\t";
 	//String ontologies[]={"BS","ECO", "GO","SO","MOD"};
-	Map <String,String>ontologies;
+	Map <String,String>ontologies=new HashMap();
 	
 	Map ontologyBS=null;//maps for storing ontology information if decide to make a cache of the webservice
 	Map ontologyECO=null;
@@ -51,7 +52,8 @@ public class DasRegistryOntologyLookUp {
 		//"SO:0001077"
 		
 		
-		boolean isValid=lookup.exists("SO:0001077", "SO");
+		boolean isValid=lookup.exists("ECO:203", "ECO");
+		
 		if(isValid){
 			System.out.println("true");
 		}else{
@@ -73,12 +75,12 @@ public class DasRegistryOntologyLookUp {
 
 	private void init() {
 		//needed to get out through sanger proxy
-		Properties props= new Properties(System.getProperties());
-		props.put("http.proxySet", "true");
-		props.put("http.proxyHost", "wwwcache.sanger.ac.uk");
-		props.put("http.proxyPort", "3128");
-		Properties newprops = new Properties(props);
-		System.setProperties(newprops);
+//		Properties props= new Properties(System.getProperties());
+//		props.put("http.proxySet", "true");
+//		props.put("http.proxyHost", "wwwcache.sanger.ac.uk");
+//		props.put("http.proxyPort", "3128");
+//		Properties newprops = new Properties(props);
+//		System.setProperties(newprops);
 		System.out.println("set properties");
 		QueryService locator = new QueryServiceLocator();
 		this.query = null;
@@ -88,13 +90,15 @@ public class DasRegistryOntologyLookUp {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		try {
-			ontologies=query.getOntologyNames();
+		//try {
+			ontologies.put("ECO", "");
+			ontologies.put("SO","");
+			ontologies.put("BO", "");//=query.getOntologyNames();
 			System.out.println(ontologies);
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		} catch (RemoteException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 		//get dir as a file from the servlet that will run at specific time intervals
 		//File dir=new File("directory");
@@ -203,12 +207,13 @@ from file
 		try {
 			System.out.println("trying id:"+id+" ontology:"+ontology);
 			String term=query.getTermById(id, ontology);
-			if(term.equals(id)){
-				exists= false;
-			}else{
-			System.out.println("term found="+term);
-			exists= true;
-			}
+			Map<String,String> map=query.getTermMetadata(id, ontology);
+			//Set<String> keys=map.keySet();
+			if(map.size()>0)return true;
+//			for(String key:keys){
+//				System.out.println(key +" value="+map.get(key));
+//			}
+			
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
