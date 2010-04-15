@@ -133,6 +133,48 @@ public class Das1_6Validator extends Das1Validator{
 	
 	
 	
+	/**
+	 * written by jw to add ontology to the types validation
+	 * 
+	 * @param typesList
+	 * @return
+	 */
+	protected boolean validateTypesAgainstOntology(
+			List<Map<String, String>> typesList) {
+		// System.out.println("validating type ontology jw");
+		// validationMessage += "got " + typesList.length + " types\n";
+		boolean ontologyOK = true;
+
+		// start at 1 as 0 is ID
+		for (int i = 1; i < typesList.size(); i++) {
+
+			// validationMessage += "*** validating type " + i + ": "
+			// + typesList[i] + "\n";
+			try {
+				// validate code here to replace validat tracks in feature
+				// equivalent method
+				Map<String, String> map = typesList.get(i);
+				SimpleTerm term = testTypeIDAgainstOntology(map.get("cvId"));
+				if (term == null) {
+					if (appendValidationErrors)
+						validationMessage += "  track ontology "
+								+ typesList.get(i)
+								+ " not found in ontology!\n";
+					return false;
+				}
+			} catch (DASException ex) {
+				// System.out.println(ex.getMessage());
+				// ex.printStackTrace();
+				if (appendValidationErrors) {
+					validationMessage += "   " + ex.getMessage() + "\n";
+					validationMessage += "   This DAS source does NOT comply with these SO, ECO, BS ontologies!\n";
+				}
+				ontologyOK = false;
+
+			}
+		}
+		return ontologyOK;
+	}
 
 	
 	
@@ -144,14 +186,11 @@ public class Das1_6Validator extends Das1Validator{
 	protected boolean validateFeatureOntology(
 			List<Map<String, String>> featuresList) {
 
-		// validationMessage += "got " + featuresList.size() + " features\n";
 		boolean ontologyOK = true;
-		int i = 0;
+		
 		HashMap <String,String> cvIdAlreadyChecked=new HashMap<String,String>();
 		for (Map<String, String> feature : featuresList) {
-			i++;
-			// validationMessage += "*** validating track " + i + ": "
-			// + feature.get("TYPE") + "\n";
+			
 			try {
 
 
@@ -173,7 +212,7 @@ public class Das1_6Validator extends Das1Validator{
 				// ex.printStackTrace();
 				if (appendValidationErrors) {
 					validationMessage += "   " + ex.getMessage() + "\n";
-					validationMessage += "   This DAS source does NOT comply with these SO, ECO, BS ontologies!\n";
+					validationMessage += "   This DAS source cvIds does NOT comply with the listed by the EBI ontology web service!\n";
 				}
 				ontologyOK = false;
 
@@ -182,41 +221,6 @@ public class Das1_6Validator extends Das1Validator{
 		return ontologyOK;
 	}
 	
-	
-	/**
-	 * written by jw to add ontology to the types validation
-	 * @param typesList
-	 * @return
-	 */
-  private boolean validateTypesAgainstOntology(String[] typesList){
-		//System.out.println("validating type ontology jw");
-		//validationMessage += "got " + typesList.length + " types\n";
-		boolean ontologyOK = true;
-		
-		//start at 1 as 0 is ID
-		for( int i=1; i<typesList.length; i++){
-			
-			//validationMessage += "*** validating type " + i +": " + typesList[i] +"\n";
-			try {
-				//validate code here to replace validat tracks in feature equivalent method
-				SimpleTerm term=testTypeIDAgainstOntology(typesList[i]);
-				if ( term!=null ) {
-					//validationMessage +="  track ok!\n";
-				}
-			} catch (DASException ex){
-				//System.out.println(ex.getMessage());
-				//ex.printStackTrace();
-				validationMessage += "   " + ex.getMessage() +"\n";
-				validationMessage += "   This DAS source does NOT comply with the BioSapiens ontology!\n";
-				ontologyOK = false;
-
-			}
-		}
-		return ontologyOK;
-	}
-	
-	
-
 	
 
 	
