@@ -1263,7 +1263,7 @@ public class Das1Validator {
 		}
 		List<Map<String, String>> types = cont_handle.getTypesAsList();
 		if (types.size() > 0) {
-			result.setTypes(types);
+			if(result!=null)result.setTypes(types);//have to check null here for junit tests
 
 			if (!ontologyValidation)
 				return true;
@@ -1483,22 +1483,6 @@ public class Das1Validator {
 		}
 		SimpleTerm term = null;
 		term = lookup.getTerm(typeID);
-		// if ( ontologies == null) {
-		// initOntologies();
-		// }
-
-		// try {
-		// for (Ontology ontology: ontologies){
-		// if ( ontology.containsTerm(typeID)) {
-		// t = ontology.getTerm(typeID);
-		// if (t != null)
-		// return t;
-		// }
-		// }
-		// } catch (NoSuchElementException ex){
-		// ex.printStackTrace();
-		// //System.err.println(ex.getMessage());
-		// }
 		return term;
 	}
 
@@ -1642,7 +1626,7 @@ public class Das1Validator {
 	 * @param typesList
 	 * @return
 	 */
-	private boolean validateTypesAgainstOntology(
+	protected boolean validateTypesAgainstOntology(
 			List<Map<String, String>> typesList) {
 		// System.out.println("validating type ontology jw");
 		// validationMessage += "got " + typesList.length + " types\n";
