@@ -1113,28 +1113,28 @@ public class Das1Validator {
 					+ "entry_points"))
 				return false;
 
-			InputStream dasInStream = open(u);
+//			InputStream dasInStream = open(u);
+//
+//			XMLReader xmlreader = getXMLReader();
 
-			XMLReader xmlreader = getXMLReader();
-
-			DAS_Entry_Points_Handler cont_handle = new DAS_Entry_Points_Handler();
-
-			xmlreader.setContentHandler(cont_handle);
-			xmlreader.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
-			InputSource insource = new InputSource();
-			insource.setByteStream(dasInStream);
-			xmlreader.parse(insource);
-			String version = cont_handle.getVersion();
-			if (version != null) {
-				return true;
-			} else {
-				if (appendValidationErrors) {
-					validationMessage += "<br/>---<br/> contacting " + url
-							+ "entry_points <br/>";
-					validationMessage += " no version was returned";
-				}
-				return false;
-			}
+//			DAS_Entry_Points_Handler cont_handle = new DAS_Entry_Points_Handler();
+//
+//			xmlreader.setContentHandler(cont_handle);
+//			xmlreader.setErrorHandler(new org.xml.sax.helpers.DefaultHandler());
+//			InputSource insource = new InputSource();
+//			insource.setByteStream(dasInStream);
+//			xmlreader.parse(insource);
+//			String version = cont_handle.getVersion();
+//			if (version != null) {
+//				return true;
+//			} else {
+//				if (appendValidationErrors) {
+//					validationMessage += "<br/>---<br/> contacting " + url
+//							+ "entry_points <br/>";
+//					validationMessage += " no version was returned";
+//				}
+//				return false;
+//			}
 
 		} catch (Exception e) {
 			// e.printStackTrace();
@@ -1150,7 +1150,7 @@ public class Das1Validator {
 					validationMessage += e.toString();
 			}
 		}
-		return false;
+		return true;
 	}
 
 	/*
@@ -1495,7 +1495,6 @@ public class Das1Validator {
 	 */
 	public boolean validateTrack(Map<String, String> feature)
 			throws DASException {
-		System.out.println("validating track");
 		Pattern ecoPattern = Pattern.compile("(ECO:[0-9]+)");
 
 		// validate type:
@@ -1515,34 +1514,14 @@ public class Das1Validator {
 			throw new DASException(
 					"track does not have the TYPE - category field set");
 		}
-		System.out.println("validating track and found typeID" + typeID
-				+ " typeCatagory=" + typeCategory);
+		
 		SimpleTerm t = testTypeIDAgainstOntology(typeID);
 		if (t == null) {
 			System.out
 					.println("no term found for typeid so ontology is invalid");
 			return false;
 		}
-		// if (! t.getDescription().equals(type)){
-		// boolean synonymUsed = false;
-		// Object[] synonyms = t.getSynonyms();
-		// for (Object syno : synonyms){
-		// //System.out.println(syno);
-		// if ( syno.equals(type)){
-		// synonymUsed = true;
-		// break;
-		// }
-		// }
-		// if ( ! synonymUsed) {
-		// throw new DASException("feature type ("+ type +
-		// ") does not match Ontology description (" +
-		// t.getDescription()+" for termID: " +
-		// typeID+")");
-		// }
-		// }
-		//
-		// // test evidence code
-		//
+		
 		// parse the ECO id from the typeCategory;
 		Matcher m = ecoPattern.matcher(typeCategory);
 		String eco = null;

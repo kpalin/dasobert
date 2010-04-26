@@ -195,7 +195,7 @@ public class Das1_6Validator extends Das1Validator{
 
 
 				String cvId=feature.get("TYPE_CVID");
-				System.out.println("cvId="+cvId);
+				String methodCvId=feature.get("methodCvId");
 				if(cvId==null){
 					throw new DASException("cvId cannot be undefined " + cvId + "<");
 				}//need an cvId for ontologies to be valid
@@ -203,10 +203,23 @@ public class Das1_6Validator extends Das1Validator{
 				if (! lookup.exists(cvId)){
 					throw new DASException("unknown cvId >" + cvId + "<");
 				}
+				cvIdAlreadyChecked.put(cvId,"");
+				}
+				if(methodCvId==null){
+					throw new DASException("method cvId cannot be undefined " + methodCvId + "<");
+				}
+				
+				if(methodCvId.contains("ECO:")){//only ECO ids should be allowed here as recommended - I guess one day this may change
+				if(!cvIdAlreadyChecked.containsKey(methodCvId)){
+					if (! lookup.exists(methodCvId)){
+						throw new DASException("unknown cvId >" + methodCvId + "<");
+					}
+					cvIdAlreadyChecked.put(methodCvId,"");
+					}
+				}else{
+					throw new DASException("method cvIds should contain an ECO ontology id this one does not:" + methodCvId + "<");
 				}
 
-
-				return true;
 			} catch (DASException ex) {
 				// System.out.println(ex.getMessage());
 				// ex.printStackTrace();
