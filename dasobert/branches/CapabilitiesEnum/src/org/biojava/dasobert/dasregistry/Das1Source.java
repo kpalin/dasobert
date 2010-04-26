@@ -31,6 +31,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 
+import org.biojava.dasobert.das.DasSpec;
 import org.biojava.dasobert.das2.io.DasSourceWriter;
 import org.biojava.dasobert.das2.io.DasSourceWriterImpl;
 import org.biojava.utils.xml.PrettyXMLWriter;
@@ -57,6 +58,7 @@ public class Das1Source implements DasSource {
 	boolean alertAdmin;
 	private String[] validCapabilities;
 	private String specification;
+	//private Map<DasSpec,String> capabilityStatusMap;
 
 	public static String EMPTY_ID = "UNK:-1" ;
 

@@ -57,6 +57,7 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 	String type_id;
 	String type_category;
 	String type_cvId;
+	String methodCvId;
 	
 	
 	public DAS_Feature_Handler() {
@@ -74,6 +75,7 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 		type_id = "";
 		type_category="";
 		type_cvId="";
+		methodCvId="";
 	}
 
 	
@@ -166,6 +168,12 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 			type_category="";
 			type_cvId="";
 		}
+		if ( qName.equals("METHOD")){
+			if ( featureText.length() < 1)
+				featureText = type_id;
+			feature.put("methodCvId",methodCvId);
+			methodCvId="";
+		}
 		
 		
 		feature.put(featurefield,featureText);
@@ -197,8 +205,7 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 			addLink(uri,name,qName, atts);
 		else if ( qName.equals("GROUP"))
 			addGroup(uri,name,qName, atts);
-		else if ( qName.equals("METHOD") || 
-				qName.equals("TYPE") ||
+		else if ( qName.equals("TYPE") ||
 				qName.equals("START") ||
 				qName.equals("END") ||
 				qName.equals("NOTE") ||                
@@ -217,6 +224,8 @@ public class DAS_Feature_Handler  extends DefaultHandler{
 				version = v;
 			
 			
+		}else if ( qName.equals("METHOD")){
+			methodCvId=atts.getValue("cvId");
 		}
 		if ( qName.equals("TYPE")){
 			type_id      = atts.getValue("id");

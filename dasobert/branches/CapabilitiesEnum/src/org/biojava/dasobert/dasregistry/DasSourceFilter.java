@@ -142,7 +142,7 @@ public class DasSourceFilter {
 	 * @param version TODO
 	 * @return an array of DasSources that match the requested filtering rules
 	 */
-	public DasSource[] filterBy(DasSource[] sources, String label,
+	public List<DasSource> filterBy(List<DasSource> sources, String label,
 			String organism, String authority, String capability, String type, DasSpec spec, String version) {
 
 		if ((label == null) && (organism == null) && (authority == null)
@@ -150,8 +150,8 @@ public class DasSourceFilter {
 			return sources;
 
 		List lst = new ArrayList();
-		for (int i = 0; i < sources.length; i++) {
-			DasSource source = sources[i];
+		for (int i = 0; i < sources.size(); i++) {
+			DasSource source = sources.get(i);
 
 			// test for correct label
 			if (hasLabel(source, label) && hasOrganism(source, organism)
@@ -163,7 +163,7 @@ public class DasSourceFilter {
 			}
 		}
 
-		return (DasSource[]) lst.toArray(new DasSource[lst.size()]);
+		return lst;
 
 	}
 
