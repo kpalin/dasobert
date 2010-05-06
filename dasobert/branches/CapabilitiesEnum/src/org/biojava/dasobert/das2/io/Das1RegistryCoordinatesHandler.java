@@ -146,9 +146,9 @@ public class Das1RegistryCoordinatesHandler  extends DefaultHandler{
 		}
 	}
 
-	public DasCoordinateSystem[] getRegistryCoordinates(){    
+	public List<DasCoordinateSystem> getRegistryCoordinates(){    
 		//System.out.println("Das2SourceHandler: source size: " + sources.size());
-		return (DasCoordinateSystem[])coordinates.toArray(new DasCoordinateSystem[coordinates.size()]);
+		return coordinates;
 	}
 
 	
