@@ -113,7 +113,7 @@ public class Das1Validator {
 	// moment
 	private boolean checkHeaders = true;
 
-	private DasCoordinateSystem[] registryCoordinateSystems = null;
+	private List<DasCoordinateSystem> registryCoordinateSystems = null;
 
 	public static final String REGISTRY_LOCATION = "http://www.dasregistry.org/das1/sources";
 	public static final String invalidTestCode = "invalidTestCode";// segment or
@@ -722,8 +722,8 @@ public class Das1Validator {
 
 			// System.out.println("user authority="+userCSAuthority+" category="+userCSCategory);
 			// System.out.println("Number of Reg coordinate systems returned="+this.registryCoorinateSystems.length);
-			for (int k = 0; k < registryCoordinateSystems.length; k++) {
-				DasCoordinateSystem tempCs = registryCoordinateSystems[k];
+			for (int k = 0; k < registryCoordinateSystems.size(); k++) {
+				DasCoordinateSystem tempCs = registryCoordinateSystems.get(k);
 				// System.out.println("uniqueId="+tempCs.uniqueId+"");
 				if (tempCs.equals(cs)) {
 					// logger
@@ -896,13 +896,13 @@ public class Das1Validator {
 	 * org.biojava.dasobert.dasregistry.DasValidator#getRegistryCoordinateSystems
 	 * ()
 	 */
-	public DasCoordinateSystem[] getRegistryCoordinateSystems() {
+	public List<DasCoordinateSystem> getRegistryCoordinateSystems() {
 
 		DASRegistryCoordinatesReaderXML reader = new DASRegistryCoordinatesReaderXML();
 		// need to implement a reader for
 		// http://www.dasregistry.org/das1/coordinatesystem cmd
 		logger.debug("getting registry CoordinateSystems from dasregistry url");
-		DasCoordinateSystem coords[] = reader
+		List<DasCoordinateSystem> coords = reader
 				.readRegistryDas1CoorinateSystems();
 
 		return coords;

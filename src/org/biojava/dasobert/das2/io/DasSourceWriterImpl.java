@@ -101,7 +101,7 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 		xw.closeTag("MAINTAINER");
 		// System.out.println("before version");
 		xw.openTag("VERSION");
-		xw.attribute("uri", source.getId());
+		xw.attribute("uri", source.getUrl());
 
 		Date d = source.getRegisterDate();
 		if (d == null)

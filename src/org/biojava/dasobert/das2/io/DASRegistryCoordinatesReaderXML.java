@@ -26,6 +26,9 @@ package org.biojava.dasobert.das2.io;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -53,7 +56,7 @@ public class DASRegistryCoordinatesReaderXML implements DASRegistryCoordinatesRe
 	 * Use this method if you want to read from the public registry instance www.dasregistry.org
 	 * @return
 	 */
-	public DasCoordinateSystem[] readRegistryDas1CoorinateSystems()  {
+	public List<DasCoordinateSystem> readRegistryDas1CoorinateSystems()  {
 		URL url=null;
 		try {
 			url=new URL(PUBLIC_REGISTRY);
@@ -62,12 +65,12 @@ public class DASRegistryCoordinatesReaderXML implements DASRegistryCoordinatesRe
 			e.printStackTrace();
 		}
 		
-		DasCoordinateSystem[] regCoords=this.readRegistryDas1CoordinateSystems(url);
+		List<DasCoordinateSystem> regCoords=this.readRegistryDas1CoordinateSystems(url);
 		return regCoords;
 	}
 	
-	public DasCoordinateSystem[] readRegistryDas1CoordinateSystems(URL url){
-		DasCoordinateSystem[] coords = new DasCoordinateSystem[0];
+	public List<DasCoordinateSystem> readRegistryDas1CoordinateSystems(URL url){
+		List<DasCoordinateSystem> coords = new ArrayList();
 		System.setProperty("proxySet", "true");
 		System.setProperty("proxyHost", "wwwcache.sanger.ac.uk");
 		System.setProperty("proxyPort", "3128");
@@ -92,9 +95,9 @@ public class DASRegistryCoordinatesReaderXML implements DASRegistryCoordinatesRe
 	/** read a DAS2 coordinates response and return a list of coordinate systems.
 	 * 
 	 */
-	public DasCoordinateSystem[] readRegistryCoordinates(InputStream stream)  {
+	public List<DasCoordinateSystem> readRegistryCoordinates(InputStream stream)  {
 
-		DasCoordinateSystem[] regCoords = new DasCoordinateSystem[0];
+		List<DasCoordinateSystem> regCoords = new ArrayList();
 
 		try {
 			SAXParserFactory spfactory =
