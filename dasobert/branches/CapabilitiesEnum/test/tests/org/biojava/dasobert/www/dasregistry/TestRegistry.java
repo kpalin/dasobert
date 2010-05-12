@@ -21,7 +21,7 @@
  * 
  */
 
-package org.biojava.dasobert.test;
+package tests.org.biojava.dasobert.www.dasregistry;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -68,7 +68,7 @@ public class TestRegistry extends TestCase {
 		
 		DasSource[] sources = reader.readDasSource(url);
 
-		assertTrue(sources.length > 200);
+		assertTrue(sources.length > 700);
 
 
 
