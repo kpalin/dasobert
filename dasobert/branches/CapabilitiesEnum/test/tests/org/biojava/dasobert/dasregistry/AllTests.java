@@ -12,6 +12,7 @@ public class AllTests {
 		suite.addTestSuite(Das1ValidatorTest.class);
 		suite.addTestSuite(Das1_6ValidatorTest.class);
 		suite.addTestSuite(CapablitiesTests.class);
+		suite.addTestSuite(KeywordsTest.class);
 		//$JUnit-END$
 		return suite;
 	}
