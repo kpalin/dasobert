@@ -28,6 +28,6 @@ public class CapablitiesTests extends TestCase{
 			// could change this to save a null pointer exception by creating an array if we want to
 			//e.printStackTrace();
 		//}
-		assertTrue(caps2==null);
+		assertTrue(caps2.length==1);
 	}
 }
