@@ -33,7 +33,7 @@ public class Das1ValidatorTest extends TestCase {
 		Das1Source [] sources=validator.getDas1SourcesFromSourcesXml(registryLocation+"/das/sources");
 		System.out.println("sources length:"+sources.length);
 
-		boolean allValid=validator.validateSources(sources);
+		//boolean allValid=validator.validateSources(sources);
 //		assertTrue(allValid);
 //		if(allValid)System.out.println("-------------All sources are valid");
 	}
