@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -220,7 +221,10 @@ public class DasSourceIndexWriterImpl implements DasSourceWriter {
 			List<Map<String, String>> typesInfo) throws IOException {
 		xw.openTag("entry");
 		xw.attribute("id", sourceIdentifier);
-
+		
+		HashSet previousTypeIds=new HashSet<String>();
+		HashSet previousCategory=new HashSet<String>();
+		HashSet previousCvId=new HashSet<String>();
 		xw.openTag("additional_fields");
 		for (Map<String, String> type : typesInfo) {
 			String id = type.get("id");
@@ -228,16 +232,27 @@ public class DasSourceIndexWriterImpl implements DasSourceWriter {
 			String category = type.get("category");
 			// String number=type.get("number");
 			if (id != null && id != "") {
+				if(!previousTypeIds.contains(id)){
 				this.writeAdditionalField(xw, "type_id", id);
+				previousTypeIds.add(id);
+				}
 			}
 			if (cvId != null && cvId != "") {
+				if(previousCvId.contains(cvId)){
 				this.writeAdditionalField(xw, "cvId", cvId);
+				previousCvId.add(cvId);
+				}
 			}
 			if (category != null && category != "") {
+				if(!previousCategory.contains(category)){
 				this.writeAdditionalField(xw, "category", category);
+				previousCategory.add(category);
+				}
+				
+				
+			}
 			}
 
-		}
 		xw.closeTag("additional_fields");
 		xw.closeTag("entry");
 
