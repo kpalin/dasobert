@@ -28,6 +28,8 @@ import org.biojava.dasobert.das.Capabilities;
 import org.biojava.dasobert.das2.io.DasSourceReaderImpl;
 import org.biojava.dasobert.dasregistry.Das1Validator;
 import org.biojava.dasobert.dasregistry.DasSource;
+import org.biojava.dasobert.dasregistry.DasValidationResult;
+
 
 
 public class ValidateSourcesCmd {
@@ -60,15 +62,15 @@ public class ValidateSourcesCmd {
 				if (! source.hasCapability(Capabilities.INTERACTION.toString()))
 					continue;
 				
-				String[] okCaps = validator.validate(source.getUrl(), source.getCoordinateSystem(),testCaps);
+				DasValidationResult okCaps = validator.validate(source.getUrl(), source.getCoordinateSystem(),testCaps);
 
-				if ( okCaps.length != testCaps.length){
-					System.err.println("!!! DAS source " + source.getNickname() +" does not validate");
-					System.err.println(validator.getValidationMessage());
-					
-				} else {
-					System.out.println(" Excellent, server is fine! ***");
-				}
+//				if ( okCaps.length != testCaps.length){
+//					System.err.println("!!! DAS source " + source.getNickname() +" does not validate");
+//					System.err.println(validator.getValidationMessage());
+//					
+//				} else {
+//					System.out.println(" Excellent, server is fine! ***");
+//				}
 
 
 			}

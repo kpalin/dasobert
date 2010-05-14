@@ -137,7 +137,7 @@ public class ContactRegistry {
     }
     
     private void displaySources(DasSource[] sources){
-        for (int i=0;i<2;i++) {
+        for (int i=0;i<sources.length;i++) {
             DasSource ds = sources[i];
             System.out.println(ds);
             String[] caps = ds.getCapabilities();

@@ -26,6 +26,7 @@ import org.biojava.bio.program.das.dasalignment.DASException;
 import org.biojava.dasobert.das.FeatureThread;
 import org.biojava.dasobert.dasregistry.Das1Source;
 import org.biojava.dasobert.dasregistry.Das1Validator;
+
 import org.biojava.dasobert.eventmodel.FeatureEvent;
 import org.biojava.dasobert.eventmodel.FeatureListener;
 
