@@ -180,7 +180,13 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 			xw.closeTag("PROP");
 
 		}
-
+		
+		String spec=source.getSpecification();
+		xw.openTag("PROP");
+		xw.attribute("name", "spec");
+		xw.attribute("value", spec);
+		xw.closeTag("PROP");
+		
 		ValidationResultLights results = new ValidationResultLights(
 				source);
 		List<LightBean> beans = results.getLightsLinksAndResults();
