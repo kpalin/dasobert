@@ -41,6 +41,7 @@ import org.biojava.dasobert.dasregistry.Das1Source;
 import org.biojava.dasobert.dasregistry.DasCoordinateSystem;
 import org.biojava.dasobert.dasregistry.DasSource;
 import org.biojava.dasobert.dasregistry.LightBean;
+import org.biojava.dasobert.dasregistry.RegistryTimer;
 import org.biojava.dasobert.dasregistry.ValidationResultLights;
 import org.biojava.utils.xml.PrettyXMLWriter;
 import org.biojava.utils.xml.XMLWriter;
@@ -48,9 +49,10 @@ import org.biojava.utils.xml.XMLWriter;
 public class DasSourceWriterImpl implements DasSourceWriter {
 
 	public static final String COORDSYSURI = "http://www.dasregistry.org/dasregistry/coordsys/";
-
+	private RegistryTimer timer;
 	public DasSourceWriterImpl() {
 		super();
+		timer=new RegistryTimer();
 
 	}
 
@@ -200,6 +202,14 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 				xw.closeTag("PROP");
 			}
 
+		}
+		
+		int daysBeforeDeletion=timer.daysBeforeArchiving(source);
+		if(daysBeforeDeletion==60){
+		xw.openTag("PROP");
+		xw.attribute("name", "daysBeforeDeletion");
+		xw.attribute("value", Integer.toString(daysBeforeDeletion));
+		xw.closeTag("PROP");
 		}
 		xw.closeTag("VERSION");
 
