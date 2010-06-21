@@ -183,4 +183,9 @@ public class DasSourceFilter {
 		return false;
 	}
 
+	
+	private boolean isUCSC(DasSource source){
+		if(source.getId().startsWith("UCSC_"))return true;
+		return false;
+	}
 }

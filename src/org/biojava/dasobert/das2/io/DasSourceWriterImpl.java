@@ -103,7 +103,7 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 		xw.closeTag("MAINTAINER");
 		// System.out.println("before version");
 		xw.openTag("VERSION");
-		xw.attribute("uri", source.getUrl());
+		xw.attribute("uri", source.getId());
 
 		Date d = source.getRegisterDate();
 		if (d == null)
@@ -138,12 +138,24 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 		} else if (source instanceof Das1Source) {
 			// System.out.println("das1source");
 			String[] capabilities = source.getCapabilities();
+			String queryUriString="";
+			String sourceUri="";
 			for (int i = 0; i < capabilities.length; i++) {
 				String c = capabilities[i];
-				xw.openTag("CAPABILITY");
+				xw.openTag("CAPABILITY");				
 				xw.attribute("type", Das2CapabilityImpl.DAS1_CAPABILITY_PREFIX
 						+ c);
-				xw.attribute("query_uri", source.getUrl() + c);
+				if(c.equals("sources")){
+					sourceUri=source.getUrl();
+					if(sourceUri.endsWith("/")){
+				queryUriString=source.getUrl().substring(0,source.getUrl().lastIndexOf('/'));
+					}else{
+						queryUriString=source.getUrl();
+					}
+				}else{
+				queryUriString=source.getUrl() + c;
+				}
+				xw.attribute("query_uri", queryUriString);
 				xw.closeTag("CAPABILITY");
 			}
 			
@@ -205,7 +217,8 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 		}
 		
 		int daysBeforeDeletion=timer.daysBeforeArchiving(source);
-		if(daysBeforeDeletion==60){
+		//System.out.println(daysBeforeDeletion);
+		if(daysBeforeDeletion!=60){
 		xw.openTag("PROP");
 		xw.attribute("name", "daysBeforeDeletion");
 		xw.attribute("value", Integer.toString(daysBeforeDeletion));
