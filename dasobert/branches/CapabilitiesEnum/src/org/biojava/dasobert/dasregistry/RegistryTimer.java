@@ -30,7 +30,7 @@ public class RegistryTimer {
 	long timeSinceLeaseTime=now.getTime()-ds.getLeaseDate().getTime();
 	int days=(int) (timeSinceLeaseTime/oneday);
 	daysLeft=RegistryTimer.ARCHIVE_TIME-days;
-	System.out.println("days left="+daysLeft);
+	//System.out.println("days left="+daysLeft);
 	return daysLeft;
 	}
 		

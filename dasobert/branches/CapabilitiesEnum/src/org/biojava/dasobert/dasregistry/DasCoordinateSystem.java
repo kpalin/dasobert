@@ -100,6 +100,52 @@ public class DasCoordinateSystem {
 		return match;
 	}
 
+	
+	public boolean equalsUsingOrganismName(DasCoordinateSystem other) {
+		boolean match = true;
+		//System.out.println("comparing in coordinate system " + this.toString() );
+		//System.out.println("to other toString()="+other.toString());
+		// URI has piority
+//		if ( !uniqueId.equalsIgnoreCase(
+//		other.getUniqueId())){
+//			System.out.println("failed on first test unique id in database="+uniqueId+" is not equal to "+other.uniqueId);
+//			return false;
+//		}
+
+		
+		//added by jw for registry
+		if (!organism_name.equals(other.getOrganismName())) {
+			//System.out.println("mismatch in name |"+organism_name+"| other=|"+other.getOrganismName()+"|");
+			match = false;
+			return match;
+		}
+		if (!version.equals(other.getVersion())) {
+			//System.out.println("mismatch in version");
+			match = false;
+			return match;
+		}
+		if (!category.equals(other.getCategory())) {
+			//System.out.println("mismatch in category");
+			match = false;
+			return match;
+		}
+		if (!name.equals(other.getName())) {
+			//System.out.println("mismatch in name");
+			match = false;
+			return match;
+		}
+		
+		
+		//if(match){
+		//System.out.println(" match: " + match);
+		//}
+		//organism_name = "";
+		
+		
+		
+
+		return match;
+	}
 	public int hashCode() {
 		int h = 7;
 
@@ -225,6 +271,32 @@ public class DasCoordinateSystem {
 			dcs.setOrganismName(spl[2]);
 		}
 		return dcs;
+	}
+	
+	public static DasCoordinateSystem fromStringSepVersion(String rawString) {
+		String[] spl = rawString.split(",");
+		DasCoordinateSystem dcs = new DasCoordinateSystem();
+		if (spl.length == 2) {
+			dcs.setName(spl[0]);
+			dcs.setCategory(spl[1]);
+			getVersion(spl, dcs);
+		}
+		if (spl.length == 3) {
+			dcs.setName(spl[0]);
+			dcs.setCategory(spl[1]);
+			getVersion(spl, dcs);
+			dcs.setOrganismName(spl[2]);
+		}
+		return dcs;
+	}
+
+	private static void getVersion(String[] spl, DasCoordinateSystem dcs) {
+		if(spl[0].contains("_")){
+			String versionString[]=spl[0].split("_");
+			System.out.println("setting version");
+			dcs.setAuthority(versionString[0]);
+			dcs.setVersion(versionString[1]);
+		}
 	}
 
 	
