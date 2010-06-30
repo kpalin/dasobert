@@ -201,20 +201,7 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 		xw.attribute("value", spec);
 		xw.closeTag("PROP");
 		
-		ValidationResultLights results = new ValidationResultLights(
-				source);
-		List<LightBean> beans = results.getLightsLinksAndResults();
-		for (LightBean bean : beans) {
-			CapabilityStatus status = bean.getStatus();
-			if(!status.equals(CapabilityStatus.OPTIONAL)){//don't bother writing optional fields
-				xw.openTag("PROP");
-				xw.attribute("name", bean.getCapability().toString());
-				xw.attribute("value", status.toString());
-
-				xw.closeTag("PROP");
-			}
-
-		}
+		writeCapabilityStatus(xw, source);
 		
 		int daysBeforeDeletion=timer.daysBeforeArchiving(source);
 		//System.out.println(daysBeforeDeletion);
@@ -227,6 +214,12 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 		xw.closeTag("VERSION");
 
 		xw.closeTag("SOURCE");
+	}
+
+	protected void writeCapabilityStatus(XMLWriter xw, DasSource source)
+			throws IOException {
+		//do nothing for a normal response
+		//only implemented by the registry to give status of capabilities see RegistryDasSourceWriterImpl for method
 	}
 
 	public void writeDasSource(OutputStream stream, DasSource source)

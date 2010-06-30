@@ -293,7 +293,7 @@ public class DasCoordinateSystem {
 	private static void getVersion(String[] spl, DasCoordinateSystem dcs) {
 		if(spl[0].contains("_")){
 			String versionString[]=spl[0].split("_");
-			System.out.println("setting version");
+			//System.out.println("setting version");
 			dcs.setAuthority(versionString[0]);
 			dcs.setVersion(versionString[1]);
 		}
