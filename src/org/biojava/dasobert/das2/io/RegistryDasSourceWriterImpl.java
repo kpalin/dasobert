@@ -23,27 +23,12 @@
 package org.biojava.dasobert.das2.io;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import org.biojava.dasobert.das.Capabilities;
 import org.biojava.dasobert.das.CapabilityStatus;
-import org.biojava.dasobert.das.DasTimeFormat;
-import org.biojava.dasobert.das2.Das2Capability;
-import org.biojava.dasobert.das2.Das2CapabilityImpl;
-import org.biojava.dasobert.das2.Das2Source;
-import org.biojava.dasobert.dasregistry.Das1Source;
-
-import org.biojava.dasobert.dasregistry.DasCoordinateSystem;
 import org.biojava.dasobert.dasregistry.DasSource;
 import org.biojava.dasobert.dasregistry.LightBean;
-import org.biojava.dasobert.dasregistry.RegistryTimer;
 import org.biojava.dasobert.dasregistry.ValidationResultLights;
-import org.biojava.utils.xml.PrettyXMLWriter;
 import org.biojava.utils.xml.XMLWriter;
 
 public class RegistryDasSourceWriterImpl extends DasSourceWriterImpl  {
