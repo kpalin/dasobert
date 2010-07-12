@@ -50,6 +50,7 @@ public class Das2SourceHandler extends DefaultHandler{
 	List coordinates;
 	List capabilities;
 	List labels;
+	String spec;
 	
 	StringBuffer characterdata;
 	DasCoordinateSystem dcs;
@@ -57,6 +58,7 @@ public class Das2SourceHandler extends DefaultHandler{
 	
 
 	public static final String LABELPROPERTY = "label";
+	public static final String SPECPROPERTY = "spec";
 
 	public Das2SourceHandler() {
 		super();
@@ -67,6 +69,7 @@ public class Das2SourceHandler extends DefaultHandler{
 		capabilities  = new ArrayList();
 		labels        = new ArrayList();
 		characterdata=new StringBuffer();
+		spec="";
 	}
 
 	private void startSource (String uri, String name, String qName, Attributes atts){
@@ -165,10 +168,14 @@ public class Das2SourceHandler extends DefaultHandler{
 
 	private void addProperty(String uri, String name, String qName, Attributes atts){
 		String pname = atts.getValue("name");
-		String label = atts.getValue("value");
+		String value = atts.getValue("value");
+		//System.out.println("adding property "+pname+":"+value);
 		if ( pname.equals(LABELPROPERTY) ) {
-			if (! labels.contains(label)) 
-				labels.add(label);
+			if (! labels.contains(value)) 
+				labels.add(value);
+		}
+		if ( pname.equals(SPECPROPERTY) ) {
+			spec=value;				
 		}
 	}
 
@@ -185,6 +192,8 @@ public class Das2SourceHandler extends DefaultHandler{
 			currentSource.setCoordinateSystem((DasCoordinateSystem[])coordinates.toArray(new DasCoordinateSystem[coordinates.size()]));
 
 			currentSource.setLabels((String[])labels.toArray(new String[labels.size()]));
+			currentSource.setSpecification(spec);
+			spec="";
 			labels.clear();
 
 			if (currentSource.hasDas1Capabilities()){

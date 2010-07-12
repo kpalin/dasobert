@@ -106,7 +106,7 @@ public class Das1Validator {
 	protected static final int MAX_SEQUENCE_LENGTH = 1000;
 	protected static final int MAX_NR_FEATURES = 10;
 	protected static final int MAX_NR_FEATURES_ONTOLOGY = 1000;
-	public static final boolean VERBOSE = true;
+	public boolean VERBOSE = true;
 	private boolean relaxNgApprovalNeeded = true;// needed if via web page, but
 	// specifically not needed
 	// for autovalidation at the
@@ -234,6 +234,7 @@ public class Das1Validator {
 			DasCoordinateSystem[] coords, String[] capabilities,
 			boolean verbose, boolean ontologyValidation) {
 		System.out.println("calling validate in DAS1Validator with url=" + url);
+		DasHeaders headers=null;
 		verbose = true;
 
 		result = new DasValidationResult(url, coords);
@@ -258,7 +259,7 @@ public class Das1Validator {
 		if (verbose)
 			System.out.println("validation message=" + validationMessage);
 
-		String specification = getSpec(removeDataSourceNameFromUrl(url));
+		headers = getHeaders(removeDataSourceNameFromUrl(url));
 		
 		// test if all possible capabilities work
 		for (Capabilities capability : EnumSet.allOf(Capabilities.class)) {
@@ -273,9 +274,9 @@ public class Das1Validator {
 			// System.out.println("testing " + capability);
 
 			if (capability.equals(Capabilities.SOURCES)) {
-				if(specification.equals("")){
-					specification = getSpec(removeDataSourceNameFromUrl(url)+"sources");
-				}
+				
+					if(headers==null)getHeaders(removeDataSourceNameFromUrl(url)+"sources");
+				
 				boolean sourcesok = true;
 
 				if (!validateSourcesCmdShallow(url)) {
@@ -346,8 +347,8 @@ public class Das1Validator {
 				for (int i = 0; i < coords.length; i++) {
 					DasCoordinateSystem ds = coords[i];
 					String testcode = ds.getTestCode();
-					if(specification.equals("")){
-						specification = getSpec(url+Capabilities.FEATURES.getCommandTestString(testcode));
+					if(headers==null){
+						headers = getHeaders(url+Capabilities.FEATURES.getCommandTestString(testcode));
 					}
 					if (!validateFeatures(url, testcode, ontologyValidation)) {
 						featureok = false;
@@ -467,8 +468,9 @@ public class Das1Validator {
 			result.error(capability, validationMessage);
 
 		}
-		result.setSpecification(specification);
-		
+		if(headers!=null){
+		result.setSpecification(headers.getHeaderVersion());
+		}
 		// if ( error) {
 		// System.out.println("DasValidator: "+ validationMessage);
 		// }
@@ -823,8 +825,8 @@ public class Das1Validator {
 		for (int i = 0; i < sources.length; i++) {
 			DasSource ds = sources[i];
 			if (ds instanceof Das1Source) {
-				System.out.println("adding das1 source from registry "
-						+ ds.getUrl());
+				//System.out.println("adding das1 source from registry "
+					//	+ ds.getUrl());
 				das1sources.add((Das1Source) ds);
 			} else if (ds instanceof Das2Source) {
 				Das2Source d2s = (Das2Source) ds;
@@ -866,6 +868,7 @@ public class Das1Validator {
 
 		URL url = null;
 		try {
+			System.out.println("trying url="+sourcesUrl);
 			url = new URL(sourcesUrl);
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
@@ -877,9 +880,10 @@ public class Das1Validator {
 		List das1sources = new ArrayList();
 		for (int i = 0; i < sources.length; i++) {
 			DasSource ds = sources[i];
+			System.out.println("i="+i);
 			if (ds instanceof Das1Source) {
-				System.out.println("adding das1 source from registry "
-						+ ds.getUrl());
+				//System.out.println("adding das1 source from registry "
+						//+ ds.getUrl());
 				das1sources.add((Das1Source) ds);
 			}
 		}
@@ -976,7 +980,13 @@ public class Das1Validator {
 		return true;
 
 	}
-
+	
+	/**
+	 * @deprecated replaced by the sources cmd as dsn doesn't contain enough information to be useful
+	 * @param url
+	 * @param testcode
+	 * @return
+	 */
 	private boolean validateDNA(String url, String testcode) {
 		try {
 			String cmd = url + "dna?segment=" + testcode;
@@ -1935,37 +1945,12 @@ public class Das1Validator {
 
 	}
 
-	public String getSpec(String urlString) {
-		 URL url=null;
-		 String dasVersion="";
-		 try {
-		 url = new URL(urlString);
-		 } catch (MalformedURLException e) {
-		 // TODO Auto-generated catch block
-		 e.printStackTrace();
+	public DasHeaders getHeaders(String urlString) {
+		 DasHeaders headers=new DasHeaders(urlString);
+		 if(headers.validHttpStatus()){
+			 return headers;
 		 }
-				  
-				    
-		
-		 URLConnection connection = null;
-		 try {
-		 connection = url.openConnection();
-		 }
-		 catch (IOException ex) {
-		 System.out.println("Cannot open connection to URL: " + url);
-		 }
-		
-				   
-				   
-		 String headerVersion=connection.getHeaderField("X-DAS-Version");
-			if(headerVersion!=null){
-				dasVersion=headerVersion;
-			}
-			   
-				  
-				  
-		 return dasVersion;
-
+		 return null;
 		//return this.validateHeaders(urlString);
 
 	}

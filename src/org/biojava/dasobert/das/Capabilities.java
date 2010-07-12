@@ -151,6 +151,21 @@ public enum Capabilities {
 		return caps.toArray(new Capabilities[caps.size()]);
 	}
 	
+	public static List<Capabilities> capabilitiesListFromStrings  (String[] strings) {
+		ArrayList <Capabilities>caps=new ArrayList<Capabilities>();
+		for(int i=0;i<strings.length;i++){
+			if(nameToValueMap.containsKey(strings[i])){
+				caps.add(nameToValueMap.get(strings[i]));
+			}else{
+				System.err.println("Warning a capability not found for  String "+strings[i]);
+				 //throw new NoSuchCapabilityException(strings[i]);
+				
+			}
+		
+		}
+		return caps;
+	}
+	
 	public static String[] capabilitiesAsStrings(Collection <Capabilities>capabilities){
 		ArrayList <String>list=new ArrayList<String>();
 		for(Capabilities cap:capabilities){
