@@ -91,22 +91,22 @@ protein structures.">
       <PROP name="leaseTime" value="2007-06-13" />
     </VERSION>
   </SOURCE>
-  <SOURCE uri="DS_113" title="alig_pdb_sp" description="UniProt to PDB
-alignment server.
-Served from the
-Sanger installation
-of the MSD oracle
-database.">
-    <MAINTAINER email="ap3@sanger.ac.uk" />
-    <VERSION uri="latest" created="2005-03-21">
-      <COORDINATES uri="http://www.dasregistry.org/dasregistry/coordsys/CS_DS6" source="Protein Sequence" authority="UniProt" test_range="5pti">UniProt,Protein Sequence</COORDINATES>
-      <COORDINATES uri="http://www.dasregistry.org/dasregistry/coordsys/CS_DS7" source="Protein Structure" authority="PDBresnum" test_range="5pti">PDBresnum,Protein Structure</COORDINATES>
-      <CAPABILITY type="das1:alignment" query_uri="http://das.sanger.ac.uk/das/msdpdbsp/alignment" />
-      <PROPERTY name="label" value="eFamily" />
-      <PROP name="label" value="eFamily" />
-      <PROP name="leaseTime" value="2007-06-13" />
-    </VERSION>
-  </SOURCE>
+<!--  <SOURCE uri="DS_113" title="alig_pdb_sp" description="UniProt to PDB-->
+<!--alignment server.-->
+<!--Served from the-->
+<!--Sanger installation-->
+<!--of the MSD oracle-->
+<!--database.">-->
+<!--    <MAINTAINER email="ap3@sanger.ac.uk" />-->
+<!--    <VERSION uri="latest" created="2005-03-21">-->
+<!--      <COORDINATES uri="http://www.dasregistry.org/dasregistry/coordsys/CS_DS6" source="Protein Sequence" authority="UniProt" test_range="5pti">UniProt,Protein Sequence</COORDINATES>-->
+<!--      <COORDINATES uri="http://www.dasregistry.org/dasregistry/coordsys/CS_DS7" source="Protein Structure" authority="PDBresnum" test_range="5pti">PDBresnum,Protein Structure</COORDINATES>-->
+<!--      <CAPABILITY type="das1:alignment" query_uri="http://das.sanger.ac.uk/das/msdpdbsp/alignment" />-->
+<!--      <PROPERTY name="label" value="eFamily" />-->
+<!--      <PROP name="label" value="eFamily" />-->
+<!--      <PROP name="leaseTime" value="2007-06-13" />-->
+<!--    </VERSION>-->
+<!--  </SOURCE>-->
   <SOURCE uri="DS_114" title="signalp" doc_href="http://www.cbs.dtu.dk/services/SignalP" description="SignalP
 (http://www.cbs.dtu.dk/services/SignalP)
 predictions for UniProt.">

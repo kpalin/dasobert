@@ -21,9 +21,9 @@ public class KeywordsTest extends TestCase {
 		System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
 		System.setProperty("javax.xml.parsers.SAXParserFactory", "org.apache.xerces.jaxp.SAXParserFactoryImpl");
 		validator=new Das1Validator();
-		sources=validator.getDas1SourcesFromSourcesXml(registryLocation+"/das/sources");
-		sourcesWithKeywords=validator.getDas1SourcesFromSourcesXml(registryLocation+"/das/sources?keywords=homo");
-		sourcesWithRows=validator.getDas1SourcesFromSourcesXml(registryLocation+"/das/sources?keywords=homo&rows=1-2");
+		sources=validator.getDas1SourcesFromSourcesXml(registryLocation+"das/sources");
+		sourcesWithKeywords=validator.getDas1SourcesFromSourcesXml(registryLocation+"das/sources?keywords=homo");
+		sourcesWithRows=validator.getDas1SourcesFromSourcesXml(registryLocation+"das/sources?keywords=homo&rows=1-2");
 		
 	}
 
