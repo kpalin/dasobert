@@ -30,12 +30,14 @@ public class ServerLocation {
 
 //	URL u = new URL("http://deskpro349.dynamic.sanger.ac.uk:8088/dasregistry/services/das_directory");
 	//URL u = new URL("http://www.dasregistry.org/services/das_directory");
-	
-	//public static final String REGISTRY= "http://www.dasregistry.org";
+	public static final boolean withinSanger=false;
+	//public static final String REGISTRY= "http://www.dasregistry.org/";
+	public static final String SANGER_SOURCES="http://www.dasregistry.org/sanger/das/";
+	//public static final String SANGER_SOURCES="http://localhost:8080/dasregistry/sanger/das/";
 	
 	//public static final String REGISTRY= "http://deskpro349.dynamic.sanger.ac.uk:8080/dasregistry";
 	//public static final String REGISTRY= "http://deskpro20727.dynamic.sanger.ac.uk:8080/dasregistryOID";
-	public static final String REGISTRY= "http://localhost:8080/dasregistry";
+	public static final String REGISTRY= "http://localhost:8080/dasregistry/";
 	
 	public static  URL REGISTRYURL ;
 	
@@ -47,6 +49,22 @@ public class ServerLocation {
 		}
 	}
 	
+	public static void setProxy(){
+		
+		if(withinSanger){
+		System.setProperty("proxySet", "true");
+		System.setProperty("proxyHost", "wwwcache.sanger.ac.uk");
+		System.setProperty("proxyPort", "3128");
+		
 	
+		
+
+		}
+		System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
+		"org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+		System.setProperty("javax.xml.parsers.SAXParserFactory",
+		"org.apache.xerces.jaxp.SAXParserFactoryImpl");
+
+	}
 	
 }
