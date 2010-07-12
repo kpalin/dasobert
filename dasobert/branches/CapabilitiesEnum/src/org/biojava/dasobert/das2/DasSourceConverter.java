@@ -58,6 +58,7 @@ public class DasSourceConverter {
         ds.setNickname(das2source.getNickname());
         ds.setId(das2source.getId());
         ds.setLabels(das2source.getLabels());
+        ds.setSpecification(das2source.getSpecification());
         
         // convert the capabilitites to das1 capabiltities and get the url
         Das2Capability[] caps = das2source.getDas2Capabilities();

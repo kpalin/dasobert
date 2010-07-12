@@ -196,11 +196,12 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 		}
 		
 		String spec=source.getSpecification();
+		if(spec!=null && spec!=""){
 		xw.openTag("PROP");
 		xw.attribute("name", "spec");
 		xw.attribute("value", spec);
 		xw.closeTag("PROP");
-		
+		}
 		writeCapabilityStatus(xw, source);
 		
 		int daysBeforeDeletion=timer.daysBeforeArchiving(source);
