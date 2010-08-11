@@ -9,14 +9,15 @@ import java.net.URLConnection;
 public class DasHeaders {
 	
 	private int httpStatus = 0;
-	public String getHeaderVersion() {
-		return headerVersion;
-	}
-
+	
+	String dasVersion = "";
 	private String headerVersion;
 	private String cors;
 	private String accessControl;
 	private boolean hasCors = false;
+	public String getDasVersion(){
+		return dasVersion;
+	}
 
 	public boolean hasCors() {
 		return hasCors;
@@ -36,7 +37,7 @@ public class DasHeaders {
 	public DasHeaders(String urlString) {
 		URL url = null;
 		
-		String dasVersion = "";
+		
 		try {
 			url = new URL(urlString);
 		} catch (MalformedURLException e) {
