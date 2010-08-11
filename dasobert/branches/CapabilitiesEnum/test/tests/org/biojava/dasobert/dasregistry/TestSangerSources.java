@@ -64,8 +64,7 @@ public class TestSangerSources extends TestCase {
 	public void testValidateSangerSources() {
 		validator=validator15;
 		Das1Source[] sangerSources = validator
-				.getDas1SourcesFromSourcesXml(ServerLocation.SANGER_SOURCES
-						+ "sources");
+				.getDas1SourcesFromSourcesXml(ServerLocation.SANGER_SOURCES);
 		ArrayList<Das1Source> invalidSources = new ArrayList<Das1Source>();
 		Map<String,String> errors=new HashMap<String, String>();
 		assertTrue(sangerSources.length > 100);

@@ -38,6 +38,7 @@ public class Das1ValidatorTest extends TestCase {
 	
 	public void testSourcesResponse(){
 		Das1Source test16Source=null;
+		Das1Source testFeatureById=null;
 		Das1Validator validator=new Das1Validator();
 		validator.setRelaxNgPath(ServerLocation.REGISTRY+"validation/");
 		//assertTrue(validator.validateSourcesCmd("http://www.ensembl.org/das/sources"));
@@ -85,6 +86,13 @@ public class Das1ValidatorTest extends TestCase {
 					
 					
 				}
+				if(source.getId().equals("uniprot2probes")){
+				testFeatureById = source;
+					
+					//assertTrue(results.isOverallValid());
+					
+					
+				}
 				
 				if (!isValid) {
 					// add to invalid list with the error message
@@ -123,7 +131,12 @@ public class Das1ValidatorTest extends TestCase {
 		assertFalse(results.isValid(Capabilities.INTERACTION));
 		assertFalse(results.isValid(Capabilities.MAXBINS));
 		assertFalse(results.isValid(Capabilities.SOURCES));
+		assertTrue(results.isValid(Capabilities.CORS));
+		assertFalse(results.isValid(Capabilities.FEATURE_BY_ID));
 		//assertTrue(invalidSources.size()<=47);
+		
+		DasValidationResult resultsForFeatureById = validator.validate(testFeatureById.getUrl(), testFeatureById.getCoordinateSystem(), testFeatureById.getCapabilities(), false, false);
+		assertTrue(resultsForFeatureById.isValid(Capabilities.FEATURE_BY_ID));
 	}
 	
 	
