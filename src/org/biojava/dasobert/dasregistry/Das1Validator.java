@@ -1363,6 +1363,9 @@ public class Das1Validator {
 			e.printStackTrace();
 		}
 		List<Map<String, String>> types = cont_handle.getTypesAsList();
+		
+		System.out.println(this.getClass().getName());
+		if(cont_handle.segmentTypePresent && appendValidationErrors && this.getClass().getName().equals("org.biojava.dasobert.dasregistry.Das1_6Validator"))validationMessage+="Warning: segment attribute type is deprecated - may be invalid soon!";
 		if (types.size() > 0) {
 			if (result != null)
 				result.setTypes(types);// have to check null here for junit
