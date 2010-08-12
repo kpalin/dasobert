@@ -42,6 +42,7 @@ public class DAS_Types_Handler extends DefaultHandler {
 		private int maxNrFeaturesOntolgy;
 		private String chars;//hold data from between a set of tags
 		HashMap<String,String>map;
+		public boolean segmentTypePresent;
 	    
 	    public DAS_Types_Handler() {
 		super();
@@ -49,6 +50,7 @@ public class DAS_Types_Handler extends DefaultHandler {
 		dastypesPresent = false;
 		gffPresent=false;
 		segmentPresent=false;
+		segmentTypePresent=true;
 	    }
 
 	    public void startElement (String uri, String name, String qName, Attributes atts){
@@ -64,6 +66,8 @@ public class DAS_Types_Handler extends DefaultHandler {
 		    segmentPresent = true;	
 		 
 		    String id = atts.getValue("id");
+		    String type=atts.getValue("type");//optional in 1.5 deprecated in 1.6 so still optional
+		    if(type!=null)segmentTypePresent=true;
 		    // id is optional here
 		    //if ( id != null ) {
 			//types.add("id",id);
