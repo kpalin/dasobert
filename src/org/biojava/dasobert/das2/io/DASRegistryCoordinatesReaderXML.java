@@ -46,7 +46,7 @@ public class DASRegistryCoordinatesReaderXML implements DASRegistryCoordinatesRe
 
 	Exception loggedException;
 	private static String PUBLIC_REGISTRY="http://www.dasregistry.org/das1/coordinatesystem";
-	private static String INTERNAL_REGISTRY="http://deskpro20727.dynamic.sanger.ac.uk:8080/dasregistryOID/das1/coordinatesystem";
+	private static String INTERNAL_REGISTRY="http://localhost:8080/dasregistry/das1/coordinatesystem";
 	public DASRegistryCoordinatesReaderXML() {
 		super();
 		loggedException = null;
