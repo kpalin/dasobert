@@ -29,7 +29,7 @@ package org.biojava.dasobert.dasregistry;
  * @author Andreas Prlic
  */
 public class DasCoordinateSystem {
-
+ public static boolean debugCoords=false;
 	String name;// name also seems to be Authority?
 	String category;
 	String organism_name;
@@ -62,28 +62,28 @@ public class DasCoordinateSystem {
 		
 		//added by jw for registry
 		if (!organism_name.equals(other.getOrganismName())) {
-			//System.out.println("mismatch in name |"+organism_name+"| other=|"+other.getOrganismName()+"|");
+			if(debugCoords)System.out.println("mismatch in organism name |"+organism_name+"| other=|"+other.getOrganismName()+"|");
 			match = false;
 			return match;
 		}
 		if (ncbi_tax_id != other.getNCBITaxId()) {
-			//System.out.println("mismatch in ncbi tax id " + ncbi_tax_id +
-			//" != " + other.getNCBITaxId());
+			if(debugCoords)System.out.println("mismatch in ncbi tax id " + ncbi_tax_id +
+			" != " + other.getNCBITaxId());
 			match = false;
 			return match;
 		}
 		if (!version.equals(other.getVersion())) {
-			//System.out.println("mismatch in version");
+			if(debugCoords)System.out.println("mismatch in version");
 			match = false;
 			return match;
 		}
 		if (!category.equals(other.getCategory())) {
-			//System.out.println("mismatch in category");
+			if(debugCoords)System.out.println("mismatch in category");
 			match = false;
 			return match;
 		}
 		if (!name.equals(other.getName())) {
-			//System.out.println("mismatch in name");
+			if(debugCoords)System.out.println("mismatch in name");
 			match = false;
 			return match;
 		}
@@ -94,9 +94,6 @@ public class DasCoordinateSystem {
 		//}
 		//organism_name = "";
 		
-		
-		
-
 		return match;
 	}
 
@@ -306,6 +303,12 @@ public class DasCoordinateSystem {
 
 	public void setAuthority(String authority) {
 		this.name = authority.trim();
+	}
+	
+	public String getDebugString(){
+		String all=uniqueId+"|"+name+"|"+category
+		+"|"+organism_name+"|"+String.valueOf(ncbi_tax_id)+"|"+version+"|"+testCode +"|";
+		return all;
 	}
 
 }

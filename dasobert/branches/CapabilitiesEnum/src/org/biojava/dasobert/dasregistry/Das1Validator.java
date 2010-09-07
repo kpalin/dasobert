@@ -656,6 +656,10 @@ public class Das1Validator {
 		}
 	}
 
+	
+	public boolean validateSourcesCmdShallow(String url) {
+		return this.validateSourcesCmdShallow(url, true);
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -663,7 +667,7 @@ public class Das1Validator {
 	 * org.biojava.dasobert.dasregistry.DasValidator#validateSourcesCmd(java
 	 * .lang.String)
 	 */
-	public boolean validateSourcesCmdShallow(String url) {
+	public boolean validateSourcesCmdShallow(String url, boolean chopUrl) {
 		// sources is the odd capability as belongs to the server not the source
 		// therefor need to chop DataSourceName off the end of the url
 
@@ -674,7 +678,12 @@ public class Das1Validator {
 		sourceIds = new HashMap();
 		// System.out.println("sources url at start of validation method " +
 		// url);
-		String choppedURL = removeDataSourceNameFromUrl(url);
+		String choppedURL=null;
+		if(chopUrl){
+			choppedURL = removeDataSourceNameFromUrl(url);
+		}else{
+			choppedURL=url;
+		}
 		// System.out.println("chopped "+choppedURL);
 		String cmd = choppedURL + "sources";
 
@@ -697,12 +706,12 @@ public class Das1Validator {
 			for (int i = 0; i < sources.length; i++) {
 				Das1Source ds = (Das1Source) sources[i];
 				boolean isValid = this.checkDAS1SourceInSourcesXML(ds);
-
+			//System.out.println(ds.getDescription());
 				if (!isValid) {
 					numberOfInvalidSources++;
 					if (appendValidationErrors)
 						validationMessage += " No coordinate system found in the registry that matches the one for this source "
-								+ ds.getNickname() + "\n";
+								+ ds.getUrl() + "\n";
 				}
 
 			}

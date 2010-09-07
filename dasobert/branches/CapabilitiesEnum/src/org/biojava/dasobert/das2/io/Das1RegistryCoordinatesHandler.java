@@ -141,6 +141,7 @@ public class Das1RegistryCoordinatesHandler  extends DefaultHandler{
 			}else{
 			dcs.setOrganismName("");
 			}
+			//System.out.println("adding cs:"+dcs.toString());
 			coordinates.add(dcs);
 			
 		}

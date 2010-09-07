@@ -50,7 +50,7 @@ public class DAS_Types_Handler extends DefaultHandler {
 		dastypesPresent = false;
 		gffPresent=false;
 		segmentPresent=false;
-		segmentTypePresent=true;
+		segmentTypePresent=false;
 	    }
 
 	    public void startElement (String uri, String name, String qName, Attributes atts){

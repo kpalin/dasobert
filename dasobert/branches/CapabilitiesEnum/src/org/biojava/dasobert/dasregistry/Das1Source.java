@@ -172,7 +172,6 @@ public class Das1Source implements DasSource {
 
 		h = 31 * h + ( null == nickname ? 0 : nickname.hashCode());
 		h = 31 * h + ( null == url ? 0 : url.hashCode());
-System.out.println("hashcode="+h);
 		return h;
 	}
 
@@ -196,6 +195,8 @@ System.out.println("hashcode="+h);
 		return writer.toString();
 
 	}
+	
+	//not really used anymore - only for mirrored sources registered before 18th august 2010
 	public void setLocal(boolean flag){ local = flag;}
 	public boolean isLocal(){return local;}
 

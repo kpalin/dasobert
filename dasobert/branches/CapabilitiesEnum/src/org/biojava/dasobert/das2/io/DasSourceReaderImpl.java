@@ -68,7 +68,7 @@ public class DasSourceReaderImpl implements DasSourceReader {
 	 * 
 	 */
 	public DasSource[] readDasSource(InputStream stream)  {
-
+System.out.println("reading das source");
 		DasSource[] sources = new DasSource[0];
 
 		try {
@@ -101,7 +101,7 @@ public class DasSourceReaderImpl implements DasSourceReader {
 			try {
 				xmlreader.setFeature("http://xml.org/sax/features/validation", validation);
 			} catch (SAXException e) {
-				//logger.log(Level.FINE,"Cannot set validation " + validation); 
+				e.printStackTrace();
 			}
 
 			try {
