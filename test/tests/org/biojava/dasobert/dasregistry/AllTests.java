@@ -1,5 +1,8 @@
 package tests.org.biojava.dasobert.dasregistry;
 
+import org.biojava.dasobert.test.TestCoordinates_Handler;
+import org.biojava.dasobert.test.sourcesdocument.SourcesDocumentTest;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -14,6 +17,8 @@ public class AllTests {
 		suite.addTestSuite(CapablitiesTests.class);
 		suite.addTestSuite(KeywordsTest.class);
 		suite.addTestSuite(HeadersTest.class);
+		suite.addTestSuite(SourcesDocumentTest.class);
+		suite.addTestSuite(TestCoordinates_Handler.class);
 		//$JUnit-END$
 		return suite;
 	}

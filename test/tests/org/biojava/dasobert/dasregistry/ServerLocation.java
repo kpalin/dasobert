@@ -30,7 +30,7 @@ public class ServerLocation {
 
 //	URL u = new URL("http://deskpro349.dynamic.sanger.ac.uk:8088/dasregistry/services/das_directory");
 	//URL u = new URL("http://www.dasregistry.org/services/das_directory");
-	public static final boolean withinSanger=false;//true if testing live registry not on mac
+	public static final boolean withinSanger=true;//true if testing live registry not on mac, true if on sanger network
 	//public static final String REGISTRY= "http://www.dasregistry.org/";
 	public static final String SANGER_SOURCES="http://das.sanger.ac.uk/das/sources";
 	//public static final String SANGER_SOURCES="http://localhost:8080/dasregistry/sanger/das/";

@@ -86,7 +86,7 @@ public class Das1ValidatorTest extends TestCase {
 					
 					
 				}
-				if(source.getId().equals("uniprot2probes")){
+				if(source.getId().equals("GAD")){
 				testFeatureById = source;
 					
 					//assertTrue(results.isOverallValid());
@@ -130,7 +130,7 @@ public class Das1ValidatorTest extends TestCase {
 		assertFalse(results.isValid(Capabilities.STRUCTURE));
 		assertFalse(results.isValid(Capabilities.INTERACTION));
 		assertFalse(results.isValid(Capabilities.MAXBINS));
-		assertFalse(results.isValid(Capabilities.SOURCES));
+		assertTrue(results.isValid(Capabilities.SOURCES));
 		assertTrue(results.isValid(Capabilities.CORS));
 		assertFalse(results.isValid(Capabilities.FEATURE_BY_ID));
 		//assertTrue(invalidSources.size()<=47);
