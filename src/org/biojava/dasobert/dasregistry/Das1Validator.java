@@ -106,7 +106,7 @@ public class Das1Validator {
 	protected static final int MAX_SEQUENCE_LENGTH = 1000;
 	protected static final int MAX_NR_FEATURES = 10;
 	protected static final int MAX_NR_FEATURES_ONTOLOGY = 1000;
-	public boolean VERBOSE = true;
+	public boolean VERBOSE = false;
 	private boolean relaxNgApprovalNeeded = true;// needed if via web page, but
 	// specifically not needed
 	// for autovalidation at the
@@ -235,7 +235,7 @@ public class Das1Validator {
 			DasCoordinateSystem[] coords, String[] capabilities,
 			boolean verbose, boolean ontologyValidation) {
 
-		System.out.println("calling validate in DAS1Validator with url=" + url);
+		//System.out.println("calling validate in DAS1Validator with url=" + url);
 		DasHeaders headers = null;
 		verbose = true;
 
@@ -259,8 +259,8 @@ public class Das1Validator {
 		if (lastChar != '/')
 			url += "/";
 
-		if (verbose)
-			System.out.println("validation message=" + validationMessage);
+		//if (verbose)
+			//System.out.println("validation message=" + validationMessage);
 
 		headers = getHeaders(removeDataSourceNameFromUrl(url));
 
@@ -288,8 +288,8 @@ public class Das1Validator {
 
 				}
 
-				if (verbose)
-					System.out.println(validationMessage);
+				//if (verbose)
+					//System.out.println(validationMessage);
 
 				if (sourcesok) {
 					isValid = true;
