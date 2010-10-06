@@ -68,7 +68,6 @@ public class DasSourceReaderImpl implements DasSourceReader {
 	 * 
 	 */
 	public DasSource[] readDasSource(InputStream stream)  {
-System.out.println("reading das source");
 		DasSource[] sources = new DasSource[0];
 
 		try {

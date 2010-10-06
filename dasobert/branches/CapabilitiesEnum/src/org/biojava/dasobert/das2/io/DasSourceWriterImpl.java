@@ -115,7 +115,7 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 		if(coords!=null && coords.length>0){
 		for (int i = 0; i < coords.length; i++) {
 			DasCoordinateSystem co = coords[i];
-			writeCoordinateSystem(xw, co);
+			if(co!=null)writeCoordinateSystem(xw, co);
 
 		}
 		}
