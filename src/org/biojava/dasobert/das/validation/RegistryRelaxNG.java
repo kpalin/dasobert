@@ -265,7 +265,7 @@ public class RegistryRelaxNG {
 				boolean panicMode) throws Exception {
 			//System.out.println("verifying using SimpleVerifier ");
 			reh = new RegReportErrorHandler();
-			Verifier v = new Verifier(docDecl, reh);
+			RegVerifier v = new RegVerifier(docDecl, reh);
 			v.setPanicMode(panicMode);
 
 			p.setDTDHandler(v);

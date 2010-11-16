@@ -176,6 +176,7 @@ public class RegVerifier extends AbstractVerifier implements IVerifier  {
 	        if( qName==null || qName.length()==0 )
 	            qName=localName;
 	        
+	       // System.out.println(qName);
 	        
 	        super.startElement(namespaceUri, localName, qName, atts);
 	    
@@ -268,7 +269,7 @@ public class RegVerifier extends AbstractVerifier implements IVerifier  {
 	    
 	    protected Datatype[] feedAttribute(Acceptor child, String uri, String localName, String qName, String value)
 	        throws SAXException {
-	        
+	       // System.out.println("localname="+localName+" value="+value);
 	        // work gracefully with misconfigured parsers that don't support namespaces,
 	        // or other sources that produce broken SAX events.
 	        if( uri==null )
