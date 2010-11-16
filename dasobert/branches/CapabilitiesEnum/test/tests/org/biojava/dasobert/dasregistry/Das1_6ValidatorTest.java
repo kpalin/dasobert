@@ -14,7 +14,7 @@ public class Das1_6ValidatorTest extends TestCase {
 	Das1_6Validator validator16;
 	Das1Validator validator;
 	public void setUp(){
-		
+		System.out.println("running setup");
 		ServerLocation.setProxy();
 		validator16=new Das1_6Validator();
 		validator16.setRelaxNgPath(relaxng16);
