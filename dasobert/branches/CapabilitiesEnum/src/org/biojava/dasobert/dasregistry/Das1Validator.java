@@ -267,6 +267,10 @@ public class Das1Validator {
 		// test if all possible capabilities work
 		for (Capabilities capability : EnumSet.allOf(Capabilities.class)) {
 			boolean isValid = false;
+			//for dbug
+//			if(!capability.equals(Capabilities.SOURCES)){
+//				continue;
+//			}
 			validationMessage = "";
 			// Capabilities capability = caps[c];
 			if (statedCapabilities.contains(capability.toString())) {
@@ -688,8 +692,11 @@ public class Das1Validator {
 		String cmd = choppedURL + "sources";
 
 		// System.out.println("running sources with  cmd="+cmd);
-		if (!relaxNgApproved(Capabilities.SOURCES, cmd))
+		if (!relaxNgApproved(Capabilities.SOURCES, cmd)){
+		System.out.println("sources not valid due to rng!!!");
 			return false;
+		}
+		System.out.println("sources rng approved it");
 
 		// get a list of all sources from the registry either from xml for
 		// external programs or from database
@@ -724,6 +731,8 @@ public class Das1Validator {
 		// + numberOfInvalidSources + "\n";
 		if (numberOfInvalidSources != 0)
 			return false;
+		
+		System.out.println("sources validation is true");
 		return true;
 
 	}
@@ -737,6 +746,19 @@ public class Das1Validator {
 		}
 		// now remove the datasource name at the end of the url
 		String choppedURL = url.substring(0, url.lastIndexOf("/") + 1);
+		return choppedURL;
+	}
+	
+	
+	public static String getDataSourceNameFromUrl(String url) {
+		if (url.endsWith("/")) {
+			// System.out.println("ends with /");
+			url = url.substring(0, url.length() - 1);
+			// System.out.println("after -1="+url);
+
+		}
+		// now get the datasource name at the end of the url
+		String choppedURL = url.substring(url.lastIndexOf("/") + 1,url.length());
 		return choppedURL;
 	}
 
