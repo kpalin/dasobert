@@ -60,7 +60,13 @@ public abstract class DasSourceComparator
         protected Comparable getField(DasSource ds) {
             return ds.getNickname();
         }
-    };    
+    };   
+    
+    public static final Comparator BY_TITLE = new DasSourceComparator("title") {
+        protected Comparable getField(DasSource ds) {
+            return ds.getNickname();
+        }
+    };
     
     public static final Comparator BY_STATUS = new DasSourceComparator("status"){
 		protected Comparable getField(DasSource ds) {
@@ -99,7 +105,7 @@ public abstract class DasSourceComparator
             return ds.getDescription();
         }
     };
-    public static final Comparator BY_CAPABILITIES = new DasSourceComparator("capabilities") {
+    public static final Comparator BY_VALID_CAPABILITIES = new DasSourceComparator("validcapabilities") {
         protected Comparable getField(DasSource ds) {
         	//System.out.println("nickname="+ds.getNickname());
             String[] caps = ds.getValidCapabilities();
@@ -108,7 +114,18 @@ public abstract class DasSourceComparator
             return caps==null ? 0 :caps.length;
         }
     };
-    public static final Comparator BY_COORDINATE_SYSTEM = new DasSourceComparator("coordinateSystem") {
+    
+    public static final Comparator BY_CAPABILITIES = new DasSourceComparator("capabilities") {
+        protected Comparable getField(DasSource ds) {
+        	//System.out.println("nickname="+ds.getNickname());
+            String[] caps = ds.getCapabilities();
+            //System.out.println("return="+caps.length);
+            
+            return caps==null ? 0 :caps.length;
+        }
+    };
+    
+    public static final Comparator BY_COORDINATE_SYSTEM = new DasSourceComparator("coordinatesystem") {
         protected Comparable getField(DasSource ds) {
             DasCoordinateSystem[] dcss = ds.getCoordinateSystem();
             return dcss.length == 0 ? "" : dcss[0].toString();
@@ -127,6 +144,8 @@ public abstract class DasSourceComparator
         COMPS_BY_NAME.put(BY_CAPABILITIES.toString(),      BY_CAPABILITIES);
         COMPS_BY_NAME.put(BY_COORDINATE_SYSTEM.toString(), BY_COORDINATE_SYSTEM);
         COMPS_BY_NAME.put(BY_STATUS.toString(),            BY_STATUS);
+        COMPS_BY_NAME.put(BY_TITLE.toString(),           BY_TITLE);
+        COMPS_BY_NAME.put(BY_VALID_CAPABILITIES.toString(), BY_VALID_CAPABILITIES);
     }
 
    

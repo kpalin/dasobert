@@ -218,9 +218,9 @@ public class Das1Validator {
 	 * java.lang.String[])
 	 */
 	public DasValidationResult validate(String url,
-			DasCoordinateSystem[] coords, String[] capabilities) {
+			DasCoordinateSystem[] coords, String[] capabilities, String queryUri) {
 		return validate(url, coords, capabilities, VERBOSE,
-				NO_ONTOLOGY_VALIDATION);
+				NO_ONTOLOGY_VALIDATION, queryUri);
 	}
 
 	/*
@@ -233,9 +233,9 @@ public class Das1Validator {
 	 */
 	public DasValidationResult validate(String url,
 			DasCoordinateSystem[] coords, String[] capabilities,
-			boolean verbose, boolean ontologyValidation) {
+			boolean verbose, boolean ontologyValidation, String queryUri) {
 
-		//System.out.println("calling validate in DAS1Validator with url=" + url);
+		System.out.println("calling validate in DAS1Validator with url=" + url);
 		DasHeaders headers = null;
 		verbose = true;
 
@@ -475,6 +475,12 @@ public class Das1Validator {
 					isValid = validateFeatureById(url, featureForFurtherTests);
 				}
 			}
+			else if (capability.equals(Capabilities.BIGFILE_FEATURES)) {
+
+				
+					isValid = validateBigFileFeature(queryUri);
+				
+			}
 
 			else {
 
@@ -499,6 +505,11 @@ public class Das1Validator {
 		// this.validationMessage = validationMessage;
 		return result;
 
+	}
+
+	private boolean validateBigFileFeature(String bigFileString) {
+		System.out.println("calling validate bigfile_features with string "+bigFileString);
+		return false;
 	}
 
 	private boolean validateFeatureById(String url,

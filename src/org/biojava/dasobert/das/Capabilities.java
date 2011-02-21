@@ -60,7 +60,8 @@ public enum Capabilities {
 	,ERROR_SEGMENT("error_segment"){ public String getCommandTestString(String testCode) { return "features"+"?segment=" + Das1Validator.invalidTestCode+":1,1000"; } }
 	,MAXBINS("maxbins"){ public String getCommandTestString(String testCode) { return "features" + "?segment=" + testCode+";maxbins=1"; }}
 	,CORS("cors"){ public String getCommandTestString(String testCode) { return "any valid request"; }}
-	,FEATURE_BY_ID("feature_by_id"){ public String getCommandTestString(String testCode) { return "features"+"?feature_id="; }}; //NEXT_FEATURE("next_feature");//FEATURE_BY_ID("feature_by_id"), GROUP_BY_ID("group_by_id")
+	,FEATURE_BY_ID("feature_by_id"){ public String getCommandTestString(String testCode) { return "features"+"?feature_id="; }}
+	,BIGFILE_FEATURES("bigfile_features"){ public String getCommandTestString(String testCode) { return "features"+"?feature_id="; }}; //NEXT_FEATURE("next_feature");//FEATURE_BY_ID("feature_by_id"), GROUP_BY_ID("group_by_id")
 //error_segments: Annotation servers should report unknown-segment and unknown-feature, and reference servers should indicate error-segment instead of unknown-segment.
 	private static final Map<String, Capabilities> nameToValueMap =
         new HashMap<String, Capabilities>();
