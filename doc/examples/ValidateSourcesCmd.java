@@ -62,7 +62,7 @@ public class ValidateSourcesCmd {
 				if (! source.hasCapability(Capabilities.INTERACTION.toString()))
 					continue;
 				
-				DasValidationResult okCaps = validator.validate(source.getUrl(), source.getCoordinateSystem(),testCaps);
+				DasValidationResult okCaps = validator.validate(source.getUrl(), source.getCoordinateSystem(),testCaps,"");
 
 //				if ( okCaps.length != testCaps.length){
 //					System.err.println("!!! DAS source " + source.getNickname() +" does not validate");
