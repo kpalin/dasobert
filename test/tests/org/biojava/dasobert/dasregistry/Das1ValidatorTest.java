@@ -118,7 +118,7 @@ public class Das1ValidatorTest extends TestCase {
 							+ invalidSource.getAdminemail()+"/n"+errors.get(invalidSource.getId()));
 		}
 		
-		DasValidationResult results = validator.validate(test16Source.getUrl(), test16Source.getCoordinateSystem(), test16Source.getCapabilities(), false, false);
+		DasValidationResult results = validator.validate(test16Source.getUrl(), test16Source.getCoordinateSystem(), test16Source.getCapabilities(), false, false, "");
 		System.out.println("test id found="+test16Source.getId());
 		//assertTrue(test16Source.getSpecification().equals(DasSpec.SPEC1_6E.toString()));
 		assertTrue(results.isValid(Capabilities.STYLESHEET));
@@ -135,7 +135,7 @@ public class Das1ValidatorTest extends TestCase {
 		assertFalse(results.isValid(Capabilities.FEATURE_BY_ID));
 		//assertTrue(invalidSources.size()<=47);
 		
-		DasValidationResult resultsForFeatureById = validator.validate(testFeatureById.getUrl(), testFeatureById.getCoordinateSystem(), testFeatureById.getCapabilities(), false, false);
+		DasValidationResult resultsForFeatureById = validator.validate(testFeatureById.getUrl(), testFeatureById.getCoordinateSystem(), testFeatureById.getCapabilities(), false, false, "");
 		assertTrue(resultsForFeatureById.isValid(Capabilities.FEATURE_BY_ID));
 	}
 	

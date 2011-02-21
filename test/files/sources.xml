@@ -445,7 +445,7 @@ Mutant Archive">
       <PROP name="leaseTime" value="2007-06-13" />
     </VERSION>
   </SOURCE>
-  <SOURCE uri="DS_146" title="ensp_pdb_mapping" doc_href="http://www.efamily.org.uk/software/dasclients/spice/ensembl.shtml" description="If you click on a feature of
+  <SOURCE uri="DS_146" title="ensp_pdb_mapping" doc_href="http://www.dasregistry.org/spice/ensembl.shtml" description="If you click on a feature of
 this DAS track, SPICE can be launched
 from ENSEMBL. - Mapping of ENSP
 protein sequences to
