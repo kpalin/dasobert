@@ -108,7 +108,7 @@ public class DasSourceFilter {
 		DasCoordinateSystem[] coords = source.getCoordinateSystem();
 		for (int j = 0; j < coords.length; j++) {
 			DasCoordinateSystem cs = coords[j];
-			System.out.println(cs.getOrganismName()+" "+organism);
+			//System.out.println(cs.getOrganismName()+" "+organism);
 			if ((organism.equalsIgnoreCase(cs.getOrganismName()))
 					|| (organism.equalsIgnoreCase(cs.getNCBITaxId() + ""))) {
 				return true;
@@ -144,10 +144,10 @@ public class DasSourceFilter {
 	 */
 	public List<DasSource> filterBy(List<DasSource> sources, String label,
 			String organism, String authority, String capability, String type, DasSpec spec, String version) {
-
-		if ((label == null) && (organism == null) && (authority == null)
-				&& (capability == null) && (type == null) && (spec==null))
-			return sources;
+//cant return sources here as it then gets re-ordered so we need a copy
+//		if ((label == null) && (organism == null) && (authority == null)
+//				&& (capability == null) && (type == null) && (spec==null))
+//			return sources;
 
 		List lst = new ArrayList();
 		for (int i = 0; i < sources.size(); i++) {
