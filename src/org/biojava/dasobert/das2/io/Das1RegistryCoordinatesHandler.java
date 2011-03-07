@@ -81,6 +81,11 @@ public class Das1RegistryCoordinatesHandler  extends DefaultHandler{
 		if(atts.getValue("test_range")!=null)test_range = atts.getValue("test_range");
 		dcs.setTestCode(test_range);
 		
+		if (atts.getValue("version")!=null)version=atts.getValue("version");
+			dcs.setVersion(version);
+		
+			
+
 //		String organism=atts.getValue("organism");
 //		dcs.setOrganismName(organism);
 
@@ -89,10 +94,6 @@ public class Das1RegistryCoordinatesHandler  extends DefaultHandler{
 			int taxid = Integer.parseInt(taxidstr);
 			dcs.setNCBITaxId(taxid);
 		} catch (Exception e){}
-
-		version = atts.getValue("version");
-		if ( version != null)
-			dcs.setVersion(version);
 
 		return dcs;
 	}

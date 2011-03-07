@@ -143,7 +143,7 @@ public class DasSourceFilter {
 	 * @return an array of DasSources that match the requested filtering rules
 	 */
 	public List<DasSource> filterBy(List<DasSource> sources, String label,
-			String organism, String authority, String capability, String type, DasSpec spec, String version) {
+			String organism, String authority, String capability, String type, DasSpec spec, String version, String id) {
 //cant return sources here as it then gets re-ordered so we need a copy
 //		if ((label == null) && (organism == null) && (authority == null)
 //				&& (capability == null) && (type == null) && (spec==null))
@@ -158,7 +158,8 @@ public class DasSourceFilter {
 					&& hasAuthority(source, authority)
 					&& hasCapability(source, capability)
 					&& hasType(source, type)
-					&& isSpec(source, spec) && hasVersion(source,version)) {
+					&& isSpec(source, spec) && hasVersion(source,version)
+					&& isCoordinateId(source, id)) {
 				lst.add(source);
 			}
 		}
@@ -187,5 +188,23 @@ public class DasSourceFilter {
 	private boolean isUCSC(DasSource source){
 		if(source.getId().startsWith("UCSC_"))return true;
 		return false;
+	}
+	
+	private boolean isCoordinateId(DasSource source, String id){
+		if (id == null)
+			return true;
+		if (id.equals(""))
+			return true;
+		DasCoordinateSystem[] coords = source.getCoordinateSystem();
+		for (int j = 0; j < coords.length; j++) {
+			DasCoordinateSystem cs = coords[j];
+			//System.out.println("coord id="+cs.getUniqueId());
+			if (id.equalsIgnoreCase(cs.getUniqueId())) {
+				//System.out.println("match found");
+				return true;
+			}
+		}
+		return false;
+		
 	}
 }
