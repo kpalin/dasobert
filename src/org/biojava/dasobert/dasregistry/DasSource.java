@@ -25,6 +25,8 @@ package org.biojava.dasobert.dasregistry;
 import java.util.Date;
 import java.util.Map;
 
+import org.biojava.dasobert.das.Capabilities;
+
 public interface DasSource {
 
     public  void setLocal(boolean flag);
@@ -129,5 +131,9 @@ public interface DasSource {
 	public String getSpecification();
 
 	public void setSpecification(String specification);
+
+	public boolean hasValidCapability(String capability);
+
+	public String getCapabilityTime(Capabilities valueOf);
 
 }

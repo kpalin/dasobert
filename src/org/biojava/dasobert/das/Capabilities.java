@@ -55,20 +55,20 @@ public enum Capabilities {
 	,ALIGNMENT("alignment"){ public String getCommandTestString(String testCode) { return getName()+"?query=" + testCode; } }
 	,STRUCTURE("structure"){ public String getCommandTestString(String testCode) { return getName()+"?query=" + testCode; } }
 	,INTERACTION("interaction"){ public String getCommandTestString(String testCode) { return getName() + "?interactor=" + testCode; } } 
-	,UNKNOWN_SEGMENT("unknown_segment"){ public String getCommandTestString(String testCode) { return "features"+"?segment=" + Das1Validator.invalidTestCode+":1,1000"; } }
-	,UNKNOWN_FEATURE("unknown_feature"){ public String getCommandTestString(String testCode) { return "features"+"?feature_id=" + Das1Validator.invalidTestCode; } }
-	,ERROR_SEGMENT("error_segment"){ public String getCommandTestString(String testCode) { return "features"+"?segment=" + Das1Validator.invalidTestCode+":1,1000"; } }
+	,UNKNOWN_SEGMENT("unknown-segment","unknown_segment"){ public String getCommandTestString(String testCode) { return "features"+"?segment=" + Das1Validator.invalidTestCode+":1,1000"; } }
+	,UNKNOWN_FEATURE("unknown-feature", "unknown_feature"){ public String getCommandTestString(String testCode) { return "features"+"?feature_id=" + Das1Validator.invalidTestCode; } }
+	,ERROR_SEGMENT("error-segment","error_segment"){ public String getCommandTestString(String testCode) { return "features"+"?segment=" + Das1Validator.invalidTestCode+":1,1000"; } }
 	,MAXBINS("maxbins"){ public String getCommandTestString(String testCode) { return "features" + "?segment=" + testCode+";maxbins=1"; }}
 	,CORS("cors"){ public String getCommandTestString(String testCode) { return "any valid request"; }}
-	,FEATURE_BY_ID("feature_by_id"){ public String getCommandTestString(String testCode) { return "features"+"?feature_id="; }}
+	,FEATURE_BY_ID("feature-by-id","feature_id"){ public String getCommandTestString(String testCode) { return "features"+"?feature_id="; }}
 	,FORMAT("format"){ public String getCommandTestString(String testCode) { return "format"; }}
-	,FEATURE_ADJACENT("feature_adjacent"){ public String getCommandTestString(String testCode) { return "feature_adjacent"; }}; //NEXT_FEATURE("next_feature");//FEATURE_BY_ID("feature_by_id"), GROUP_BY_ID("group_by_id")
+	,ADJACENT_FEATURE("adjacent-feature", "adjacent"){ public String getCommandTestString(String testCode) { return "adjacent"; }}; //NEXT_FEATURE("next_feature");//FEATURE_BY_ID("feature_by_id"), GROUP_BY_ID("group_by_id")
 //error_segments: Annotation servers should report unknown-segment and unknown-feature, and reference servers should indicate error-segment instead of unknown-segment.
 	private static final Map<String, Capabilities> nameToValueMap =
         new HashMap<String, Capabilities>();
   static {
   for (Capabilities value : EnumSet.allOf(Capabilities.class)) {
-      nameToValueMap.put(value.toString(), value);
+      nameToValueMap.put(value.getName(), value);
   }
 }
 
@@ -92,28 +92,37 @@ public enum Capabilities {
 	}
 
 	public String getCommand(){
-		return this.command;
+		if(command!=null){
+			return this.command;
+		}else{
+			return this.getName();
+		}
+	
 	}
 	
 	/**
-	 * return a subset of the capabilities as not all capabilities are DAS
-	 * commands
+	 * return commmands or query params for capabilities
 	 * 
 	 * @return
 	 */
 	public static String[] getCommandStrings() {
 
-		return new String[] { SEQUENCE.toString(), STRUCTURE.toString(),
-				ALIGNMENT.toString(), TYPES.toString(), FEATURES.toString(),
-				ENTRY_POINTS.toString(), STYLESHEET.toString(),
-				INTERACTION.toString(), SOURCES.toString() };
+		ArrayList caps = new ArrayList();
+		for (Capabilities value : EnumSet.allOf(Capabilities.class)) {
+			caps.add(value.getCommand());
+		}
+		return (String[]) caps.toArray(new String[caps.size()]);
 
 	}
 
+	/**
+	 * get the names of the capabilities
+	 * @return
+	 */
 	public static String[] getCapabilityStrings() {
 		ArrayList caps = new ArrayList();
 		for (Capabilities value : EnumSet.allOf(Capabilities.class)) {
-			caps.add(value.toString());
+			caps.add(value.getName());
 		}
 		return (String[]) caps.toArray(new String[caps.size()]);
 
@@ -130,7 +139,8 @@ public enum Capabilities {
 	}
 
 	public String toString() {
-		return name;
+		//in most instances we want the command and not the name if we want the name call getName()
+		return this.getCommand();
 	}
 	
 	
@@ -173,7 +183,7 @@ public enum Capabilities {
 	public static String[] capabilitiesAsStrings(Collection <Capabilities>capabilities){
 		ArrayList <String>list=new ArrayList<String>();
 		for(Capabilities cap:capabilities){
-			list.add(cap.toString());
+			list.add(cap.getName());
 		}
 		return list.toArray(new String[list.size()]);
 	}

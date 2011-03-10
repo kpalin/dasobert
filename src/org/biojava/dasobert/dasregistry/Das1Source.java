@@ -23,21 +23,23 @@
  */
 package org.biojava.dasobert.dasregistry;
 
-import java.util.Date ;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-
+import org.biojava.dasobert.das.Capabilities;
 import org.biojava.dasobert.das.DasSpec;
 import org.biojava.dasobert.das2.io.DasSourceWriter;
 import org.biojava.dasobert.das2.io.DasSourceWriterImpl;
 import org.biojava.utils.xml.PrettyXMLWriter;
 
-
-/** a simple Bean class to be returned via SOAP
+/**
+ * a simple Bean class to be returned via SOAP
+ * 
  * @author Andreas Prlic
  */
 
@@ -45,123 +47,119 @@ public class Das1Source implements DasSource {
 	String url;
 	protected String nickname;
 	String adminemail;
-	String description ;
+	String description;
 	DasCoordinateSystem[] coordinateSystem;
-	String[] capabilities;
+	List<Capabilities> capabilities;
 	String[] labels;
-	String helperurl;    
-	Date   registerDate; 
-	Date   leaseDate;
+	String helperurl;
+	Date registerDate;
+	Date leaseDate;
 	String id;
 	boolean local;
-	Map<String,String> properties;
+	Map<String, String> properties;
 	boolean alertAdmin;
-	private String[] validCapabilities;
+	private List<Capabilities> validCapabilities;
 	private String specification;
-	//private Map<DasSpec,String> capabilityStatusMap;
+	// private Map<DasSpec,String> capabilityStatusMap;
 
-	public static String EMPTY_ID = "UNK:-1" ;
+	public static String EMPTY_ID = "UNK:-1";
 
-	public Das1Source () {
-		id               = EMPTY_ID;
-		url              = "";
-		adminemail       = "" ;
-		description      = "" ;
-		//String empty     = "" ;
-		nickname         = "" ;
+	public Das1Source() {
+		id = EMPTY_ID;
+		url = "";
+		adminemail = "";
+		description = "";
+		// String empty = "" ;
+		nickname = "";
 		coordinateSystem = new DasCoordinateSystem[0];
+		labels = new String[0];
 
-		capabilities     = new String[0];
-		validCapabilities     = new String[0];
-		labels 	         = new String[0];
-
-		registerDate     = new Date() ;
-		leaseDate        = new Date() ;
-		helperurl        = "";	
-		local=true;
+		registerDate = new Date();
+		leaseDate = new Date();
+		helperurl = "";
+		local = true;
 		properties = new HashMap<String, String>();
-		specification="";
-		
-		
+		specification = "";
+
 	}
-  
 
-
-	/** do a quick comparison if URL and nickname are the same
+	/**
+	 * do a quick comparison if URL and nickname are the same
 	 * 
 	 */
-	public boolean equals(DasSource other){
-		//System.out.println("Das1Source equals, comparing with other DasSource");
-		if (! (other instanceof Das1Source))
+	public boolean equals(DasSource other) {
+		// System.out.println("Das1Source equals, comparing with other DasSource");
+		if (!(other instanceof Das1Source))
 			return false;
 
 		Das1Source ods = (Das1Source) other;
 
-		if ( ods.getUrl().equals(url))
+		if (ods.getUrl().equals(url))
 			return true;
 
-		if ( ods.getNickname().equals(nickname))
+		if (ods.getNickname().equals(nickname))
 			return true;
 
 		return false;
 	}
 
-	/** makes a precise comparison between two das sources
-	 * also compares description, coordsys, caps
+	/**
+	 * makes a precise comparison between two das sources also compares
+	 * description, coordsys, caps
+	 * 
 	 * @param other
 	 * @return if the two are exactly the same
 	 */
-	public boolean equalsExact(DasSource other){
-		if ( ! this.equals(other))
+	public boolean equalsExact(DasSource other) {
+		if (!this.equals(other))
 			return false;
 
-		if ( ! description.equals(other.getDescription()))
+		if (!description.equals(other.getDescription()))
 			return false;
 
 		// test coordinate systems
 		DasCoordinateSystem[] newCoords = this.getCoordinateSystem();
 		DasCoordinateSystem[] oldCoords = other.getCoordinateSystem();
 
-		if ( ! (newCoords.length == oldCoords.length))
+		if (!(newCoords.length == oldCoords.length))
 			return false;
 
-		//System.out.println("testing coords");
-		for ( int i=0 ; i< newCoords.length ; i++) {
+		// System.out.println("testing coords");
+		for (int i = 0; i < newCoords.length; i++) {
 
 			DasCoordinateSystem ncs = newCoords[i];
 
-			boolean found = false ;
+			boolean found = false;
 
-			for ( int j = 0 ; j < oldCoords.length; j++){
+			for (int j = 0; j < oldCoords.length; j++) {
 				DasCoordinateSystem ocs = oldCoords[j];
 
-				if ( ncs.getName().equals(ocs.getName())) {
-					if ( ncs.getCategory().equals(ocs.getCategory())) {
+				if (ncs.getName().equals(ocs.getName())) {
+					if (ncs.getCategory().equals(ocs.getCategory())) {
 						found = true;
 						break;
 					}
 				}
-				if (! found )
+				if (!found)
 					return false;
 			}
 		}
 
-		//System.out.println("testing capabs");
+		// System.out.println("testing capabs");
 
 		// test capabilities
 		String[] otherCaps = other.getCapabilities();
-		for (int i=0 ; i < capabilities.length;i++){
-			String cap = capabilities[i];
+		for (Capabilities cap : capabilities) {
 
 			boolean found = false;
-			for (int j=0; j < otherCaps.length;j++){
+			for (int j = 0; j < otherCaps.length; j++) {
 				String oCap = otherCaps[j];
-				if ( oCap.equals(cap)) {
+				if (oCap.equals(cap)) {
 					found = true;
 					break;
 				}
 			}
-			if (! found)
+			if (!found)
 				return false;
 		}
 		return true;
@@ -170,12 +168,13 @@ public class Das1Source implements DasSource {
 	public int hashCode() {
 		int h = 7;
 
-		h = 31 * h + ( null == nickname ? 0 : nickname.hashCode());
-		h = 31 * h + ( null == url ? 0 : url.hashCode());
+		h = 31 * h + (null == nickname ? 0 : nickname.hashCode());
+		h = 31 * h + (null == url ? 0 : url.hashCode());
 		return h;
 	}
 
-	/** the DAS2 string representation of this DAS source
+	/**
+	 * the DAS2 string representation of this DAS source
 	 * 
 	 */
 	public String toString() {
@@ -187,97 +186,135 @@ public class Das1Source implements DasSource {
 
 		DasSourceWriter dswriter = new DasSourceWriterImpl();
 		try {
-			dswriter.writeDasSource(xw,this);
-		} catch (IOException e){
+			dswriter.writeDasSource(xw, this);
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		return writer.toString();
 
 	}
-	
-	//not really used anymore - only for mirrored sources registered before 18th august 2010
-	public void setLocal(boolean flag){ local = flag;}
-	public boolean isLocal(){return local;}
 
-	public void setId(String i) { id = i; }
+	// not really used anymore - only for mirrored sources registered before
+	// 18th august 2010
+	public void setLocal(boolean flag) {
+		local = flag;
+	}
 
-	/** get a the Id of the DasSource. The Id is a unique db
-	 * identifier. The public DAS-Registry has Auto_Ids that look like
-	 * DASSOURCE:12345; public look like XYZ:12345, where the XYZ
-	 * prefix can be configured in the config file.
+	public boolean isLocal() {
+		return local;
+	}
+
+	public void setId(String i) {
+		id = i;
+	}
+
+	/**
+	 * get a the Id of the DasSource. The Id is a unique db identifier. The
+	 * public DAS-Registry has Auto_Ids that look like DASSOURCE:12345; public
+	 * look like XYZ:12345, where the XYZ prefix can be configured in the config
+	 * file.
 	 */
-	public String getId() { return id;}
+	public String getId() {
+		return id;
+	}
 
 	public void setNickname(String name) {
-		nickname = name ;
+		nickname = name;
 	}
-	public String getNickname(){
+
+	public String getNickname() {
 		return nickname;
 	}
+
 	public void setUrl(String u) {
-		char lastChar = u.charAt(u.length()-1);
-		if ( lastChar  != '/')
+		char lastChar = u.charAt(u.length() - 1);
+		if (lastChar != '/')
 			u += "/";
 
-		url = u ;
+		url = u;
 	}
 
-	public void setAdminemail (String u) {
-		adminemail = u ;
+	public void setAdminemail(String u) {
+		adminemail = u;
 	}
 
-	public void setDescription (String u) {
+	public void setDescription(String u) {
 		description = u;
 	}
 
-	public void setCoordinateSystem (DasCoordinateSystem[] u){
-		coordinateSystem=u ;
+	public void setCoordinateSystem(DasCoordinateSystem[] u) {
+		coordinateSystem = u;
 	}
 
-	public void setCapabilities (String[] u){
-		capabilities = u ;
+	public void setCapabilities(String[] u) {
+		capabilities = Capabilities.capabilitiesListFromStrings(u);
 	}
 
-    /** test if a this source has a particular capability
-     * 
-     * @param testCapability
-     * @return <code>true</code> if the server has this capability.
-     */
-    public boolean hasCapability(String testCapability){
-        for (int i=0 ; i< capabilities.length;i++){
-            String cap = capabilities[i];
-            if ( cap.equals(testCapability))
-                return true;
-        }
-        return false;
-    }
-    
-	public String getUrl(){return url;}
-    
-	public String getAdminemail(){return adminemail;}
+	/**
+	 * test if a this source has a particular capability
+	 * 
+	 * @param testCapability
+	 * @return <code>true</code> if the server has this capability.
+	 */
+	public boolean hasCapability(String testCapability) {
+		for (Capabilities capabilty : capabilities) {
+			if (capabilty.getName().equals(testCapability)){
+				return true;
+			}
+			
+		}
+		return false;
+	}
 	
-    public String getDescription(){return description;}
-	
-    public String[] getCapabilities(){return capabilities;}
-	
-    public DasCoordinateSystem[] getCoordinateSystem(){return coordinateSystem;}
+	public boolean hasValidCapability(String testCapability) {
+		for (Capabilities capabilty : validCapabilities) {
+			if (capabilty.getName().equals(testCapability)){
+				return true;
+			}
+			
+		}
+		return false;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public String getAdminemail() {
+		return adminemail;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public String[] getCapabilities() {
+		return Capabilities.capabilitiesAsStrings(capabilities);
+	}
+
+	public DasCoordinateSystem[] getCoordinateSystem() {
+		return coordinateSystem;
+	}
 
 	public void setRegisterDate(Date d) {
 		registerDate = d;
 	}
+
 	public Date getRegisterDate() {
-		return registerDate ;
+		return registerDate;
 	}
+
 	public void setLeaseDate(Date d) {
-		leaseDate =d ;
+		leaseDate = d;
 	}
+
 	public Date getLeaseDate() {
-		return leaseDate ;
+		return leaseDate;
 	}
 
 	public void setLabels(String[] ls) {
-		labels = ls ;
+		labels = ls;
 	}
 
 	public String[] getLabels() {
@@ -299,44 +336,41 @@ public class Das1Source implements DasSource {
 	public boolean getAlertAdmin() {
 		return alertAdmin;
 	}
-	public Map<String,String> getProperties() {
+
+	public Map<String, String> getProperties() {
 		return properties;
 	}
-	public void setProperties(Map<String,String> properties) {
+
+	public void setProperties(Map<String, String> properties) {
 		this.properties = properties;
 	}
 
-
 	public void setValidCapabilities(String[] validCapabilities) {
-//		System.out.println("setting valid capabilities!!");
-//		for(String valid:validCapabilities){
-//			System.out.println("setting valid capabilities:"+valid);
-//		}
-		this.validCapabilities=validCapabilities;
-		
-	}
-	public String[] getValidCapabilities(){
-		
-//System.out.println("getting valid capabs!!");
-//for(String valid:validCapabilities){
-//	System.out.println("setting valid capabilities:"+valid);
-//}
-		return validCapabilities;
+		// System.out.println("setting valid capabilities!!");
+		// for(String valid:validCapabilities){
+		// System.out.println("setting valid capabilities:"+valid);
+		// }
+		this.validCapabilities = Capabilities.capabilitiesListFromStrings(validCapabilities);
+
 	}
 
+	public String[] getValidCapabilities() {
 
+		// System.out.println("getting valid capabs!!");
+		// for(String valid:validCapabilities){
+		// System.out.println("setting valid capabilities:"+valid);
+		// }
+		return Capabilities.capabilitiesAsStrings(validCapabilities);
+	}
 
 	public String getSpecification() {
-		
+
 		return this.specification;
 	}
 
-
-
 	public void setSpecification(String specification) {
-		this.specification=specification;
-		
+		this.specification = specification;
+
 	}
-	
 
 }

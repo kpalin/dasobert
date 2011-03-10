@@ -23,8 +23,11 @@ public class DasValidationResult  {
 	 * for each capability we want to save the result of invalid, possiblyValid, Valid and any messages associated with the error or positive outcome
 	 */
 	private Map <Capabilities, Boolean>isValid=new HashMap<Capabilities, Boolean>();
-	
 	private Map <Capabilities,String>errors=new HashMap<Capabilities, String>();
+	private Map <Capabilities,Long>times=new HashMap<Capabilities, Long>();
+	public Map<Capabilities, Long> getTimes() {
+		return times;
+	}
 	private List<Map<String,String>>types = new ArrayList<Map<String,String>>();//list of types as maps of id->type, cvId-> cvId, category->category for each source if capable and associated cvId and category if available
 	
 		private boolean overallValid=false;
@@ -89,6 +92,15 @@ public class DasValidationResult  {
 	}
 	public String getError(Capabilities cap){
 		return errors.get(cap);
+	}
+	
+	public void time(Capabilities capability, Long duration) {
+		times.put(capability, duration);
+		
+	}
+	
+	public Long getTime(Capabilities cap){
+		return times.get(cap);
 	}
 	
 	public String[] getValidCaps(){
