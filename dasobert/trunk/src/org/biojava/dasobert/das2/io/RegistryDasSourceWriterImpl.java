@@ -25,6 +25,7 @@ package org.biojava.dasobert.das2.io;
 import java.io.IOException;
 import java.util.List;
 
+import org.biojava.dasobert.das.Capabilities;
 import org.biojava.dasobert.das.CapabilityStatus;
 import org.biojava.dasobert.dasregistry.DasSource;
 import org.biojava.dasobert.dasregistry.LightBean;
@@ -33,7 +34,7 @@ import org.biojava.utils.xml.XMLWriter;
 
 public class RegistryDasSourceWriterImpl extends DasSourceWriterImpl  {
 
-	protected void writeCapabilityStatus(XMLWriter xw, DasSource source)
+	protected void writeCapabilityStatus(XMLWriter xw, DasSource source, boolean times)
 			throws IOException {
 		ValidationResultLights results = new ValidationResultLights(
 				source);
@@ -42,12 +43,24 @@ public class RegistryDasSourceWriterImpl extends DasSourceWriterImpl  {
 			CapabilityStatus status = bean.getStatus();
 			if(!status.equals(CapabilityStatus.OPTIONAL)){//don't bother writing optional fields
 				xw.openTag("PROP");
-				xw.attribute("name", bean.getCapability().toString());
+				xw.attribute("name", bean.getCapability().getName());
 				xw.attribute("value", status.toString());
 
 				xw.closeTag("PROP");
 			}
 
+		}
+		
+		if(times){
+			String []caps=Capabilities.getCapabilityStrings();
+			for(int i=0;i<caps.length;i++){
+				
+				xw.openTag("PROP");
+				xw.attribute("name", caps[i]+"_time");
+				xw.attribute("value", source.getCapabilityTime(Capabilities.valueOf(caps[i])));
+
+				xw.closeTag("PROP");
+			}
 		}
 	}
 

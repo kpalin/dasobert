@@ -64,6 +64,16 @@ public class DasSourceFilter {
 
 		return source.hasCapability(capability);
 	}
+	
+	public boolean hasValidCapability(DasSource source, String capability) {
+
+		if (capability == null)
+			return true;
+		if (capability.equals(""))
+			return true;
+
+		return source.hasValidCapability(capability);
+	}
 
 	public boolean hasLabel(DasSource source, String label) {
 		if (label == null)
@@ -156,7 +166,7 @@ public class DasSourceFilter {
 			// test for correct label
 			if (hasLabel(source, label) && hasOrganism(source, organism)
 					&& hasAuthority(source, authority)
-					&& hasCapability(source, capability)
+					&& hasValidCapability(source, capability)
 					&& hasType(source, type)
 					&& isSpec(source, spec) && hasVersion(source,version)
 					&& isCoordinateId(source, id)) {
@@ -191,10 +201,17 @@ public class DasSourceFilter {
 	}
 	
 	private boolean isCoordinateId(DasSource source, String id){
+		
 		if (id == null)
 			return true;
 		if (id.equals(""))
 			return true;
+		
+		//accept uris or ids
+		if(id.contains("/")){
+			id=id.substring(id.lastIndexOf("/")+1, id.length());
+			}
+				
 		DasCoordinateSystem[] coords = source.getCoordinateSystem();
 		for (int j = 0; j < coords.length; j++) {
 			DasCoordinateSystem cs = coords[j];
