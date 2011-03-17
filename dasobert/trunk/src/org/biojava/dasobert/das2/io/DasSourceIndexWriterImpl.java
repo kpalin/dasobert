@@ -95,7 +95,7 @@ public class DasSourceIndexWriterImpl implements DasSourceWriter {
 		// xw.closeTag("COORDINATES");
 	}
 
-	public void writeDasSource(XMLWriter xw, DasSource source) {
+	public void writeDasSource(XMLWriter xw, DasSource source, boolean times) {
 		try {
 			xw.openTag("entry");
 
@@ -197,13 +197,13 @@ public class DasSourceIndexWriterImpl implements DasSourceWriter {
 		}
 	}
 
-	public void writeDasSource(OutputStream stream, DasSource source)
+	public void writeDasSource(OutputStream stream, DasSource source, boolean times)
 			throws IOException {
 		// System.out.println(source.getNickname());
 
 		PrintWriter pw = new PrintWriter(stream);
 		PrettyXMLWriter xw = new PrettyXMLWriter(pw);
-		writeDasSource(xw, source);
+		writeDasSource(xw, source, false);
 
 	}
 
@@ -257,5 +257,13 @@ public class DasSourceIndexWriterImpl implements DasSourceWriter {
 		xw.closeTag("entry");
 
 	}
+
+	public void writeDasSource(OutputStream stream, DasSource source)
+			throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 
 }

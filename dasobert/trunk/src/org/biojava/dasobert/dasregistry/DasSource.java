@@ -23,6 +23,8 @@
 package org.biojava.dasobert.dasregistry;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.biojava.dasobert.das.Capabilities;
@@ -69,6 +71,8 @@ public interface DasSource {
 
     public  void setCoordinateSystem(DasCoordinateSystem[] u);
 
+    public  void setCapabilities(List<String> u);
+
     public  void setCapabilities(String[] u);
 
     /** test if a this source has a particular capability
@@ -84,7 +88,9 @@ public interface DasSource {
 
     public  String getDescription();
 
-    public  String[] getCapabilities();
+    public  List<String> getCapabilities();
+    
+    public String[] getCapabilitiesAsStringArray();
 
     public  DasCoordinateSystem[] getCoordinateSystem();
 
@@ -124,9 +130,9 @@ public interface DasSource {
      */
     public Map<String,String> getProperties();
 
-	public void setValidCapabilities(String[] validCapabilities);
+	public void setValidCapabilities(List<String> validCapabilities);
 	
-	public String[] getValidCapabilities();
+	public List<String> getValidCapabilities();
 	
 	public String getSpecification();
 
@@ -134,6 +140,8 @@ public interface DasSource {
 
 	public boolean hasValidCapability(String capability);
 
-	public String getCapabilityTime(Capabilities valueOf);
+	public Map<Capabilities, Long> getCapabilityTimes();
+	
+	public void setCapabilityTime(Map<Capabilities,Long> capTimes);
 
 }

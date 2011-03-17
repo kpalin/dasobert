@@ -22,6 +22,8 @@
  */
 package org.biojava.dasobert.das2;
 
+import java.util.List;
+
 import org.biojava.dasobert.dasregistry.Das1Source;
 import org.biojava.dasobert.dasregistry.DasSource;
 
@@ -113,14 +115,14 @@ implements Das2Source
         
     }
     
-    public String[] getCapabilities() {
+    public List<String> getCapabilities() {
         //todo mark as not needed / not appropriate ...
         return super.getCapabilities();
     }
 
 
 
-    public void setCapabilities(String[] u) {
+    public void setCapabilities(List<String> u) {
         // TODO Auto-generated method stub
         super.setCapabilities(u);
     }

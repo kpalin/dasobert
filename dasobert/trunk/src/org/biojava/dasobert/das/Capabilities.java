@@ -146,17 +146,17 @@ public enum Capabilities {
 	
 	/**
 	 * create a list of the enums represented by the strings
-	 * @param strings
+	 * @param list
 	 * @return array of Capabilities
 	 * @throws NoSuchCapabilityException - if no Capability found represented by a string[]
 	 */
-	public static Capabilities [] capabilitiesFromStrings  (String[] strings) {
+	public static Capabilities [] capabilitiesFromStrings  (List<String> list) {
 		ArrayList <Capabilities>caps=new ArrayList<Capabilities>();
-		for(int i=0;i<strings.length;i++){
-			if(nameToValueMap.containsKey(strings[i])){
-				caps.add(nameToValueMap.get(strings[i]));
+		for(int i=0;i<list.size();i++){
+			if(nameToValueMap.containsKey(list.get(i))){
+				caps.add(nameToValueMap.get(list.get(i)));
 			}else{
-				System.err.println("Warning a capability not found for  String "+strings[i]);
+				System.err.println("Warning a capability not found for  String "+list.get(i));
 				 //throw new NoSuchCapabilityException(strings[i]);
 				
 			}
@@ -165,13 +165,13 @@ public enum Capabilities {
 		return caps.toArray(new Capabilities[caps.size()]);
 	}
 	
-	public static List<Capabilities> capabilitiesListFromStrings  (String[] strings) {
+	public static List<Capabilities> capabilitiesListFromStrings  (List<String> list) {
 		ArrayList <Capabilities>caps=new ArrayList<Capabilities>();
-		for(int i=0;i<strings.length;i++){
-			if(nameToValueMap.containsKey(strings[i])){
-				caps.add(nameToValueMap.get(strings[i]));
+		for(int i=0;i<list.size();i++){
+			if(nameToValueMap.containsKey(list.get(i))){
+				caps.add(nameToValueMap.get(list.get(i)));
 			}else{
-				System.err.println("Warning a capability not found for  String "+strings[i]);
+				System.err.println("Warning a capability not found for  String "+list.get(i));
 				 //throw new NoSuchCapabilityException(strings[i]);
 				
 			}
@@ -180,24 +180,33 @@ public enum Capabilities {
 		return caps;
 	}
 	
-	public static String[] capabilitiesAsStrings(Collection <Capabilities>capabilities){
+	public static List<String> capabilitiesListFromStrings  (String[] list) {
+		ArrayList <String>caps=new ArrayList<String>();
+		for(int i=0;i<list.length;i++){
+			caps.add(list[i]);
+		
+		}
+		return caps;
+	}
+	
+	public static List<String> capabilitiesAsStrings(Collection <Capabilities>capabilities){
 		ArrayList <String>list=new ArrayList<String>();
 		for(Capabilities cap:capabilities){
 			list.add(cap.getName());
 		}
-		return list.toArray(new String[list.size()]);
+		return list;
 	}
 	/**
 	 * is this set of capabilities Strings contained fully in the superset of Strings
-	 * @param stated
-	 * @param valid
+	 * @param list
+	 * @param caps
 	 * @return
 	 */
-	public static List<String> containsSubSet(String [] stated, String[] valid){
+	public static List<String> containsSubSet(List<String> list, List<String> caps){
 		ArrayList <String> notValidButStated=new ArrayList<String>();
-		for(String sub: stated){
+		for(String sub: list){
 			boolean found=false;
-			for(String superS:valid){
+			for(String superS:caps){
 				if(sub.equals(superS)){
 					found=true;
 				}
@@ -221,7 +230,7 @@ public enum Capabilities {
 	 * @param valid
 	 * @return
 	 */
-	public static boolean allStatedAreValid(String []stated, String[] valid){
+	public static boolean allStatedAreValid(List<String>stated, List<String> valid){
 	List <String> notValidButStated=Capabilities.containsSubSet(stated,valid );
 	return notValidButStated.size()==0 ? true : false;
 	}

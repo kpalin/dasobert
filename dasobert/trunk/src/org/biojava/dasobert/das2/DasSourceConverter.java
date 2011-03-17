@@ -90,7 +90,7 @@ public class DasSourceConverter {
             
         }
         
-        ds.setCapabilities((String[])das1capabilitites.toArray(new String[das1capabilitites.size()]));
+        ds.setCapabilities(das1capabilitites);
         
         return ds ;
     }

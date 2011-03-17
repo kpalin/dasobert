@@ -222,8 +222,8 @@ public class Das1Validator {
 	 * java.lang.String[])
 	 */
 	public DasValidationResult validate(String url,
-			DasCoordinateSystem[] coords, String[] capabilities) {
-		return validate(url, coords, capabilities, VERBOSE,
+			DasCoordinateSystem[] coords, List<String> list) {
+		return validate(url, coords, list, VERBOSE,
 				NO_ONTOLOGY_VALIDATION);
 	}
 
@@ -236,7 +236,7 @@ public class Das1Validator {
 	 * java.lang.String[], boolean, boolean)
 	 */
 	public DasValidationResult validate(String url,
-			DasCoordinateSystem[] coords, String[] capabilities,
+			DasCoordinateSystem[] coords, List<String> list,
 			boolean verbose, boolean ontologyValidation) {
 
 		System.out.println("calling validate in DAS1Validator with url=" + url);
@@ -252,10 +252,10 @@ public class Das1Validator {
 		if (coords == null)
 			return result;
 
-		if (capabilities == null)
+		if (list == null)
 			return result;
 		HashSet<String> statedCapabilities = new HashSet<String>();
-		for (String capability : capabilities) {
+		for (String capability : list) {
 			statedCapabilities.add(capability);
 		}
 
@@ -548,7 +548,7 @@ public class Das1Validator {
 					.lastIndexOf(",") - 1);
 			// we should also test + and - capabilities in the requests
 			String urlString = url + "features?adjacent=" + pointLocation
-					+ ":f";
+					+ ":F";
 
 			System.out.println("calling validate adjacent_feature with string "
 					+ urlString);

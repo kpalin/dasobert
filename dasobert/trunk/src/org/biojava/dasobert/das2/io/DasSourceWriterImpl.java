@@ -81,7 +81,7 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 		xw.closeTag("COORDINATES");
 	}
 
-	public void writeDasSource(XMLWriter xw, DasSource source)
+	public void writeDasSource(XMLWriter xw, DasSource source, boolean writeTimeData)
 			throws IOException {
 		xw.openTag("SOURCE");
 		// System.out.println("DasSourceWriterImpl:  writing new source");
@@ -137,11 +137,11 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 
 		} else if (source instanceof Das1Source) {
 			// System.out.println("das1source");
-			String[] capabilities = source.getCapabilities();
+			List<String> capabilities = source.getCapabilities();
 			String queryUriString="";
 			String sourceUri="";
-			for (int i = 0; i < capabilities.length; i++) {
-				String c = capabilities[i];
+			for (int i = 0; i < capabilities.size(); i++) {
+				String c = capabilities.get(i);
 				xw.openTag("CAPABILITY");				
 				xw.attribute("type", Das2CapabilityImpl.DAS1_CAPABILITY_PREFIX
 						+ c);
@@ -202,7 +202,7 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 		xw.attribute("value", spec);
 		xw.closeTag("PROP");
 		}
-		writeCapabilityStatus(xw, source);
+		writeCapabilityStatus(xw, source, writeTimeData);
 		
 		int daysBeforeDeletion=timer.daysBeforeArchiving(source);
 		//System.out.println(daysBeforeDeletion);
@@ -217,7 +217,7 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 		xw.closeTag("SOURCE");
 	}
 
-	protected void writeCapabilityStatus(XMLWriter xw, DasSource source)
+	protected void writeCapabilityStatus(XMLWriter xw, DasSource source, boolean times)
 			throws IOException {
 		//do nothing for a normal response
 		//only implemented by the registry to give status of capabilities see RegistryDasSourceWriterImpl for method
@@ -229,7 +229,7 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 
 		PrintWriter pw = new PrintWriter(stream);
 		PrettyXMLWriter xw = new PrettyXMLWriter(pw);
-		writeDasSource(xw, source);
+		writeDasSource(xw, source, false);
 
 	}
 

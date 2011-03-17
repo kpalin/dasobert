@@ -64,7 +64,7 @@ public class ValidationResultLights {
 		this.statedCaps = Capabilities.capabilitiesFromStrings(ds
 				.getCapabilities());
 		this.statedCapsMap = Capabilities.capabilitiesToMap(statedCaps);
-		String[] validCaps = ds.getValidCapabilities();
+		List<String> validCaps = ds.getValidCapabilities();
 		Map valid = Capabilities.capabilitiesToMap(Capabilities
 				.capabilitiesFromStrings(ds.getValidCapabilities()));
 		for (Capabilities allCap : EnumSet.allOf(Capabilities.class)) {
