@@ -23,6 +23,7 @@
  */
 package org.biojava.dasobert.dasregistry;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -59,6 +60,7 @@ public class Das1Source implements DasSource {
 	Map<String, String> properties;
 	boolean alertAdmin;
 	private List<Capabilities> validCapabilities;
+	private Map<Capabilities, Long> capabilityTime;
 	private String specification;
 	// private Map<DasSpec,String> capabilityStatusMap;
 
@@ -148,12 +150,12 @@ public class Das1Source implements DasSource {
 		// System.out.println("testing capabs");
 
 		// test capabilities
-		String[] otherCaps = other.getCapabilities();
+		List<String> otherCaps = other.getCapabilities();
 		for (Capabilities cap : capabilities) {
 
 			boolean found = false;
-			for (int j = 0; j < otherCaps.length; j++) {
-				String oCap = otherCaps[j];
+			for (int j = 0; j < otherCaps.size(); j++) {
+				String oCap = otherCaps.get(j);
 				if (oCap.equals(cap)) {
 					found = true;
 					break;
@@ -186,7 +188,7 @@ public class Das1Source implements DasSource {
 
 		DasSourceWriter dswriter = new DasSourceWriterImpl();
 		try {
-			dswriter.writeDasSource(xw, this);
+			dswriter.writeDasSource(xw, this, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -247,8 +249,16 @@ public class Das1Source implements DasSource {
 		coordinateSystem = u;
 	}
 
-	public void setCapabilities(String[] u) {
-		capabilities = Capabilities.capabilitiesListFromStrings(u);
+	public void setCapabilities(List<String> list) {
+		capabilities = Capabilities.capabilitiesListFromStrings(list);
+	}
+	
+	public void setCapabilities(String[] caps) {
+		ArrayList list=new ArrayList();
+		for(int i=0; i<caps.length; i++){
+			list.add(caps[i]);
+		}
+		capabilities = Capabilities.capabilitiesListFromStrings(list);
 	}
 
 	/**
@@ -268,8 +278,10 @@ public class Das1Source implements DasSource {
 	}
 	
 	public boolean hasValidCapability(String testCapability) {
-		for (Capabilities capabilty : validCapabilities) {
-			if (capabilty.getName().equals(testCapability)){
+		System.out.println("looking for cap="+testCapability);
+		for (Capabilities capability : validCapabilities) {
+			System.out.println(capability);
+			if (capability.getName().equals(testCapability)){
 				return true;
 			}
 			
@@ -289,8 +301,9 @@ public class Das1Source implements DasSource {
 		return description;
 	}
 
-	public String[] getCapabilities() {
-		return Capabilities.capabilitiesAsStrings(capabilities);
+	public List<String> getCapabilities() {
+		List<String> capsNames=Capabilities.capabilitiesAsStrings(capabilities);
+		return capsNames;
 	}
 
 	public DasCoordinateSystem[] getCoordinateSystem() {
@@ -345,7 +358,7 @@ public class Das1Source implements DasSource {
 		this.properties = properties;
 	}
 
-	public void setValidCapabilities(String[] validCapabilities) {
+	public void setValidCapabilities(List<String> validCapabilities) {
 		// System.out.println("setting valid capabilities!!");
 		// for(String valid:validCapabilities){
 		// System.out.println("setting valid capabilities:"+valid);
@@ -354,7 +367,7 @@ public class Das1Source implements DasSource {
 
 	}
 
-	public String[] getValidCapabilities() {
+	public List<String> getValidCapabilities() {
 
 		// System.out.println("getting valid capabs!!");
 		// for(String valid:validCapabilities){
@@ -371,6 +384,37 @@ public class Das1Source implements DasSource {
 	public void setSpecification(String specification) {
 		this.specification = specification;
 
+	}
+
+	public Long getCapabilityTime(Capabilities cap) {
+		Long time=new Long(0);
+		
+		return time;
+	}
+
+	public  Map<Capabilities, Long> getCapabilityTimes() {
+		// TODO Auto-generated method stub
+		return this.capabilityTime;
+	}
+
+	public void setCapabilityTime(Map<Capabilities, Long> capTimes) {
+		this.capabilityTime=capTimes;
+		
+	}
+
+	public String[] getCapabilitiesAsStringArray() {
+		if(capabilities!=null&&capabilities.size()>0){
+		String [] array=new String[capabilities.size()];
+		int i=0;
+		for(Capabilities cap:capabilities){
+			array[i]=cap.getName();
+			i++;
+		}
+		return array;
+		}else{
+			String[]array=new String[]{""};
+			return array;
+		}
 	}
 
 }

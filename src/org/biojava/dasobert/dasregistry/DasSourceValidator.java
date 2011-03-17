@@ -22,6 +22,8 @@
  */
 package org.biojava.dasobert.dasregistry;
 
+import java.util.List;
+
 import org.biojava.bio.program.das.dasalignment.DASException;
 import org.biojava.dasobert.das2.Das2Source;
 
@@ -48,7 +50,7 @@ public class DasSourceValidator {
             // a DAS 1 source ...
             
             String url =ds.getUrl();
-            String[] caps = ds.getCapabilities();
+            List<String> caps = ds.getCapabilities();
             //String testCode = ds.getTestCode();
             
             Das1Validator validator = new Das1Validator();

@@ -27,6 +27,7 @@ package org.biojava.dasobert.dasregistry ;
 
 import java.util.Comparator ;
 import java.util.Date;
+import java.util.List;
 import java.util.Map ;
 import java.util.HashMap ;
 
@@ -108,20 +109,20 @@ public abstract class DasSourceComparator
     public static final Comparator BY_VALID_CAPABILITIES = new DasSourceComparator("validcapabilities") {
         protected Comparable getField(DasSource ds) {
         	//System.out.println("nickname="+ds.getNickname());
-            String[] caps = ds.getValidCapabilities();
+            List<String> caps = ds.getValidCapabilities();
             //System.out.println("return="+caps.length);
             
-            return caps==null ? 0 :caps.length;
+            return caps==null ? 0 :caps.size();
         }
     };
     
     public static final Comparator BY_CAPABILITIES = new DasSourceComparator("capabilities") {
         protected Comparable getField(DasSource ds) {
         	//System.out.println("nickname="+ds.getNickname());
-            String[] caps = ds.getCapabilities();
+            List<String> caps = ds.getCapabilities();
             //System.out.println("return="+caps.length);
             
-            return caps==null ? 0 :caps.length;
+            return caps==null ? 0 :caps.size();
         }
     };
     

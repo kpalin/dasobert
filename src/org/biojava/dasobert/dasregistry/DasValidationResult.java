@@ -103,7 +103,7 @@ public class DasValidationResult  {
 		return times.get(cap);
 	}
 	
-	public String[] getValidCaps(){
+	public List<String> getValidCaps(){
 		Set <Map.Entry<Capabilities, Boolean>>keys=isValid.entrySet();
 		Iterator<Map.Entry<Capabilities, Boolean>>valuesIterator=keys.iterator();
 		ArrayList <String>list=new ArrayList<String>();
@@ -113,7 +113,7 @@ public class DasValidationResult  {
 				list.add(entry.getKey().toString());
 			}
 		}
-		return (String[]) list.toArray(new String[list.size()]);
+		return list;
 	}
 	
 	

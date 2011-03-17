@@ -23,7 +23,10 @@
 package org.biojava.dasobert.das2.io;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.biojava.dasobert.das.Capabilities;
 import org.biojava.dasobert.das.CapabilityStatus;
@@ -36,6 +39,7 @@ public class RegistryDasSourceWriterImpl extends DasSourceWriterImpl  {
 
 	protected void writeCapabilityStatus(XMLWriter xw, DasSource source, boolean times)
 			throws IOException {
+		//System.out.println("in registryDasSourceWriter capabilitystatus");
 		ValidationResultLights results = new ValidationResultLights(
 				source);
 		List<LightBean> beans = results.getLightsLinksAndResults();
@@ -52,12 +56,16 @@ public class RegistryDasSourceWriterImpl extends DasSourceWriterImpl  {
 		}
 		
 		if(times){
-			String []caps=Capabilities.getCapabilityStrings();
-			for(int i=0;i<caps.length;i++){
-				
+			//System.out.println("print times here--------------------");
+			Map<Capabilities, Long> timeMap = source.getCapabilityTimes();
+		
+			Iterator it=timeMap.entrySet().iterator();
+			while(it.hasNext()){
+				Entry<Capabilities,Long> entry=(Entry<Capabilities, Long>) it.next();
+				Capabilities cap=(Capabilities) entry.getKey();
 				xw.openTag("PROP");
-				xw.attribute("name", caps[i]+"_time");
-				xw.attribute("value", source.getCapabilityTime(Capabilities.valueOf(caps[i])));
+				xw.attribute("name", cap.getName()+"_time");
+				xw.attribute("value", String.valueOf(timeMap.get(cap)));
 
 				xw.closeTag("PROP");
 			}

@@ -35,7 +35,7 @@ public interface DasSourceWriter {
 
     public void writeDasSource(OutputStream stream, DasSource source) throws IOException;
     
-    public void writeDasSource(XMLWriter writer, DasSource source) throws IOException;
+    public void writeDasSource(XMLWriter writer, DasSource source, boolean times) throws IOException;
     
     public void writeCoordinateSystem(XMLWriter writer, DasCoordinateSystem dcs) throws IOException;
 
