@@ -130,9 +130,9 @@ public class DasSourceIndexWriterImpl implements DasSourceWriter {
 			}
 			if (source instanceof Das1Source) {
 				// System.out.println("das1source");
-				String[] capabilities = source.getCapabilities();
-				for (int i = 0; i < capabilities.length; i++) {
-					String c = capabilities[i];
+				List<String> capabilities = source.getCapabilities();
+				for (int i = 0; i < capabilities.size(); i++) {
+					String c = capabilities.get(i);
 					writeAdditionalField(xw, "capability_type",
 							Das2CapabilityImpl.DAS1_CAPABILITY_PREFIX + c);
 					writeAdditionalField(xw, "capability_query_uri", source
