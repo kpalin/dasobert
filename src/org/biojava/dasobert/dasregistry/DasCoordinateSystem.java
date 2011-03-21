@@ -111,22 +111,22 @@ public class DasCoordinateSystem {
 
 		
 		//added by jw for registry
-		if (!organism_name.equals(other.getOrganismName())) {
+		if (!organism_name.equalsIgnoreCase(other.getOrganismName())) {
 			//System.out.println("mismatch in name |"+organism_name+"| other=|"+other.getOrganismName()+"|");
 			match = false;
 			return match;
 		}
-		if (!version.equals(other.getVersion())) {
+		if (!version.equalsIgnoreCase(other.getVersion())) {
 			//System.out.println("mismatch in version");
 			match = false;
 			return match;
 		}
-		if (!category.equals(other.getCategory())) {
+		if (!category.equalsIgnoreCase(other.getCategory())) {
 			//System.out.println("mismatch in category");
 			match = false;
 			return match;
 		}
-		if (!name.equals(other.getName())) {
+		if (!name.equalsIgnoreCase(other.getName())) {
 			//System.out.println("mismatch in name");
 			match = false;
 			return match;

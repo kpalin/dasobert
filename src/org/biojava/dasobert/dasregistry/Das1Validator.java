@@ -480,6 +480,7 @@ public class Das1Validator {
 
 				if (featureForFurtherTests != null) {
 					isValid = validateFeatureById(url, featureForFurtherTests);
+					
 				}
 			} else if (capability.equals(Capabilities.ADJACENT_FEATURE)) {
 

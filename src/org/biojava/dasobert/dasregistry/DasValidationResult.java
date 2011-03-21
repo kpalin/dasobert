@@ -110,7 +110,7 @@ public class DasValidationResult  {
 		while(valuesIterator.hasNext()){
 			Map.Entry<Capabilities,Boolean>entry=valuesIterator.next();
 			if(entry.getValue()){
-				list.add(entry.getKey().toString());
+				list.add(entry.getKey().getName());
 			}
 		}
 		return list;
@@ -169,7 +169,7 @@ public class DasValidationResult  {
 		while(valuesIterator.hasNext()){
 			Map.Entry<Capabilities,Boolean>entry=valuesIterator.next();
 			
-				resultString+=entry.getKey().toString()+"|"+entry.getValue()+"\n";
+				resultString+=entry.getKey().getName()+"|"+entry.getValue()+"\n";
 			
 		}
 		
@@ -179,7 +179,7 @@ public class DasValidationResult  {
 		while(errorValuesIterator.hasNext()){
 			Map.Entry<Capabilities,String>errorEntry=errorValuesIterator.next();
 			
-				resultString+=errorEntry.getKey().toString()+"|"+errorEntry.getValue()+"\n";
+				resultString+=errorEntry.getKey().getName()+"|"+errorEntry.getValue()+"\n";
 			
 		}
 		return resultString;
