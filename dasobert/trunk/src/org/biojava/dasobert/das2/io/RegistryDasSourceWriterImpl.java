@@ -30,6 +30,7 @@ import java.util.Map.Entry;
 
 import org.biojava.dasobert.das.Capabilities;
 import org.biojava.dasobert.das.CapabilityStatus;
+import org.biojava.dasobert.das.DasTimeFormat;
 import org.biojava.dasobert.dasregistry.DasSource;
 import org.biojava.dasobert.dasregistry.LightBean;
 import org.biojava.dasobert.dasregistry.ValidationResultLights;
@@ -53,6 +54,20 @@ public class RegistryDasSourceWriterImpl extends DasSourceWriterImpl  {
 				xw.closeTag("PROP");
 			}
 
+		}
+		xw.openTag("PROP");
+		xw.attribute("name", "leaseTime");
+
+		xw.attribute("value", DasTimeFormat.toDASString(source.getLeaseDate()));
+		xw.closeTag("PROP");
+		
+		int daysBeforeDeletion=timer.daysBeforeArchiving(source);
+		//System.out.println(daysBeforeDeletion);
+		if(daysBeforeDeletion!=60){
+		xw.openTag("PROP");
+		xw.attribute("name", "daysBeforeDeletion");
+		xw.attribute("value", Integer.toString(daysBeforeDeletion));
+		xw.closeTag("PROP");
 		}
 		
 		if(times){

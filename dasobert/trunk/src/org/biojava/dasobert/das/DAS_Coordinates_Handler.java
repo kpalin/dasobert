@@ -53,6 +53,7 @@ public class DAS_Coordinates_Handler  extends DefaultHandler{
 	String authority;
 	String test_range;
 	String version;
+	String organismString;
 	
 	
 	public DAS_Coordinates_Handler() {
@@ -66,6 +67,7 @@ public class DAS_Coordinates_Handler  extends DefaultHandler{
 		authority="";
 		test_range="";
 		version="";
+		organismString="";
 	}
 
 	
@@ -84,14 +86,19 @@ public class DAS_Coordinates_Handler  extends DefaultHandler{
 	}
 
 	void add_coordinatedata(String uri, String name, String qName) {
-		coordinate.setUniqueId(uri);
+		
 		coordinate.setAuthority(authority);
 		if(taxid!=null)coordinate.setNCBITaxId(Integer.parseInt(taxid));
 		coordinate.setVersion(version);
 		coordinate.setCategory(source);
-		coordinates.add(coordinate);
 		coordinatefield = "";
-		characterdata = new StringBuffer();
+		String elementData=characterdata.toString();
+		String []bits=elementData.split(",");
+		if(bits.length==3){
+			coordinate.setOrganismName(bits[2]);
+			
+		}
+		coordinates.add(coordinate);
 	}
 	
 	public void startElement (String xmluri, String name, String qName, Attributes atts){

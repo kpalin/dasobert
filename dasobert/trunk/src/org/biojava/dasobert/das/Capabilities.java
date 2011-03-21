@@ -172,7 +172,12 @@ public enum Capabilities {
 				caps.add(nameToValueMap.get(list.get(i)));
 			}else{
 				System.err.println("Warning a capability not found for  String "+list.get(i));
-				 //throw new NoSuchCapabilityException(strings[i]);
+				 try {
+					throw new NoSuchCapabilityException(list.get(i));
+				} catch (NoSuchCapabilityException e) {
+					System.out.println("no such found capability "+e.getUnfoundCapability());
+					e.printStackTrace();
+				}
 				
 			}
 		
@@ -244,4 +249,9 @@ public enum Capabilities {
 	  }
 	  return map;
 	  }
+
+
+public static Capabilities getValue(String nameOfCapability){
+	return nameToValueMap.get(nameOfCapability);
+}
 }

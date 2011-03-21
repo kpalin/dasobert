@@ -49,7 +49,7 @@ import org.biojava.utils.xml.XMLWriter;
 public class DasSourceWriterImpl implements DasSourceWriter {
 
 	public static final String COORDSYSURI = "http://www.dasregistry.org/dasregistry/coordsys/";
-	private RegistryTimer timer;
+	protected RegistryTimer timer;
 	public DasSourceWriterImpl() {
 		super();
 		timer=new RegistryTimer();
@@ -176,12 +176,6 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 
 		}
 
-		xw.openTag("PROP");
-		xw.attribute("name", "leaseTime");
-
-		xw.attribute("value", DasTimeFormat.toDASString(source.getLeaseDate()));
-		xw.closeTag("PROP");
-
 		Map<String, String> props = source.getProperties();
 
 		Set<String> keys = props.keySet();
@@ -203,15 +197,6 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 		xw.closeTag("PROP");
 		}
 		writeCapabilityStatus(xw, source, writeTimeData);
-		
-		int daysBeforeDeletion=timer.daysBeforeArchiving(source);
-		//System.out.println(daysBeforeDeletion);
-		if(daysBeforeDeletion!=60){
-		xw.openTag("PROP");
-		xw.attribute("name", "daysBeforeDeletion");
-		xw.attribute("value", Integer.toString(daysBeforeDeletion));
-		xw.closeTag("PROP");
-		}
 		xw.closeTag("VERSION");
 
 		xw.closeTag("SOURCE");

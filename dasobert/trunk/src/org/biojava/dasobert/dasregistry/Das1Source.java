@@ -50,7 +50,7 @@ public class Das1Source implements DasSource {
 	String adminemail;
 	String description;
 	DasCoordinateSystem[] coordinateSystem;
-	List<Capabilities> capabilities;
+	List<Capabilities> capabilities=new ArrayList<Capabilities>();
 	String[] labels;
 	String helperurl;
 	Date registerDate;
@@ -59,7 +59,7 @@ public class Das1Source implements DasSource {
 	boolean local;
 	Map<String, String> properties;
 	boolean alertAdmin;
-	private List<Capabilities> validCapabilities;
+	private List<Capabilities> validCapabilities=new ArrayList<Capabilities>();
 	private Map<Capabilities, Long> capabilityTime;
 	private String specification;
 	// private Map<DasSpec,String> capabilityStatusMap;
@@ -278,9 +278,9 @@ public class Das1Source implements DasSource {
 	}
 	
 	public boolean hasValidCapability(String testCapability) {
-		System.out.println("looking for cap="+testCapability);
+		//System.out.println("looking for cap="+testCapability);
 		for (Capabilities capability : validCapabilities) {
-			System.out.println(capability);
+			//System.out.println(capability);
 			if (capability.getName().equals(testCapability)){
 				return true;
 			}
@@ -359,10 +359,10 @@ public class Das1Source implements DasSource {
 	}
 
 	public void setValidCapabilities(List<String> validCapabilities) {
-		// System.out.println("setting valid capabilities!!");
-		// for(String valid:validCapabilities){
-		// System.out.println("setting valid capabilities:"+valid);
-		// }
+//		 System.out.println("setting valid capabilities!!");
+//		 for(String valid:validCapabilities){
+//		 System.out.println("setting valid capabilities:"+valid);
+//		 }
 		this.validCapabilities = Capabilities.capabilitiesListFromStrings(validCapabilities);
 
 	}
