@@ -97,7 +97,11 @@ public class DasCoordinateSystem {
 		return match;
 	}
 
-	
+	/**
+	 * use organism name only and not taxids to see if equal
+	 * @param other
+	 * @return
+	 */
 	public boolean equalsUsingOrganismName(DasCoordinateSystem other) {
 		boolean match = true;
 		//System.out.println("comparing in coordinate system " + this.toString() );
@@ -111,23 +115,23 @@ public class DasCoordinateSystem {
 
 		
 		//added by jw for registry
-		if (!organism_name.equalsIgnoreCase(other.getOrganismName())) {
-			//System.out.println("mismatch in name |"+organism_name+"| other=|"+other.getOrganismName()+"|");
+		if (!organism_name.equals(other.getOrganismName())) {
+			if(debugCoords)System.out.println("mismatch in name |"+organism_name+"| other=|"+other.getOrganismName()+"|");
 			match = false;
 			return match;
 		}
-		if (!version.equalsIgnoreCase(other.getVersion())) {
-			//System.out.println("mismatch in version");
+		if (!version.equals(other.getVersion())) {
+			if(debugCoords)System.out.println("mismatch in version");
 			match = false;
 			return match;
 		}
-		if (!category.equalsIgnoreCase(other.getCategory())) {
-			//System.out.println("mismatch in category");
+		if (!category.equals(other.getCategory())) {
+			if(debugCoords)System.out.println("mismatch in category");
 			match = false;
 			return match;
 		}
-		if (!name.equalsIgnoreCase(other.getName())) {
-			//System.out.println("mismatch in name");
+		if (!name.equals(other.getName())) {
+			if(debugCoords)System.out.println("mismatch in name");
 			match = false;
 			return match;
 		}
