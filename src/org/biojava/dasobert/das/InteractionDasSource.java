@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 
 /**
@@ -236,10 +237,10 @@ public class InteractionDasSource extends Das1Source{
         
         // capabilities
         xw.openTag("capabilities");
-        String[] caps = getCapabilities();
-        for (int i = 0; i < caps.length; i++){
+        List<String> caps = getCapabilities();
+        for (int i = 0; i < caps.size(); i++){
             xw.openTag("capability");
-            xw.attribute("service",caps[i]);
+            xw.attribute("service",caps.get(i));
             xw.closeTag("capability");
         } 
         xw.closeTag("capabilities");
