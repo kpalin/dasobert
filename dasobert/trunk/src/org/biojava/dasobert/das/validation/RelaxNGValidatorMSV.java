@@ -4,8 +4,7 @@ import java.util.Map;
 
 import org.biojava.dasobert.das.Capabilities;
 import org.biojava.dasobert.das.validation.RegistryRelaxNG;
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.log4j.Logger;
+import java.util.logging.*;
 //import org.biojava.services.das.registry.RegistryConfiguration;
 
 /**                    BioJava development code
@@ -36,7 +35,7 @@ public class RelaxNGValidatorMSV {
 
 
 	//private static String path = "http://localhost:8080/dasregistryOID/validation/";//default also set here
-	Logger logger=Logger.getLogger(RelaxNGValidatorMSV.class);
+	Logger logger=Logger.getLogger("RelaxNG");
 
 	//private static String PATH="http://localhost:8080/dasregistryOID/validation1.6E/";
 	private String path = "http://www.dasregistry.org/validation/";

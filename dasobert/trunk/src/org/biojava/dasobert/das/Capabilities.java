@@ -10,42 +10,10 @@ import java.util.Map;
 
 import org.biojava.dasobert.dasregistry.Das1Validator;
 
+import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIGlobalBinding;
+
 public enum Capabilities {
 
-//	SEQUENCE("sequence"), STRUCTURE("structure"), ALIGNMENT("alignment"), TYPES(
-//			"types"), FEATURES("features"), ENTRY_POINTS("entry_points"), STYLESHEET("stylesheet"), INTERACTION("interaction"), SOURCES(
-//			"sources"),
-//			ERROR_SEGMENT("error_segment"),UNKNOWN_SEGMENT("unknown_segment"),UNKNOWN_FEATURE("unknown_feature"), FEATURE_BY_ID("feature_by_id");
-
-//	else if (capability.equals(Capabilities.SEQUENCE)
-//			|| capability.equals(Capabilities.FEATURES)) {
-//		cmd += capability + "?segment=" + testCode;
-//		
-//		
-//	} else if (capability.equals(Capabilities.ALIGNMENT)
-//			|| capability.equals(Capabilities.STRUCTURE)) {
-//		cmd += capability + "?query=" + testCode;
-//	} else if (capability.equals(Capabilities.ENTRY_POINTS)) {
-//		cmd += capability;
-//	} else if (capability.equals(Capabilities.STYLESHEET)) {
-//		cmd += capability;
-//	}  else if (capability.equals(Capabilities.TYPES)) {
-//		cmd += capability;
-//	} else if (capability.equals(Capabilities.INTERACTION)) {
-//		cmd += capability + "?interactor=" + testCode;
-//}else if (capability.equals(Capabilities.ERROR_SEGMENT)) {
-//	cmd+="features?"+"segment="+Das1Validator.invalidTestCode;
-//} else if (capability.equals(Capabilities.UNKNOWN_SEGMENT)) {
-//	cmd+="features?"+"segment="+Das1Validator.invalidTestCode;
-//} else if (capability.equals(Capabilities.UNKNOWN_FEATURE)) {
-//	cmd+="features?feature_id=" + Das1Validator.invalidTestCode;
-//} else if(capability.equals(Capabilities.MAXBINS)){
-//	cmd += "features" + "?segment=" + testCode+";maxbins=1";
-//}
-	
-	
-	
-	
 	SOURCES("sources"){ public String getCommandTestString(String testCode) { return "sources"; } }
 	,STYLESHEET("stylesheet"){ public String getCommandTestString(String testCode) { return getName(); } }
 	,FEATURES("features"){ public String getCommandTestString(String testCode) { return getName()+"?segment=" + testCode; } }
@@ -62,8 +30,17 @@ public enum Capabilities {
 	,CORS("cors"){ public String getCommandTestString(String testCode) { return "any valid request"; }}
 	,FEATURE_BY_ID("feature-by-id","feature_id"){ public String getCommandTestString(String testCode) { return "features"+"?feature_id="; }}
 	,FORMAT("format"){ public String getCommandTestString(String testCode) { return "format"; }}
-	,ADJACENT_FEATURE("adjacent-feature", "adjacent"){ public String getCommandTestString(String testCode) { return "adjacent"; }}; //NEXT_FEATURE("next_feature");//FEATURE_BY_ID("feature_by_id"), GROUP_BY_ID("group_by_id")
-//error_segments: Annotation servers should report unknown-segment and unknown-feature, and reference servers should indicate error-segment instead of unknown-segment.
+	,ADJACENT_FEATURE("adjacent-feature", "adjacent"){ public String getCommandTestString(String testCode) { return "adjacent"; }}//;
+	,BIGFILE_BAM("bigfile-bam", "bigfile_bam"){ public String getCommandTestString(String testCode) { return ""; }}
+	,BIGFILE_BIGBED("bigfile-bigbed", "bigfile_bigbed"){ public String getCommandTestString(String testCode) { return ""; }}
+	,BIGFILE_BIGWIG("bigfile-bigwig", "bigfile_bigwig"){ public String getCommandTestString(String testCode) { return ""; }}; //NEXT_FEATURE("next_feature");//FEATURE_BY_ID("feature_by_id"), GROUP_BY_ID("group_by_id")
+
+	
+	private String name;//name is the lowercase name of the command usually but not necessarily the same as the cgi command string 
+	private String command;//the actual command that needs to be added to the das source url
+	
+	
+	//error_segments: Annotation servers should report unknown-segment and unknown-feature, and reference servers should indicate error-segment instead of unknown-segment.
 	private static final Map<String, Capabilities> nameToValueMap =
         new HashMap<String, Capabilities>();
   static {
@@ -71,9 +48,20 @@ public enum Capabilities {
       nameToValueMap.put(value.getName(), value);
   }
 }
+  
+  private static final ArrayList<Capabilities> bigFileFormats= new ArrayList<Capabilities>();
 
-	private String name;//name is the lowercase name of the command usually but not necessarily the same as the cgi command string 
-	private String command;//the actual command that needs to be added to the das source url
+  static{
+	  bigFileFormats.add(BIGFILE_BAM);
+	  bigFileFormats.add(BIGFILE_BIGBED);
+	  bigFileFormats.add(BIGFILE_BIGWIG);
+	  
+  }
+  
+  public ArrayList<Capabilities> getBigFileFormats(){
+	  return bigFileFormats;
+  }
+	
 	
 
 	Capabilities(String name) {
@@ -166,7 +154,12 @@ public enum Capabilities {
 	}
 	
 	public static List<Capabilities> capabilitiesListFromStrings  (List<String> list) {
+		
 		ArrayList <Capabilities>caps=new ArrayList<Capabilities>();
+		if(list==null){
+			System.out.println("Warning capabilities from Strings is passed no capabilities");
+			return caps;
+		}
 		for(int i=0;i<list.size();i++){
 			if(nameToValueMap.containsKey(list.get(i))){
 				caps.add(nameToValueMap.get(list.get(i)));
@@ -253,5 +246,17 @@ public enum Capabilities {
 
 public static Capabilities getValue(String nameOfCapability){
 	return nameToValueMap.get(nameOfCapability);
+}
+
+
+
+public static boolean isBigFileFormat(String name) {
+	
+	for(Capabilities cap: bigFileFormats){
+		if(cap.getName().equals(name)){
+			return true;
+		}
+	}
+	return false;
 }
 }
