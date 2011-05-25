@@ -280,8 +280,9 @@ public class Das1Source implements DasSource {
 	public boolean hasValidCapability(String testCapability) {
 		//System.out.println("looking for cap="+testCapability);
 		for (Capabilities capability : validCapabilities) {
-			//System.out.println(capability);
+			//System.out.println("has "+capability);
 			if (capability.getName().equals(testCapability)){
+				System.out.println("found cap="+testCapability);
 				return true;
 			}
 			
@@ -359,10 +360,10 @@ public class Das1Source implements DasSource {
 	}
 
 	public void setValidCapabilities(List<String> validCapabilities) {
-//		 System.out.println("setting valid capabilities!!");
-//		 for(String valid:validCapabilities){
-//		 System.out.println("setting valid capabilities:"+valid);
-//		 }
+	 //System.out.println("setting valid capabilities!!");
+	 for(String valid:validCapabilities){
+	 //System.out.println("setting valid capabilities:"+valid);
+	 }
 		this.validCapabilities = Capabilities.capabilitiesListFromStrings(validCapabilities);
 
 	}

@@ -87,7 +87,6 @@ public class DasSourceFilter {
 			if (l.equalsIgnoreCase(label))
 				return true;
 		}
-
 		return false;
 	}
 
@@ -162,7 +161,7 @@ public class DasSourceFilter {
 		List lst = new ArrayList();
 		for (int i = 0; i < sources.size(); i++) {
 			DasSource source = sources.get(i);
-
+//if(source.getNickname().equals("Bamtestagain")){
 			// test for correct label
 			if (hasLabel(source, label) && hasOrganism(source, organism)
 					&& hasAuthority(source, authority)
@@ -172,6 +171,7 @@ public class DasSourceFilter {
 					&& isCoordinateId(source, id)) {
 				lst.add(source);
 			}
+			//}
 		}
 
 		return lst;

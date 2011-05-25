@@ -145,7 +145,8 @@ public class DasSourceWriterImpl implements DasSourceWriter {
 				xw.openTag("CAPABILITY");				
 				xw.attribute("type", Das2CapabilityImpl.DAS1_CAPABILITY_PREFIX
 						+ c);
-				if(c.equals("sources")){
+				//System.out.println("c in DasSourceWriterImp="+c);
+				if(c.equals("sources")||c.equals("bigfile-features")){
 					sourceUri=source.getUrl();
 					if(sourceUri.endsWith("/")){
 				queryUriString=source.getUrl().substring(0,source.getUrl().lastIndexOf('/'));

@@ -50,7 +50,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.log4j.Logger;
+import java.util.logging.Logger;
 import org.biojava.bio.Annotation;
 import org.biojava.bio.program.das.dasalignment.Alignment;
 import org.biojava.bio.program.das.dasalignment.DASAlignmentClient;
@@ -370,7 +370,7 @@ public class Das1Validator {
 					}
 					if (!validateFeatures(url, testcode, ontologyValidation)) {
 						featureok = false;
-						logger.debug("features not ok! in validate");
+						logger.fine("features not ok! in validate");
 					}
 					if (verbose)
 						System.out.println(validationMessage);
@@ -508,6 +508,14 @@ public class Das1Validator {
 					isValid = false;
 					validationMessage += " no testcode provided";
 				}
+
+			}
+			else if (Capabilities.isBigFileFormat(capability.getName())) {
+				//currently no tests but need these to be in the validated_capabilities table so we can search them
+				if(statedCapabilities.contains(capability.getName())){//only one is valid currently, the one that has been stated and not the others
+					isValid=true;
+				}
+				
 
 			}
 
@@ -1138,7 +1146,7 @@ public class Das1Validator {
 		DASRegistryCoordinatesReaderXML reader = new DASRegistryCoordinatesReaderXML();
 		// need to implement a reader for
 		// http://www.dasregistry.org/das1/coordinatesystem cmd
-		logger.debug("getting registry CoordinateSystems from dasregistry url");
+		logger.fine("getting registry CoordinateSystems from dasregistry url");
 		List<DasCoordinateSystem> coords = reader
 				.readRegistryDas1CoorinateSystems();
 
