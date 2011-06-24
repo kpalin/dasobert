@@ -50,6 +50,7 @@ public enum Capabilities {
 }
   
   private static final ArrayList<Capabilities> bigFileFormats= new ArrayList<Capabilities>();
+  private static final ArrayList<Capabilities> primaryCapabilities= new ArrayList<Capabilities>();
 
   static{
 	  bigFileFormats.add(BIGFILE_BAM);
@@ -57,8 +58,28 @@ public enum Capabilities {
 	  bigFileFormats.add(BIGFILE_BIGWIG);
 	  
   }
+  /**
+   * Every DAS source should have at least one of these valid
+   */
+  static{
+	  primaryCapabilities.add(SEQUENCE);
+	  primaryCapabilities.add(FEATURES);
+	  primaryCapabilities.add(ALIGNMENT);
+	  primaryCapabilities.add(STRUCTURE);
+	  primaryCapabilities.add(INTERACTION);
+	  primaryCapabilities.add(BIGFILE_BAM);
+	  primaryCapabilities.add(BIGFILE_BIGBED);
+	  primaryCapabilities.add(BIGFILE_BIGWIG);
+	  
+  }
   
-  public ArrayList<Capabilities> getBigFileFormats(){
+  public static ArrayList<Capabilities> getPrimarycapabilities() {
+	return primaryCapabilities;
+}
+
+
+
+public ArrayList<Capabilities> getBigFileFormats(){
 	  return bigFileFormats;
   }
 	
@@ -253,6 +274,16 @@ public static Capabilities getValue(String nameOfCapability){
 public static boolean isBigFileFormat(String name) {
 	
 	for(Capabilities cap: bigFileFormats){
+		if(cap.getName().equals(name)){
+			return true;
+		}
+	}
+	return false;
+}
+
+public static boolean isPrimaryCapability(String name) {
+	
+	for(Capabilities cap: primaryCapabilities){
 		if(cap.getName().equals(name)){
 			return true;
 		}
