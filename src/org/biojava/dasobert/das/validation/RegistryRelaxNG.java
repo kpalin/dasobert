@@ -221,7 +221,7 @@ public class RegistryRelaxNG {
 					- parsingTime))
 					+ "\n";
 		int test = allValid ? 0 : -1;
-		System.out.println("int test" + test);
+		//System.out.println("int test" + test);
 		return test;
 	}
 

@@ -39,7 +39,7 @@ public class RegReportErrorHandler implements ErrorHandler {
 
 	public void error(SAXParseException e) throws SAXException {
 		
-		System.out.println("e.getmessage()="+e.getMessage());
+		//System.out.println("e.getmessage()="+e.getMessage());
 		//if error is type of namespace then ignore
 //		if(e.getLocalizedMessage().contains("namespace")){
 //			hadError=false;

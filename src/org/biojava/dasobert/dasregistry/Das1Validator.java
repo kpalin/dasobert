@@ -110,7 +110,7 @@ public class Das1Validator {
 																// until can get
 																// from file not
 																// web service
-	public boolean VERBOSE = true;
+	public boolean VERBOSE = false;
 	private boolean relaxNgApprovalNeeded = true;// needed if via web page, but
 	// specifically not needed
 	// for autovalidation at the
@@ -241,7 +241,7 @@ public class Das1Validator {
 
 		System.out.println("calling validate in DAS1Validator with url=" + url);
 		DasHeaders headers = null;
-		verbose = true;
+		VERBOSE = verbose;
 
 		result = new DasValidationResult(url, coords);
 		// if(!url.contains("batman"))return result;
@@ -269,9 +269,19 @@ public class Das1Validator {
 		headers = getHeaders(removeDataSourceNameFromUrl(url));
 
 		Timer timer = new Timer();
+		
 		// test if all possible capabilities work
 		for (Capabilities capability : EnumSet.allOf(Capabilities.class)) {
 			boolean isValid = false;
+			
+			if(!statedCapabilities.contains(capability.getName())){
+				//do we want to test this capability if eg structure and not stated?
+				if(Capabilities.isPrimaryCapability(capability.getName())){
+					result.isValid(capability, isValid);
+					result.error(capability, validationMessage);
+					continue;//don
+				}
+			}
 			timer.reset();
 			timer.start();
 			// for dbug
@@ -329,12 +339,13 @@ public class Das1Validator {
 					validationMessage += " no testcode provided";
 				}
 			} else if (capability.equals(Capabilities.STRUCTURE)) {
+				
 				boolean structureok = true;
 				for (int i = 0; i < coords.length; i++) {
 					DasCoordinateSystem ds = coords[i];
 
 					// don't test for structure if this can't work...
-					System.out.println("catagory=" + ds.getCategory());
+					//System.out.println("catagory=" + ds.getCategory());
 					// if (! ds.getCategory().equals("Protein Structure"))
 					// continue;
 
@@ -530,7 +541,7 @@ public class Das1Validator {
 			}
 			timer.end();
 			result.time(capability, timer.duration());
-			timer.printDuration(System.out);
+			//timer.printDuration(System.out);
 			result.isValid(capability, isValid);
 			result.error(capability, validationMessage);
 
@@ -559,16 +570,16 @@ public class Das1Validator {
 			String urlString = url + "features?adjacent=" + pointLocation
 					+ ":F";
 
-			System.out.println("calling validate adjacent_feature with string "
-					+ urlString);
+			//System.out.println("calling validate adjacent_feature with string "
+					//+ urlString);
 
 			u = new URL(urlString);
 
 			if (!relaxNgApproved(Capabilities.FEATURES, u.toString()))
 				return false;
-			System.out
-					.println("validation message after features and rng call= "
-							+ validationMessage);
+			//System.out
+			//		.println("validation message after features and rng call= "
+			//				+ validationMessage);
 			InputStream dasInStream = open(u);
 			XMLReader xmlreader = getXMLReader();
 
@@ -594,7 +605,7 @@ public class Das1Validator {
 			// then check the ids are unique
 			if (!checkFeatureIdsAreUnique(features))
 				return false;
-			System.out.println("features size is=" + features.size());
+			//.println("features size is=" + features.size());
 
 			if (cont_handle.isMD5Checksum())
 				supportsMD5Checksum = true;
@@ -639,7 +650,7 @@ public class Das1Validator {
 		String featureByIdUrl = url
 				+ Capabilities.FEATURE_BY_ID.getCommandTestString("")
 				+ featureForFurtherTests2.get("id");
-		System.out.println("testing featureById url=" + featureByIdUrl);
+		//System.out.println("testing featureById url=" + featureByIdUrl);
 		URL u = null;
 		try {
 			u = new URL(featureByIdUrl);
@@ -684,7 +695,7 @@ public class Das1Validator {
 		if (features.size() > 0) {
 			String featureByIdId = features.get(0).get("id");
 			String previousFeatureId = featureForFurtherTests2.get("id");
-			System.out.println(featureByIdId + " " + previousFeatureId);
+			//System.out.println(featureByIdId + " " + previousFeatureId);
 			if (featureByIdId.equals(previousFeatureId)) {
 				return true;
 			} else {
@@ -718,7 +729,7 @@ public class Das1Validator {
 			if (firstValid && secondValid) {
 
 				if (firstFeaturesSize == secondFeaturesSize) {
-					System.out.println("returning false for maxbins valid");
+					//System.out.println("returning false for maxbins valid");
 					return false;
 				} else {
 					return true;
@@ -815,11 +826,9 @@ public class Das1Validator {
 
 		// System.out.println("running sources with  cmd="+cmd);
 		if (!relaxNgApproved(Capabilities.SOURCES, cmd)) {
-			System.out.println("sources not valid due to rng!!!");
+			//System.out.println("sources not valid due to rng!!!");
 			return false;
 		}
-		System.out.println("sources rng approved it");
-
 		// get a list of all sources from the registry either from xml for
 		// external programs or from database
 		// for the registry
@@ -829,8 +838,8 @@ public class Das1Validator {
 		try {
 			URL u = new URL(cmd);
 			DasSource[] sources = reader.readDasSource(u);
-			System.out.println("number of sources being checked="
-					+ sources.length);
+			//System.out.println("number of sources being checked="
+				//	+ sources.length);
 
 			for (int i = 0; i < sources.length; i++) {
 				Das1Source ds = (Das1Source) sources[i];
@@ -854,7 +863,7 @@ public class Das1Validator {
 		if (numberOfInvalidSources != 0)
 			return false;
 
-		System.out.println("sources validation is true");
+		//System.out.println("sources validation is true");
 		return true;
 
 	}
@@ -909,8 +918,8 @@ public class Das1Validator {
 				if (appendValidationErrors) {
 					validationMessage += rng.getMessage();
 				}
-				System.out.println("getting message in das1 validator"
-						+ validationMessage);
+				//System.out.println("getting message in das1 validator"
+				//		+ validationMessage);
 				if (relaxNgApprovalNeeded)
 					return false;
 
@@ -1113,7 +1122,7 @@ public class Das1Validator {
 			url = new URL(sourcesUrl);
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 
 		DasSource[] sources = reader.readDasSource(url);
@@ -1121,7 +1130,7 @@ public class Das1Validator {
 		List das1sources = new ArrayList();
 		for (int i = 0; i < sources.length; i++) {
 			DasSource ds = sources[i];
-			System.out.println("i=" + i);
+			//System.out.println("i=" + i);
 			if (ds instanceof Das1Source) {
 				// System.out.println("adding das1 source from registry "
 				// + ds.getUrl());
@@ -1163,7 +1172,7 @@ public class Das1Validator {
 	 * )
 	 */
 	public boolean validateURL(String url) {
-		System.out.println("*********validating url**************");
+		//System.out.println("*********validating url**************");
 		String[] spl = url.split("/");
 
 		// for (int i = 0 ; i < spl.length ; i++ ) {
@@ -1517,7 +1526,7 @@ public class Das1Validator {
 		}
 		List<Map<String, String>> types = cont_handle.getTypesAsList();
 
-		System.out.println(this.getClass().getName());
+		//System.out.println(this.getClass().getName());
 		if (cont_handle.segmentTypePresent
 				&& appendValidationErrors
 				&& this.getClass().getName().equals(
@@ -1606,9 +1615,9 @@ public class Das1Validator {
 
 			if (!relaxNgApproved(Capabilities.FEATURES, u.toString()))
 				return false;
-			System.out
-					.println("validation message after features and rng call= "
-							+ validationMessage);
+//			System.out
+//					.println("validation message after features and rng call= "
+//							+ validationMessage);
 			InputStream dasInStream = open(u);
 			XMLReader xmlreader = getXMLReader();
 
@@ -1639,7 +1648,7 @@ public class Das1Validator {
 			// then check the ids are unique
 			if (!checkFeatureIdsAreUnique(features))
 				return false;
-			System.out.println("features size is=" + features.size());
+			//System.out.println("features size is=" + features.size());
 
 			if (cont_handle.isMD5Checksum())
 				supportsMD5Checksum = true;
@@ -1741,7 +1750,7 @@ public class Das1Validator {
 	}
 
 	private SimpleTerm getTerm(String typeID) {
-		System.out.println("Getting term typeID=" + typeID);
+		//System.out.println("Getting term typeID=" + typeID);
 		if (typeID == null) {
 			System.err.println("typeID is NULL, no terms in an ontology");
 			return null;
@@ -1798,7 +1807,7 @@ public class Das1Validator {
 			throw new DASException("could not identify ECO id in "
 					+ typeCategory);
 		}
-		System.out.println("checking ECO:" + eco);
+		//System.out.println("checking ECO:" + eco);
 		if (!lookup.exists(eco, "ECO")) {
 			throw new DASException("unknown evidence code >" + eco + "<");
 		}
@@ -1911,7 +1920,7 @@ public class Das1Validator {
 	protected boolean validateStructure(String url, String testcode) {
 		String cmd = url + "structure?model=1&query=";
 
-		System.out.println("running structure with  cmd=" + cmd);
+		//System.out.println("running structure with  cmd=" + cmd);
 
 		if (!relaxNgApproved(Capabilities.STRUCTURE, cmd + testcode))
 			return false;
@@ -2196,9 +2205,9 @@ public class Das1Validator {
 		}
 		serverTypes.put(dasServer, ++serverCount);
 		specificationTypes.put(dasVersion, ++dasVersionCount);
-		System.out.println("header result for url " + url + " is dasServer="
-				+ dasServer + " " + serverCount + " dasVersion=" + dasVersion
-				+ " " + dasVersionCount);
+		//System.out.println("header result for url " + url + " is dasServer="
+				//+ dasServer + " " + serverCount + " dasVersion=" + dasVersion
+				//+ " " + dasVersionCount);
 
 		info += "s=" + dasServer + " das=" + dasVersion;
 		return info;

@@ -57,7 +57,7 @@ public class DasHeaders {
 
 			try {
 				httpStatus = httpConnection.getResponseCode();
-				System.out.println("status code=" + httpStatus);
+				//System.out.println("status code=" + httpStatus);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -84,9 +84,11 @@ public class DasHeaders {
 			if (accessControl != null) {
 				hasAccessControl = true;
 			}
-			System.out.println("cors=" + cors);
-			System.out.println("accessControl=" + accessControl);
-			System.out.println("das version="+dasVersion);
+			//System.out.println("cors=" + cors);
+			//System.out.println("accessControl=" + accessControl);
+			//System.out.println("das version="+dasVersion);
+		}else{
+			System.out.println("|||||||||||| Error response from request");
 		}
 
 	}
