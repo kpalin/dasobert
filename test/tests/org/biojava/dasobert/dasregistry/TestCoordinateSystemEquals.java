@@ -19,7 +19,7 @@ public class TestCoordinateSystemEquals extends TestCase{
         coord.setOrganismName("callithrix jacchus");
        coord.setVersion("");
         coord.setCategory("supercontig");
-       System.out.println(coord.toString());
+     //System.out.println(coord.toString());
         //coordinates[0]=coord;
         
         coord2=new DasCoordinateSystem();
@@ -28,7 +28,7 @@ public class TestCoordinateSystemEquals extends TestCase{
         coord2.setOrganismName("callithrix jacchus");
        coord2.setVersion("2");
         coord2.setCategory("supercontig");
-       System.out.println(coord.toString());
+     //System.out.println(coord.toString());
        // coordinates[1]=coord2;
 		
 	}
