@@ -22,7 +22,7 @@ public class TestGetCoordinateSystemsFromRegistry {
 		try {
 
 			regCoords = coordGetter.getCoordinates();
-                        System.out.println("coordinates from GetCoords size="+regCoords.size());
+                      //System.out.println("coordinates from GetCoords size="+regCoords.size());
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

@@ -33,11 +33,13 @@ public class ServerLocation {
 	public static final boolean withinSanger=true;//true if testing live registry not on mac, true if on sanger network
 	//public static final String REGISTRY= "http://www.dasregistry.org/";
 	public static final String SANGER_SOURCES="http://das.sanger.ac.uk/das/sources";
+	public static final String SANGER_PROSERVER01="http://web-proserver02.internal.sanger.ac.uk:8001/das/sources";
+	public static final String SANGER_PROSERVER02="http://web-proserver02.internal.sanger.ac.uk:8001/das/sources";
 	//public static final String SANGER_SOURCES="http://localhost:8080/dasregistry/sanger/das/";
 	
 	//public static final String REGISTRY= "http://deskpro349.dynamic.sanger.ac.uk:8080/dasregistry";
 	//public static final String REGISTRY= "http://deskpro20727.dynamic.sanger.ac.uk:8080/dasregistryOID";
-	public static final String REGISTRY= "http://localhost:8080/dasregistry/";
+	public static final String REGISTRY= "http://www.dasregistry.org/";
 	
 	public static  URL REGISTRYURL ;
 	
