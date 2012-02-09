@@ -58,7 +58,7 @@ extends AbstractDasEvent {
      * for (int i = 0 ; i< features;i++) {            
      *      Map f = features[i];
      *      String type = (String) f.get("TYPE") ;
-     *      System.out.println(type);
+     *    //System.out.println(type);
      * }      
      * </pre>
      * @return a Map containng the features

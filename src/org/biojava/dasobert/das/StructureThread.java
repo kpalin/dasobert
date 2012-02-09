@@ -64,7 +64,7 @@ import org.biojava.dasobert.eventmodel.StructureListener;
 
     public synchronized void newStructure(StructureEvent event){
         Structure s = event.getStructure();
-        System.out.println(s.toPDB()); 
+      //System.out.println(s.toPDB()); 
         //System.out.println(s.toPDB()); 
         System.exit(0);
     }
@@ -107,7 +107,7 @@ extends Thread{
         
         // if the accessioncode has a chain, remove it ...
         int pos = accessionCode.indexOf(".");
-        System.out.println("ac " +  accessionCode +" " + pos);
+      //System.out.println("ac " +  accessionCode +" " + pos);
         if ( pos > 0)                 
             this.accessionCode = accessionCode.substring(0,pos);
         else

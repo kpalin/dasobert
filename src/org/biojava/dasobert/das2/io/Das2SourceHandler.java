@@ -118,9 +118,10 @@ public class Das2SourceHandler extends DefaultHandler{
 
 		return dcs;
 	}
-
+	
+	
 	public void startElement (String uri, String name, String qName, Attributes atts){
-		//System.out.println("new element "+qName);
+		
 
 		if (qName.equals("SOURCE")) {
 			//System.out.println("new Source " + atts.getValue(uri));
@@ -145,6 +146,9 @@ public class Das2SourceHandler extends DefaultHandler{
 			
 		} else if (qName.equals("PROPERTY") ||
 				qName.equals("PROP")) {
+			if(qName.equals("PROPERTY")){
+				System.out.println("aho there is a PROPERTY HERE!");
+			}
 			
 			// todo: remove PROPERTY from sources description
 			// the DAS/2 validator accepted this element for too long...

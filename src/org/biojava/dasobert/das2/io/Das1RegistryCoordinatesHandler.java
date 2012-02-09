@@ -120,7 +120,7 @@ public class Das1RegistryCoordinatesHandler  extends DefaultHandler{
 	
 
 	public void startDocument(){
-		System.out.println("starting document");
+		//System.out.println("starting document");
 		coordinates = new ArrayList();
 		
 	}
