@@ -78,7 +78,7 @@ public class InteractionDasSource extends Das1Source{
                                   
                  
                  Method setter = ic.getMethod("set"+name.substring(3,name.length()),new Class[]{} );
-                 System.out.println(setter);
+               //System.out.println(setter);
                  setter.invoke(ds, o);
              }
              

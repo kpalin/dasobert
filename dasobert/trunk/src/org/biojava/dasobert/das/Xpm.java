@@ -1557,7 +1557,7 @@ public class Xpm
     static void debug(String msg)
     {
         if(debugflag)
-            System.out.println(msg);
+          System.out.println(msg);
     }
     
     // look up string name of color. return int[3] of rgb, or
@@ -1877,7 +1877,7 @@ public class Xpm
         {
             System.out.print(" "+Integer.toHexString(b[index]));
         }
-        System.out.println(" ");
+      //System.out.println(" ");
     }
     
     // This just parses out the string that defines the colorname

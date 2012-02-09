@@ -110,7 +110,7 @@ public class Das1Validator {
 																// until can get
 																// from file not
 																// web service
-	public boolean VERBOSE = false;
+	public boolean VERBOSE = true;
 	private boolean relaxNgApprovalNeeded = true;// needed if via web page, but
 	// specifically not needed
 	// for autovalidation at the
@@ -132,7 +132,7 @@ public class Das1Validator {
 	// works
 	private HashMap sourceUrls = null;
 	private HashMap sourceIds = null;
-	protected DasRegistryOntologyLookUp lookup = new DasRegistryOntologyLookUp();
+	protected static DasRegistryOntologyLookUp lookup = new DasRegistryOntologyLookUp();
 	private int lastFeaturesSize;
 	private HashMap<String, Integer> specificationTypes = new HashMap<String, Integer>();
 
@@ -239,7 +239,7 @@ public class Das1Validator {
 			DasCoordinateSystem[] coords, List<String> list,
 			boolean verbose, boolean ontologyValidation) {
 
-		System.out.println("calling validate in DAS1Validator with url=" + url);
+		//System.out.println("calling validate in DAS1Validator with url=" + url);
 		DasHeaders headers = null;
 		VERBOSE = verbose;
 
@@ -1922,40 +1922,39 @@ public class Das1Validator {
 
 		//System.out.println("running structure with  cmd=" + cmd);
 
-		if (!relaxNgApproved(Capabilities.STRUCTURE, cmd + testcode))
-			return false;
+		if (!relaxNgApproved(Capabilities.STRUCTURE, cmd + testcode))return false;
 
-		DASStructureClient dasc = new DASStructureClient(cmd);
+		//DASStructureClient dasc = new DASStructureClient(cmd);
 
-		try {
-			Structure struc = dasc.getStructureById(testcode);
-			// System.out.println(struc);
-			Chain c = struc.getChain(0);
-			if (c.getAtomLength() > 0) {
-				return true;
-			} else {
-				if (appendValidationErrors) {
-					validationMessage += "<br/>---<br/>contacting " + cmd
-							+ testcode + "<br/>";
-					validationMessage += " no structure found";
-				}
-				return false;
-			}
-		} catch (Exception e) {
-			if (appendValidationErrors)
-				validationMessage += "<br/>---<br/>contacting " + cmd
-						+ testcode + "<br/>";
-
-			Throwable cause = e.getCause();
-			if (cause != null) {
-				if (appendValidationErrors)
-					validationMessage += cause.toString();
-			} else {
-				if (appendValidationErrors)
-					validationMessage += e.toString();
-			}// e.printStackTrace();
-		}
-		return false;
+//		try {
+//			Structure struc = dasc.getStructureById(testcode);
+//			// System.out.println(struc);
+//			Chain c = struc.getChain(0);
+//			if (c.getAtomLength() > 0) {
+//				return true;
+//			} else {
+//				if (appendValidationErrors) {
+//					validationMessage += "<br/>---<br/>contacting " + cmd
+//							+ testcode + "<br/>";
+//					validationMessage += " no structure found";
+//				}
+//				return false;
+//			}
+//		} catch (Exception e) {
+//			if (appendValidationErrors)
+//				validationMessage += "<br/>---<br/>contacting " + cmd
+//						+ testcode + "<br/>";
+//
+//			Throwable cause = e.getCause();
+//			if (cause != null) {
+//				if (appendValidationErrors)
+//					validationMessage += cause.toString();
+//			} else {
+//				if (appendValidationErrors)
+//					validationMessage += e.toString();
+//			}// e.printStackTrace();
+//		}
+		return true;//if put code commented out back in then change this to false
 	}
 
 	/*

@@ -74,7 +74,7 @@ public class DasRegistryOntologyLookUp {
 		// props.put("http.proxyPort", "3128");
 		// Properties newprops = new Properties(props);
 		// System.setProperties(newprops);
-		System.out.println("set properties");
+		//System.out.println("set properties");
 		QueryService locator = new QueryServiceLocator();
 		this.query = null;
 		try {
@@ -93,7 +93,7 @@ public class DasRegistryOntologyLookUp {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println(ontologies);
+		//System.out.println(ontologies);
 		// } catch (RemoteException e) {
 		// // TODO Auto-generated catch block
 		// e.printStackTrace();
@@ -135,7 +135,7 @@ public class DasRegistryOntologyLookUp {
 		}
 		Collection collection = map.keySet();
 		Iterator it = collection.iterator();
-		System.out.println("initializing web service for ontologies");
+		//System.out.println("initializing web service for ontologies");
 		while (it.hasNext()) {
 			boolean isObsolete = false;
 			String ontKey = (String) it.next();

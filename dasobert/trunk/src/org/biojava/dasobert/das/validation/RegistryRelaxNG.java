@@ -144,12 +144,12 @@ public class RegistryRelaxNG {
 			grammar = loader.parse(grammarName);
 
 		} catch (SAXParseException spe) {
-			if (Debug.debug)
-				spe.getException().printStackTrace();
+			//if (Debug.debug)
+				//spe.getException().printStackTrace();
 			//; // this error is already reported.
-				spe.printStackTrace();
+				//spe.printStackTrace();
 		} catch (SAXException se) {
-			se.printStackTrace();
+			//se.printStackTrace();
 			if (se.getException() != null)
 				throw se.getException();
 			throw se;
@@ -318,7 +318,7 @@ public class RegistryRelaxNG {
 	public int validateCatchingExceptions(String rng, String input) {
 		int valid = 0;
 		try {
-			System.out.println("validating rng:"+rng +"  input:"+input);
+			//System.out.println("validating rng:"+rng +"  input:"+input);
 			valid = this.validate(rng, input);
 		} catch (MalformedURLException e) {
 

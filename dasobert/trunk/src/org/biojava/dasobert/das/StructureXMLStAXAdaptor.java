@@ -78,7 +78,7 @@ public class StructureXMLStAXAdaptor extends StAXContentHandlerBase {
     public void startTree()
     throws SAXException
     {
-        System.out.println("Structure StAX adaptor called");
+      //System.out.println("Structure StAX adaptor called");
         parser.startDocument();
     }
     
